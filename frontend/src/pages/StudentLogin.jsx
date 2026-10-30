@@ -11,7 +11,7 @@ const StudentLogin = () => {
   const { loginStudent, isLoading, error: authError, clearError } = useAuth();
   const { setStudentByCode, resetStudentQuiz } = useContext(AppContext);
   const [code, setCode] = useState('3A');
-  const [name, setName] = useState('Rahul');
+  const [name, setName] = useState('');
   const [formError, setFormError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,15 +28,16 @@ const StudentLogin = () => {
 
     try {
       setIsSubmitting(true);
+      const studentDisplayName = name.trim() || 'Student';
       if (setStudentByCode) {
-        setStudentByCode(cleanCode);
+        setStudentByCode(cleanCode, studentDisplayName);
       }
       if (resetStudentQuiz) {
         resetStudentQuiz();
       }
       if (loginStudent) {
         try {
-          await loginStudent(cleanCode, name.trim() || 'Rahul');
+          await loginStudent(cleanCode, studentDisplayName);
         } catch (authErr) {
           console.warn('Backend student auth skipped, using local session:', authErr.message);
         }
@@ -51,7 +52,7 @@ const StudentLogin = () => {
 
   const useDemoCode = () => {
     setCode('3A');
-    setName('Rahul');
+    setName('Student 1');
     setFormError(null);
     if (clearError) clearError();
   };
@@ -121,7 +122,7 @@ const StudentLogin = () => {
               </label>
               <input 
                 type="text" 
-                placeholder="e.g. Rahul" 
+                placeholder="e.g. Rahul, Priya, Vikram..." 
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);

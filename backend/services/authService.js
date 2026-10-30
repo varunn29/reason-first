@@ -405,7 +405,7 @@ async function getClassroom(classCode) {
   return null;
 }
 
-async function loginStudent({ classCode, studentName = 'Rahul' }) {
+async function loginStudent({ classCode, studentName = 'Student' }) {
   if (!classCode) {
     throw new Error('Class code is required.');
   }
@@ -415,8 +415,24 @@ async function loginStudent({ classCode, studentName = 'Rahul' }) {
     throw new Error(`Class code "${classCode.toUpperCase().trim()}" not found. Please check with your teacher.`);
   }
 
-  const cleanName = (studentName || 'Rahul').trim();
-  const studentId = 'student_' + cleanName.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Math.floor(10 + Math.random() * 90);
+  const cleanName = (studentName || 'Student').trim();
+  const baseSlug = cleanName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+  const studentId = 'student_' + (baseSlug || 'user');
+  const classLabel = classroom.name || `Grade ${classroom.grade || 3} - Section ${classroom.classCode || '3A'}`;
+
+  // Persist to Postgres students table if connected
+  if (process.env.DATABASE_URL) {
+    try {
+      await pool.query(
+        `INSERT INTO students (id, display_name, class_label)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (id) DO UPDATE SET display_name = EXCLUDED.display_name, class_label = EXCLUDED.class_label`,
+        [studentId, cleanName, classLabel]
+      );
+    } catch (e) {
+      console.warn('DB student upsert skipped in loginStudent:', e.message);
+    }
+  }
 
   const token = generateToken({
     id: studentId,
@@ -454,4 +470,3 @@ module.exports = {
   DEMO_TEACHER,
   DEMO_CLASSROOM,
 };
-

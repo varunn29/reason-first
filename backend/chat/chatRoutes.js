@@ -36,9 +36,9 @@ router.post('/start', async (req, res) => {
       questionId = 'probe_01',
       responseId = null,
       language = config.defaultLanguage,
-      studentName = 'Rahul',
-      question = '1/2 + 1/4 = ?',
-      studentAnswer = '2/6',
+      studentName = 'Student',
+      question = '61 - 24 = ?',
+      studentAnswer = '43',
       studentExplanation = '',
     } = req.body;
 
@@ -385,3 +385,4 @@ router.post('/feedback', async (req, res) => {
 });
 
 module.exports = router;
+

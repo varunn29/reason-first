@@ -67,13 +67,13 @@ export const AppProvider = ({ children }) => {
   });
 
   const [activeStudent, setActiveStudent] = useState({
-    id: 'student_rahul',
-    displayName: 'Rahul Kumar',
-    classLabel: 'Grade 3 - Section A',
+    id: 'student_guest',
+    displayName: 'Student',
+    classLabel: 'Grade 3 - Section 3A',
     classCode: '3A',
-    stars: 12,
-    coins: 350,
-    avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Rahul',
+    stars: 0,
+    coins: 50,
+    avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Student',
   });
 
   const [activeTeacher, setActiveTeacher] = useState({
@@ -90,39 +90,19 @@ export const AppProvider = ({ children }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [completedQuizResults, setCompletedQuizResults] = useState([]);
 
-  const setStudentByCode = (code) => {
-    const cleanCode = (code || '').trim().toUpperCase();
-    if (cleanCode.includes('3B')) {
-      setActiveStudent({
-        id: 'student_aarav',
-        displayName: 'Aarav Patel',
-        classLabel: 'Grade 3 - Section B',
-        classCode: '3B',
-        stars: 15,
-        coins: 420,
-        avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Aarav',
-      });
-    } else if (cleanCode.includes('PRIYA') || cleanCode === '3A-P') {
-      setActiveStudent({
-        id: 'student_priya',
-        displayName: 'Priya Singh',
-        classLabel: 'Grade 3 - Section A',
-        classCode: '3A',
-        stars: 10,
-        coins: 290,
-        avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Priya',
-      });
-    } else {
-      setActiveStudent({
-        id: 'student_rahul',
-        displayName: 'Rahul Kumar',
-        classLabel: `Grade 3 - Section ${cleanCode || 'A'}`,
-        classCode: cleanCode || '3A',
-        stars: 12,
-        coins: 350,
-        avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Rahul',
-      });
-    }
+  const setStudentByCode = (code, studentName) => {
+    const cleanCode = (code || '3A').trim().toUpperCase();
+    const cleanName = (studentName || '').trim() || 'Student';
+    const cleanId = 'student_' + cleanName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    setActiveStudent({
+      id: cleanId,
+      displayName: cleanName,
+      classLabel: `Grade 3 - Section ${cleanCode}`,
+      classCode: cleanCode,
+      stars: 0,
+      coins: 50,
+      avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${cleanName.split(' ')[0]}`,
+    });
   };
 
   const resetStudentQuiz = () => {

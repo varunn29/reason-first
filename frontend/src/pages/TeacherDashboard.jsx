@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Bell, LogOut, Plus, Users, Clock, BookOpen, KeyRound, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Bell, LogOut, Plus, Users, Clock, BookOpen, KeyRound, CheckCircle2, ChevronRight, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import BottomNav from '../components/BottomNav';
@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 
 const TeacherDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [studentFilter, setStudentFilter] = useState('ALL'); // 'ALL' or 'PENDING'
   const [showNotification, setShowNotification] = useState(false);
@@ -21,24 +22,38 @@ const TeacherDashboard = () => {
 
   const { activeTeacher, currentAssignment } = useContext(AppContext);
 
-  useEffect(() => {
-    let isMounted = true;
-    api.getDashboardData().then((data) => {
-      if (isMounted) {
-        setDashboardData(data);
-        setIsLoading(false);
-      }
-    });
+  const fetchDashboard = async (silent = false) => {
+    if (!silent) setIsLoading(true);
+    try {
+      const data = await api.getDashboardData();
+      setDashboardData(data);
+    } catch (err) {
+      console.warn('Dashboard fetch error:', err);
+    } finally {
+      if (!silent) setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
 
-    return () => {
-      isMounted = false;
+  useEffect(() => {
+    fetchDashboard();
+
+    // Automatically refresh student list when window regains focus (e.g. after student quiz in another tab)
+    const handleFocus = () => {
+      fetchDashboard(true);
     };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   const statIcons = { Users, Clock, BookOpen };
 
   const teacher = activeTeacher?.name ? activeTeacher : dashboardData?.teacher;
-  const stats = dashboardData?.stats || [];
+  const stats = dashboardData?.stats || [
+    { id: 1, label: 'Total Students', value: 0, icon: 'Users', bgColor: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { id: 2, label: 'Pending Reviews', value: 0, icon: 'Clock', bgColor: 'bg-orange-50', iconColor: 'text-orange-500' },
+    { id: 3, label: 'Total Assignments', value: 1, icon: 'BookOpen', bgColor: 'bg-purple-50', iconColor: 'text-purple-500' },
+  ];
   const allStudents = dashboardData?.students || [];
 
   // Filter students based on review status
@@ -90,7 +105,9 @@ const TeacherDashboard = () => {
                 className="p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-primary transition active:scale-95"
               >
                 <Bell size={20} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full ring-2 ring-white"></span>
+                {stats.find(s => s.label === 'Pending Reviews')?.value > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full ring-2 ring-white"></span>
+                )}
               </button>
 
               {showNotification && (
@@ -99,7 +116,7 @@ const TeacherDashboard = () => {
                     <CheckCircle2 size={14} className="text-primary" /> Active Class Alerts
                   </h4>
                   <p className="text-[11px] text-gray-600 leading-tight">
-                    4 student responses in Grade 3 ready for human-in-the-loop clinical review.
+                    {stats.find(s => s.label === 'Pending Reviews')?.value || 0} student response(s) in Grade 3 ready for human-in-the-loop clinical review.
                   </p>
                 </div>
               )}
@@ -158,7 +175,7 @@ const TeacherDashboard = () => {
           </div>
         </div>
 
-        {/* Stats Cards (Interactive BUG-07 fixed) */}
+        {/* Stats Cards */}
         <div className="px-5 grid grid-cols-3 gap-3 mb-6">
           {stats.map((stat) => {
             const Icon = statIcons[stat.icon] || Users;
@@ -187,19 +204,29 @@ const TeacherDashboard = () => {
         {/* Student List */}
         <div className="px-5">
           <div className="flex justify-between items-center mb-4">
-            <div>
+            <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-darkText">My Students</h2>
+              <button 
+                type="button" 
+                onClick={() => { setIsRefreshing(true); fetchDashboard(); }}
+                title="Refresh student list"
+                className={`p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition ${isRefreshing ? 'animate-spin text-primary' : ''}`}
+              >
+                <RefreshCw size={14} />
+              </button>
               {studentFilter === 'PENDING' && (
                 <span className="text-[10px] text-orange-600 font-semibold">Filtering: Needs Review</span>
               )}
             </div>
-            <button 
-              type="button"
-              onClick={() => setStudentFilter((prev) => (prev === 'PENDING' ? 'ALL' : 'PENDING'))}
-              className="text-xs font-semibold text-primary hover:underline cursor-pointer"
-            >
-              {studentFilter === 'PENDING' ? 'Show All Students' : 'Filter Pending'}
-            </button>
+            {allStudents.length > 0 && (
+              <button 
+                type="button"
+                onClick={() => setStudentFilter((prev) => (prev === 'PENDING' ? 'ALL' : 'PENDING'))}
+                className="text-xs font-semibold text-primary hover:underline cursor-pointer"
+              >
+                {studentFilter === 'PENDING' ? 'Show All Students' : 'Filter Pending'}
+              </button>
+            )}
           </div>
 
           {isLoading ? (
@@ -207,6 +234,20 @@ const TeacherDashboard = () => {
               <SkeletonLoader />
               <SkeletonLoader />
               <SkeletonLoader />
+            </div>
+          ) : students.length === 0 ? (
+            <div className="bg-white rounded-3xl p-8 text-center border-2 border-dashed border-gray-200 my-4 shadow-sm animate-fade-in">
+              <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                <Users size={30} />
+              </div>
+              <h3 className="text-base font-bold text-darkText mb-1.5">No Students Have Joined Yet</h3>
+              <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed mb-5">
+                No students have joined your class yet. Share class code <span className="font-extrabold text-primary px-2 py-0.5 bg-blue-50 rounded-lg">{classCode}</span> to get started.
+              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700">
+                <KeyRound size={15} className="text-primary" />
+                Join Code: <span className="font-extrabold text-primary tracking-widest">{classCode}</span>
+              </div>
             </div>
           ) : (
             <div>

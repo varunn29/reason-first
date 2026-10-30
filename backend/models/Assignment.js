@@ -21,7 +21,7 @@ async function getAll() {
 
 async function create({ id, title }) {
   await pool.query(
-    'INSERT INTO assignments (id, title) VALUES ($1, $2)',
+    'INSERT INTO assignments (id, title) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING',
     [id, title]
   );
   return { id, title };

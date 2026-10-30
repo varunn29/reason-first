@@ -24,8 +24,8 @@ const QuestionSolving = () => {
     setCompletedQuizResults,
   } = useContext(AppContext);
 
-  const studentId = currentUser?.id || activeStudent?.id || 'student_rahul';
-  const studentName = currentUser?.name || activeStudent?.displayName || 'Rahul';
+  const studentId = currentUser?.id || activeStudent?.id || 'student_guest';
+  const studentName = currentUser?.name || activeStudent?.displayName || 'Student';
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasCheckedAnswer, setHasCheckedAnswer] = useState(false);
@@ -81,6 +81,7 @@ const QuestionSolving = () => {
         {
           questionText: question.text,
           assignmentId: currentAssignment?.id || 'asgn_class3_subtraction',
+          studentName: studentName,
         }
       );
       submittedDiag = diag;

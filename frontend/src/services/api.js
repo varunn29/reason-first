@@ -23,7 +23,7 @@ export const api = {
         return {
           teacher: data.teacher || mockTeacher,
           stats: data.stats || mockStats,
-          students: data.students || mockStudents,
+          students: Array.isArray(data.students) ? data.students : [],
           activeAssignment: data.activeAssignment || null,
           isLive: true,
         };
@@ -35,7 +35,7 @@ export const api = {
     return {
       teacher: mockTeacher,
       stats: mockStats,
-      students: mockStudents,
+      students: [],
       activeAssignment: null,
       isLive: false,
     };
@@ -71,7 +71,7 @@ export const api = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studentId: studentId || 'student_rahul',
+          studentId: studentId || 'student_guest',
           questionId: questionId || 'probe_01',
           questionText: extraData.questionText || '',
           assignmentId: extraData.assignmentId || 'asgn_class3_subtraction',
@@ -79,6 +79,7 @@ export const api = {
           correctAnswer,
           explanation: extraData.explanation || '',
           responses: extraData.responses || null,
+          studentName: extraData.studentName || '',
         }),
         signal: AbortSignal.timeout(6000),
       });
@@ -211,11 +212,11 @@ export const api = {
 
   // 1. Start dialogue session with Teacher Bot
   startChat: async ({
-    studentId = 'student_rahul',
+    studentId = 'student_guest',
     questionId = 'probe_01',
     responseId = null,
     language = 'hi',
-    studentName = 'Rahul',
+    studentName = 'Student',
     question = '61 - 24 = ?',
     studentAnswer = '43',
     studentExplanation = '',

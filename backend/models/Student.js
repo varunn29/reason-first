@@ -30,7 +30,11 @@ async function getById(id) {
 
 async function create({ id, displayName, classLabel }) {
   await pool.query(
-    'INSERT INTO students (id, display_name, class_label) VALUES ($1, $2, $3)',
+    `INSERT INTO students (id, display_name, class_label) 
+     VALUES ($1, $2, $3)
+     ON CONFLICT (id) DO UPDATE SET 
+       display_name = EXCLUDED.display_name, 
+       class_label = EXCLUDED.class_label`,
     [id, displayName, classLabel]
   );
   return { id, displayName, classLabel };

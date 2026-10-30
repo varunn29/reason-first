@@ -49,131 +49,32 @@ const memoryStore = {
       createdAt: new Date().toISOString(),
     }
   ],
-  students: [
-    { id: 'student_rahul', displayName: 'Rahul Kumar', classLabel: 'Grade 3 - Section A', progress: 78, avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Rahul' },
-    { id: 'student_priya', displayName: 'Priya Singh', classLabel: 'Grade 3 - Section A', progress: 64, avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Priya' },
-    { id: 'student_aarav', displayName: 'Aarav Patel', classLabel: 'Grade 3 - Section B', progress: 52, avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Aarav' },
-    { id: 'student_sneha', displayName: 'Sneha Yadav', classLabel: 'Grade 3 - Section B', progress: 88, avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sneha' },
-    { id: 'student_rohan', displayName: 'Rohan Gupta', classLabel: 'Grade 3 - Section A', progress: 71, avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Rohan' },
-  ],
+  students: [], // Fully dynamic - populated as real students join and submit answers
   stats: [
-    { id: 1, label: 'Total Students', value: 24, icon: 'Users', bgColor: 'bg-blue-50', iconColor: 'text-blue-500' },
-    { id: 2, label: 'Pending Reviews', value: 4, icon: 'Clock', bgColor: 'bg-orange-50', iconColor: 'text-orange-500' },
+    { id: 1, label: 'Total Students', value: 0, icon: 'Users', bgColor: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { id: 2, label: 'Pending Reviews', value: 0, icon: 'Clock', bgColor: 'bg-orange-50', iconColor: 'text-orange-500' },
     { id: 3, label: 'Total Assignments', value: 1, icon: 'BookOpen', bgColor: 'bg-purple-50', iconColor: 'text-purple-500' },
   ]
 };
 
-// Seed realistic initial student diagnostic responses so teacher dashboard shows real data for all students
-function seedInitialStudentReports() {
-  const seeds = [
-    {
-      studentId: 'student_rahul',
-      responseId: 'resp_rahul_01',
-      questionId: 'probe_01',
-      questionText: '61 - 24 = ?',
-      answer: 43,
-      correctAnswer: 37,
-      status: 'Fail',
-      ruleId: 'SMALLER_FROM_LARGER',
-      observations: 'Answer 43 on 61 - 24 matches Smaller-From-Larger error: student subtracted 4 - 1 = 3 in ones without regrouping.',
-      evidence: { observed: 43, expected: 37, signature: 'SMALLER_FROM_LARGER' },
-      alternatives: ['Bottom-to-top reading reversal', 'Arithmetic calculation slip'],
-      confidence: 'HIGH',
-      followUpQuestion: 'Can you show how you solved the ones column in 61 - 24?',
-      suggestedActivity: 'Tens-and-Ones Bundling Mat: unbundle 1 ten into 10 loose units before subtracting.',
-    },
-    {
-      studentId: 'student_priya',
-      responseId: 'resp_priya_01',
-      questionId: 'probe_01',
-      questionText: '61 - 24 = ?',
-      answer: 47,
-      correctAnswer: 37,
-      status: 'Fail',
-      ruleId: 'BORROW_WITHOUT_DECREMENT',
-      observations: 'Answer 47 on 61 - 24 matches Borrow-Without-Decrement: student added 10 to ones column, but forgot to reduce the tens column.',
-      evidence: { observed: 47, expected: 37, signature: 'BORROW_WITHOUT_DECREMENT' },
-      alternatives: ['Forgot to record crossing-out on tens', 'Arithmetic recall slip in tens column'],
-      confidence: 'HIGH',
-      followUpQuestion: 'Look at the tens digit after borrowing. What happened to it?',
-      suggestedActivity: "The Banker's Exchange: cross out and reduce the tens digit before taking 10 ones.",
-    },
-    {
-      studentId: 'student_aarav',
-      responseId: 'resp_aarav_01',
-      questionId: 'probe_02',
-      questionText: '72 - 38 = ?',
-      answer: 46,
-      correctAnswer: 34,
-      status: 'Fail',
-      ruleId: 'SMALLER_FROM_LARGER',
-      observations: 'Answer 46 on 72 - 38 matches Smaller-From-Larger error: student subtracted 8 - 2 = 6 in ones column without unbundling.',
-      evidence: { observed: 46, expected: 34, signature: 'SMALLER_FROM_LARGER' },
-      alternatives: ['Digit inversion', 'Calculation slip'],
-      confidence: 'HIGH',
-      followUpQuestion: 'Can you explain step-by-step how you calculated 2 - 8 in the ones column?',
-      suggestedActivity: 'Base-10 manipulative exchange practice with subtraction story problems.',
-    },
-    {
-      studentId: 'student_sneha',
-      responseId: 'resp_sneha_01',
-      questionId: 'probe_01',
-      questionText: '61 - 24 = ?',
-      answer: 37,
-      correctAnswer: 37,
-      status: 'Pass',
-      ruleId: 'CORRECT',
-      observations: 'Answer 37 is correct for 61 - 24. Student demonstrated mastery of place value regrouping.',
-      evidence: { observed: 37, expected: 37, is_correct: true },
-      alternatives: [],
-      confidence: 'HIGH',
-      followUpQuestion: 'Explain the strategy you used to solve this problem.',
-      suggestedActivity: 'Advance to 3-digit subtraction and two-step arithmetic word problems.',
-    },
-    {
-      studentId: 'student_rohan',
-      responseId: 'resp_rohan_01',
-      questionId: 'probe_01',
-      questionText: '61 - 24 = ?',
-      answer: 35,
-      correctAnswer: 37,
-      status: 'Fail',
-      ruleId: 'GENERAL_SUBTRACTION_ERROR',
-      observations: 'Answer 35 on 61 - 24 is incorrect (expected 37). Likely a mental arithmetic calculation slip.',
-      evidence: { observed: 35, expected: 37, is_correct: false },
-      alternatives: ['Calculation slip', 'Recall error'],
-      confidence: 'MEDIUM',
-      followUpQuestion: 'Walk me through how you subtracted each column.',
-      suggestedActivity: 'Column subtraction review with open number lines.',
-    },
-  ];
-
-  for (const s of seeds) {
-    memoryStore.responses.set(s.responseId, {
-      id: s.responseId,
-      studentId: s.studentId,
-      questionId: s.questionId,
-      questionText: s.questionText,
-      assignmentId: 'asgn_class3_subtraction',
-      answer: s.answer,
-      correctAnswer: s.correctAnswer,
-      explanation: '',
-      submittedAt: new Date(Date.now() - 3600000).toISOString(),
+// Dynamic helper: registers or updates student in memoryStore
+function registerStudentInMemory(id, displayName, classLabel) {
+  if (!id) return;
+  const cleanName = displayName || id.replace(/^student_/, '').replace(/_/g, ' ') || 'Student';
+  const existing = memoryStore.students.find(s => s.id === id);
+  if (!existing) {
+    memoryStore.students.push({
+      id,
+      displayName: cleanName,
+      classLabel: classLabel || 'Grade 3 - Section 3A',
+      progress: 0,
+      avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${cleanName.split(' ')[0]}`,
     });
-
-    memoryStore.diagnoses.set(s.responseId, {
-      status: s.status,
-      observations: s.observations,
-      evidence: s.evidence,
-      alternatives: s.alternatives,
-      confidence: s.confidence,
-      followUpQuestion: s.followUpQuestion,
-      suggestedActivity: s.suggestedActivity,
-      ruleId: s.ruleId,
-    });
+  } else {
+    if (displayName) existing.displayName = cleanName;
+    if (classLabel) existing.classLabel = classLabel;
   }
 }
-seedInitialStudentReports();
 
 // 1. Health check: Checks DB and ML Service status
 app.get('/health', async (req, res) => {
@@ -245,7 +146,7 @@ app.get('/api/probes', async (req, res) => {
 app.post('/api/responses', async (req, res) => {
   try {
     const {
-      studentId = 'student_rahul',
+      studentId = 'student_guest',
       questionId = 'probe_01',
       questionText = '',
       assignmentId = 'asgn_class3_subtraction',
@@ -253,11 +154,38 @@ app.post('/api/responses', async (req, res) => {
       correctAnswer = null,
       explanation = '',
       responses = null,
+      studentName = '',
     } = req.body;
 
     const responseId = randomUUID();
+    const cleanStudentName = studentName || studentId.replace(/^student_/, '').replace(/_/g, ' ') || 'Student';
+    const classLabel = 'Grade 3 - Section 3A';
 
-    // Call ML service
+    // 1. Ensure foreign key dependencies exist in PostgreSQL
+    if (process.env.DATABASE_URL) {
+      try {
+        await pool.query(
+          `INSERT INTO assignments (id, title) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING`,
+          [assignmentId, 'Class 3 Subtraction Diagnostic with Regrouping']
+        );
+        await pool.query(
+          `INSERT INTO questions (id, prompt, topic, grade) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING`,
+          [questionId, questionText || '61 - 24 = ?', 'Subtraction', 3]
+        );
+        await pool.query(
+          `INSERT INTO students (id, display_name, class_label) VALUES ($1, $2, $3)
+           ON CONFLICT (id) DO UPDATE SET display_name = EXCLUDED.display_name`,
+          [studentId, cleanStudentName, classLabel]
+        );
+      } catch (fkErr) {
+        console.warn('DB foreign key preparation skipped:', fkErr.message);
+      }
+    }
+
+    // 2. Register student in memory
+    registerStudentInMemory(studentId, cleanStudentName, classLabel);
+
+    // 3. Call ML service
     const mlResult = await mlService.diagnose({
       questionId,
       answer,
@@ -282,7 +210,7 @@ app.post('/api/responses', async (req, res) => {
       ruleId: isPass ? 'CORRECT' : 'BORROW_WITHOUT_DECREMENT',
     };
 
-    // Store in Memory Cache
+    // 4. Store in Memory Cache
     memoryStore.responses.set(responseId, {
       id: responseId,
       studentId,
@@ -296,7 +224,16 @@ app.post('/api/responses', async (req, res) => {
     });
     memoryStore.diagnoses.set(responseId, diagnosisData);
 
-    // Persist to Postgres if available
+    // Update real progress in memory
+    const studentResponses = Array.from(memoryStore.responses.values()).filter(r => r.studentId === studentId);
+    const correctCount = studentResponses.filter(r => r.correctAnswer !== null && Number(r.answer) === Number(r.correctAnswer)).length;
+    const progressPct = studentResponses.length > 0 ? Math.round((correctCount / studentResponses.length) * 100) : (isPass ? 100 : 0);
+    const memStudent = memoryStore.students.find(s => s.id === studentId);
+    if (memStudent) {
+      memStudent.progress = progressPct;
+    }
+
+    // 5. Persist to Postgres if available
     let dbSaved = false;
     if (process.env.DATABASE_URL && ResponseModel && DiagnosisModel) {
       try {
@@ -309,19 +246,17 @@ app.post('/api/responses', async (req, res) => {
           explanation,
         });
 
-        if (mlResult.status === 'ok') {
-          await DiagnosisModel.create({
-            responseId,
-            observations: diagnosisData.observations,
-            possibleMisconception: diagnosisData.ruleId,
-            evidence: diagnosisData.evidence,
-            alternatives: diagnosisData.alternatives,
-            confidence: diagnosisData.confidence,
-            followUpQuestion: diagnosisData.followUpQuestion,
-            suggestedActivity: diagnosisData.suggestedActivity,
-            ruleId: diagnosisData.ruleId,
-          });
-        }
+        await DiagnosisModel.create({
+          responseId,
+          observations: diagnosisData.observations,
+          possibleMisconception: diagnosisData.ruleId,
+          evidence: diagnosisData.evidence,
+          alternatives: diagnosisData.alternatives,
+          confidence: diagnosisData.confidence,
+          followUpQuestion: diagnosisData.followUpQuestion,
+          suggestedActivity: diagnosisData.suggestedActivity,
+          ruleId: diagnosisData.ruleId,
+        });
         dbSaved = true;
       } catch (dbErr) {
         console.warn('Database save skipped:', dbErr.message);
@@ -348,40 +283,109 @@ app.get('/api/reports/:responseId', async (req, res) => {
   const { responseId } = req.params;
 
   // Try DB first if available
-  if (process.env.DATABASE_URL && DiagnosisModel) {
+  if (process.env.DATABASE_URL && ResponseModel && DiagnosisModel) {
     try {
-      const diag = await DiagnosisModel.getByResponseId(responseId);
-      if (diag) {
-        return res.json({ ok: true, report: diag });
+      const response = await ResponseModel.getById(responseId);
+      if (response) {
+        const diagnosis = await DiagnosisModel.getByResponseId(responseId);
+        const override = OverrideModel ? await OverrideModel.getByResponseId(responseId) : null;
+        return res.json({
+          ok: true,
+          response,
+          report: diagnosis,
+          override,
+        });
       }
-    } catch (err) {
-      console.warn('DB report query error:', err.message);
+    } catch (dbErr) {
+      console.warn('Database fetch failed, falling back to memory store:', dbErr.message);
     }
   }
 
   // Memory store fallback
-  const cached = memoryStore.diagnoses.get(responseId);
-  if (cached) {
-    const resp = memoryStore.responses.get(responseId) || {};
-    const override = memoryStore.overrides.get(responseId) || null;
-    return res.json({
-      ok: true,
-      report: {
-        ...cached,
-        response: resp,
-        override,
-      }
-    });
+  const response = memoryStore.responses.get(responseId);
+  const report = memoryStore.diagnoses.get(responseId);
+  const override = memoryStore.overrides.get(responseId) || null;
+
+  if (!response) {
+    return res.status(404).json({ ok: false, error: 'Report not found' });
   }
 
-  res.status(404).json({ ok: false, error: 'Report not found' });
+  res.json({
+    ok: true,
+    response,
+    report,
+    override,
+  });
 });
 
-// 5. Get Diagnosis Report by Student ID (Returns student's latest submission & diagnosis)
+// 5. Get Diagnosis Report by Student ID (Returns student's real submission & diagnosis)
 app.get('/api/reports/student/:studentId', async (req, res) => {
   const { studentId } = req.params;
 
-  // Find latest response for this student
+  // 1. Try DB first if available
+  if (process.env.DATABASE_URL) {
+    try {
+      const studentRes = await pool.query('SELECT * FROM students WHERE id = $1', [studentId]);
+      const student = studentRes.rows[0] ? {
+        id: studentRes.rows[0].id,
+        displayName: studentRes.rows[0].display_name,
+        classLabel: studentRes.rows[0].class_label,
+      } : null;
+
+      const respRes = await pool.query(
+        `SELECT r.*, d.observations, d.possible_misconception, d.evidence, d.alternatives, d.confidence,
+                d.follow_up_question, d.suggested_activity, d.rule_id, d.created_at as diag_created_at,
+                o.teacher_decision, o.teacher_note, o.overridden_at
+         FROM responses r
+         LEFT JOIN diagnoses d ON r.id = d.response_id
+         LEFT JOIN overrides o ON r.id = o.response_id
+         WHERE r.student_id = $1
+         ORDER BY r.submitted_at DESC
+         LIMIT 1`,
+        [studentId]
+      );
+
+      if (respRes.rows.length > 0) {
+        const row = respRes.rows[0];
+        const isPass = row.rule_id === 'CORRECT';
+        return res.json({
+          ok: true,
+          student: student || {
+            id: studentId,
+            displayName: studentId.replace(/^student_/, '').replace(/_/g, ' '),
+            classLabel: 'Grade 3 - Section 3A',
+          },
+          response: {
+            id: row.id,
+            questionId: row.question_id,
+            questionText: '61 - 24 = ?',
+            answer: row.answer,
+            correctAnswer: 37,
+            submittedAt: row.submitted_at,
+          },
+          report: {
+            status: isPass ? 'Pass' : 'Fail',
+            observations: row.observations || (isPass ? 'Mastery demonstrated.' : 'Misconception detected.'),
+            ruleId: row.rule_id || (isPass ? 'CORRECT' : 'BORROWING'),
+            confidence: row.confidence || 'HIGH',
+            followUpQuestion: row.follow_up_question || 'Can you explain how you subtracted the ones column?',
+            suggestedActivity: row.suggested_activity || 'Practice regrouping with base-10 manipulatives.',
+            evidence: row.evidence || {},
+            alternatives: row.alternatives || [],
+          },
+          override: row.teacher_decision ? {
+            teacherDecision: row.teacher_decision,
+            teacherNote: row.teacher_note,
+            overriddenAt: row.overridden_at,
+          } : null,
+        });
+      }
+    } catch (dbErr) {
+      console.warn('DB student report query skipped:', dbErr.message);
+    }
+  }
+
+  // 2. Try memoryStore
   let latestResponse = null;
   for (const resp of memoryStore.responses.values()) {
     if (resp.studentId === studentId || resp.studentId.includes(studentId)) {
@@ -391,11 +395,10 @@ app.get('/api/reports/student/:studentId', async (req, res) => {
     }
   }
 
-  // Find student metadata
   const student = memoryStore.students.find(s => s.id === studentId || s.id.includes(studentId)) || {
     id: studentId,
-    displayName: 'Student',
-    classLabel: 'Grade 3 - Section A',
+    displayName: studentId.replace(/^student_/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Student',
+    classLabel: 'Grade 3 - Section 3A',
   };
 
   if (latestResponse) {
@@ -410,28 +413,12 @@ app.get('/api/reports/student/:studentId', async (req, res) => {
     });
   }
 
-  // Default fallback if no submission yet
+  // Graceful response if no submission exists yet
   res.json({
     ok: true,
     student,
-    response: {
-      id: 'default_resp',
-      questionId: 'probe_01',
-      questionText: '61 - 24 = ?',
-      answer: 43,
-      correctAnswer: 37,
-      submittedAt: new Date().toISOString(),
-    },
-    report: {
-      status: 'Fail',
-      observations: 'Answer 43 on 61 - 24 matches Smaller-From-Larger error: student subtracted smaller digit from larger digit (4 - 1 = 3) without regrouping.',
-      evidence: { observed: 43, expected: 37, signature: 'SMALLER_FROM_LARGER' },
-      alternatives: ['Bottom-to-top reading reversal', 'Arithmetic calculation slip'],
-      confidence: 'HIGH',
-      followUpQuestion: 'Can you show how you solved the ones column in 61 - 24?',
-      suggestedActivity: 'Tens-and-Ones Bundling Mat: unbundle 1 ten into 10 loose units before subtracting.',
-      ruleId: 'SMALLER_FROM_LARGER',
-    },
+    response: null,
+    report: null,
     override: null,
   });
 });
@@ -453,12 +440,6 @@ app.post('/api/overrides', async (req, res) => {
     };
 
     memoryStore.overrides.set(responseId, overrideRecord);
-
-    // Decrement pending reviews if greater than 0
-    const pendingStat = memoryStore.stats.find(s => s.id === 2);
-    if (pendingStat && pendingStat.value > 0) {
-      pendingStat.value -= 1;
-    }
 
     // Persist to Postgres if available
     if (process.env.DATABASE_URL && OverrideModel) {
@@ -512,12 +493,6 @@ app.post('/api/assignments', async (req, res) => {
 
     memoryStore.assignments.unshift(newAssignment);
 
-    // Increment Total Assignments stat
-    const assignStat = memoryStore.stats.find(s => s.id === 3);
-    if (assignStat) {
-      assignStat.value = memoryStore.assignments.length;
-    }
-
     // Persist to Postgres if available
     if (process.env.DATABASE_URL && AssignmentModel) {
       try {
@@ -537,7 +512,7 @@ app.post('/api/assignments', async (req, res) => {
   }
 });
 
-// 9. Get Teacher Dashboard Summary
+// 9. Get Teacher Dashboard Summary (Fully Dynamic)
 app.get('/api/dashboard', async (req, res) => {
   let teacherName = 'Ms. Sharma';
   let schoolName = 'Kendriya Vidyalaya';
@@ -559,24 +534,77 @@ app.get('/api/dashboard', async (req, res) => {
     } catch (e) {}
   }
 
-  let students = memoryStore.students;
+  let students = [];
 
-  if (process.env.DATABASE_URL && StudentModel) {
+  // 1. Try real PostgreSQL students first
+  if (process.env.DATABASE_URL) {
     try {
-      const dbStudents = await StudentModel.getAll();
-      if (dbStudents && dbStudents.length > 0) {
-        students = dbStudents.map((s, idx) => ({
-          id: s.id,
-          name: s.displayName,
-          grade: s.classLabel,
-          progress: 70 + (idx * 5) % 25,
-          avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${s.displayName.split(' ')[0]}`,
-        }));
+      const dbRes = await pool.query(`
+        SELECT 
+          s.id, 
+          s.display_name, 
+          s.class_label,
+          COUNT(r.id) as total_responses,
+          SUM(CASE WHEN d.rule_id = 'CORRECT' OR d.status = 'Pass' THEN 1 ELSE 0 END) as correct_responses,
+          BOOL_OR(d.rule_id != 'CORRECT' AND d.status = 'Fail') as has_misconception,
+          MAX(r.submitted_at) as last_submission
+        FROM students s
+        LEFT JOIN responses r ON s.id = r.student_id
+        LEFT JOIN diagnoses d ON r.id = d.response_id
+        GROUP BY s.id, s.display_name, s.class_label
+        ORDER BY last_submission DESC NULLS LAST, s.display_name ASC
+      `);
+
+      if (dbRes.rows && dbRes.rows.length > 0) {
+        students = dbRes.rows.map(row => {
+          const total = parseInt(row.total_responses, 10) || 0;
+          const correct = parseInt(row.correct_responses, 10) || 0;
+          const progress = total > 0 ? Math.round((correct / total) * 100) : 0;
+          return {
+            id: row.id,
+            name: row.display_name,
+            grade: row.class_label,
+            progress,
+            totalResponses: total,
+            hasMisconception: !!row.has_misconception,
+            avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${row.display_name.split(' ')[0]}`,
+          };
+        });
       }
     } catch (err) {
       console.warn('DB student query skipped:', err.message);
     }
   }
+
+  // 2. Fall back to memoryStore students if DB returned none
+  if (students.length === 0 && memoryStore.students.length > 0) {
+    students = memoryStore.students.map(s => {
+      const studentResponses = Array.from(memoryStore.responses.values()).filter(r => r.studentId === s.id);
+      const correct = studentResponses.filter(r => r.correctAnswer !== null && Number(r.answer) === Number(r.correctAnswer)).length;
+      const progress = studentResponses.length > 0 ? Math.round((correct / studentResponses.length) * 100) : (s.progress || 0);
+      const hasMisconception = studentResponses.some(r => {
+        const diag = memoryStore.diagnoses.get(r.id);
+        return diag && diag.status === 'Fail';
+      });
+      return {
+        id: s.id,
+        name: s.displayName,
+        grade: s.classLabel,
+        progress,
+        totalResponses: studentResponses.length,
+        hasMisconception,
+        avatar: s.avatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${s.displayName.split(' ')[0]}`,
+      };
+    });
+  }
+
+  // Dynamic calculation of stats
+  const pendingReviewsCount = students.filter(s => s.progress < 75 || s.hasMisconception).length;
+  const stats = [
+    { id: 1, label: 'Total Students', value: students.length, icon: 'Users', bgColor: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { id: 2, label: 'Pending Reviews', value: pendingReviewsCount, icon: 'Clock', bgColor: 'bg-orange-50', iconColor: 'text-orange-500' },
+    { id: 3, label: 'Total Assignments', value: memoryStore.assignments.length || 1, icon: 'BookOpen', bgColor: 'bg-purple-50', iconColor: 'text-purple-500' },
+  ];
 
   res.json({
     ok: true,
@@ -587,13 +615,13 @@ app.get('/api/dashboard', async (req, res) => {
       classCode,
       avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${teacherName.split(' ')[0]}`,
     },
-    stats: memoryStore.stats,
+    stats,
     students,
     activeAssignment: memoryStore.assignments[0] || null,
   });
 });
 
-// 6. Teacher Bot Chat Routes (Feature Flag Protected)
+// 10. Teacher Bot Chat Routes (Feature Flag Protected)
 try {
   const chatRoutes = require('./chat/chatRoutes');
   app.use('/chat', chatRoutes);
@@ -601,7 +629,7 @@ try {
   console.warn('Chat routes not loaded:', err.message);
 }
 
-// 7. Authentication Routes (Teachers & Students)
+// 11. Authentication Routes (Teachers & Students)
 try {
   const authRoutes = require('./routes/authRoutes');
   app.use('/api/auth', authRoutes);
@@ -610,7 +638,8 @@ try {
 }
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, async () => {  console.log(`\n========================================================`);
+app.listen(PORT, async () => {
+  console.log(`\n========================================================`);
   console.log(`🚀 Reason-First Backend running on http://localhost:${PORT}`);
   console.log(`========================================================`);
 
