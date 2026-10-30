@@ -3,3 +3,8 @@ node_modules/
 *.log
 dist/
 build/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage

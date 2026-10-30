@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #F8F9FA;
+  color: #1F2937;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Hide scrollbar for a cleaner mobile look */
+::-webkit-scrollbar {
+  display: none;
+}
