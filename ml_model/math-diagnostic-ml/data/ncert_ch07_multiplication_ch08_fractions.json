@@ -1,0 +1,698 @@
+{
+  "curriculum": "NCERT Class 3 Mathematics",
+  "textbook": "Maths Mela (First Edition 2024 / Reprint 2026-27)",
+  "chapters": [
+    "Chapter 7: Raksha Bandhan (pp. 82-106)",
+    "Chapter 8: Fair Share (pp. 107-116)"
+  ],
+  "learning_outcomes": [
+    "M3.3a: Conceptualizes multiplication as equal groups, repeated addition, arrays, and skip counting",
+    "M3.3b: Understands commutative property of multiplication (a x b = b x a) using 2D dot arrays and garden beds",
+    "M3.3c: Understands division as fair sharing (partitive) and repeated subtraction (quotitive)",
+    "M3.3d: Discovers table patterns (times-5 ending digits, table additivity e.g. times-2 + times-3 = times-5)",
+    "M3.3e: Solves multi-step real-life problems involving limiting resources, money transactions, and animal attributes",
+    "M3.4a: Understands fractions conceptually: a whole partitioned into equal parts (two halves, four quarters)",
+    "M3.4b: Distinguishes fair/equal partition from unequal partitions using superimposition and paper folding",
+    "M3.4c: Explores double and half relationships on the number line and in discrete collections",
+    "M3.4d: Identifies fractions of a collection (half vs quarter of 8 birds, 16 flowers), three-quarters (3 quarters), and unit whole"
+  ],
+  "probes": [
+    {
+      "id": "ncert_ch08_paratha_equal_halves_partition",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 108,
+      "domain": "FRACTION_EQUAL_PARTITIONING",
+      "context": "Shabnam and Mukta want to share a round paratha equally during lunch. Three parathas with different cut lines are shown.",
+      "prompt": "Which paratha has been cut equally into two halves?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "Cut straight through the center into 2 matching halves",
+        "Cut with an off-center vertical line",
+        "Cut with a horizontal line near the bottom"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "CHORD_UNEQUAL_PARTITION_BIAS",
+          "explanation": "Believed any straight cut dividing an object into 2 pieces creates halves, ignoring that the two pieces must be exactly equal.",
+          "teacherInquiry": "Fold one piece over the other. Do the two edges match up exactly, or is one side bigger?",
+          "activity": "NCERT p. 107 Paratha Folding: Fold a circular paper cutout in half so both parts overlap completely.",
+          "studentHint": "A half means both pieces must be EXACTLY the same size! Fold it over to check!"
+        },
+        "3": {
+          "signature": "OFF_CENTER_BIAS",
+          "explanation": "Selected a cut that leaves one very small part and one very large part.",
+          "teacherInquiry": "Would this be a fair share if your friend got the big part and you got the tiny part?",
+          "activity": "Superimpose two cutout paratha halves.",
+          "studentHint": "Fair share means equal parts! The cut must go right through the middle!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_chikki_grid_eaten_less_or_more_than_half",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 109,
+      "domain": "FRACTION_QUANTITY_OPERATIONS",
+      "context": "A slab of groundnut chikki has a grid of 5 x 5 = 25 square pieces. Shabnam ate 12 pieces from 3 sides. Exactly 13 pieces are left.",
+      "prompt": "How much chikki is left?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": ["Less than half", "More than half", "Exactly half"],
+      "distractors": {
+        "1": {
+          "signature": "LESS_THAN_HALF_CONFUSION",
+          "explanation": "Focused on the eaten pieces being along 3 sides and assumed most was gone, ignoring that 13 > 12.",
+          "teacherInquiry": "Count the remaining pieces: 13. Count the eaten pieces: 12. Since 13 is greater than 12, is more or less than half left?",
+          "activity": "NCERT p. 109 Chikki Grid: Color 12 pieces brown and 13 pieces orange on a 25-square grid.",
+          "studentHint": "There are 13 pieces left and only 12 eaten! 13 is MORE than half of 25!"
+        },
+        "3": {
+          "signature": "EXACT_HALF_ASSUMPTION",
+          "explanation": "Assumed 25 can be split into exact whole-number halves without a remainder.",
+          "teacherInquiry": "Can 25 be divided into two equal whole numbers? 12 + 12 = 24. There is 1 piece extra!",
+          "activity": "Split 25 counters into two equal piles.",
+          "studentHint": "Half of 25 is 12 and a half! 13 is MORE than half!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_number_line_distance_double_of_7",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 111,
+      "domain": "DOUBLE_AND_HALF_RELATIONS",
+      "context": "Teji and Jojo jump on the number line. On a number line, how far is 13 from the double of 7?",
+      "prompt": "How far is 13 from the double of 7?",
+      "correctAnswer": 1,
+      "options": [1, 6, 2, 14],
+      "distractors": {
+        "6": {
+          "signature": "SUBTRACTED_7_MINUS_13",
+          "explanation": "Subtracted 13 - 7 = 6, forgetting to double 7 first.",
+          "teacherInquiry": "What is the DOUBLE of 7? 7 + 7 = 14. How far is 13 from 14?",
+          "activity": "NCERT p. 111 Number Line: Jump to 7, double to 14, then check distance to 13.",
+          "studentHint": "Double of 7 is 14! From 13 to 14 is just 1 step!"
+        },
+        "2": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Arithmetic calculation error in 14 - 13.",
+          "teacherInquiry": "Check 14 minus 13 on the number line. How many steps between 13 and 14?",
+          "activity": "Step from 13 to 14 on number line.",
+          "studentHint": "14 - 13 = 1 step!"
+        },
+        "14": {
+          "signature": "DOUBLE_VALUE_CONFUSION",
+          "explanation": "Reported the double of 7 (14) instead of the distance from 13.",
+          "teacherInquiry": "14 is the double of 7. The question asks 'How FAR is 13 from 14?'",
+          "activity": "Measure distance between two points.",
+          "studentHint": "14 is the double, but the distance from 13 is only 1!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_number_line_distance_half_of_14",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 111,
+      "domain": "DOUBLE_AND_HALF_RELATIONS",
+      "context": "On the number line from 0 to 17, how far is 5 from half of 14?",
+      "prompt": "How far is 5 from half of 14?",
+      "correctAnswer": 2,
+      "options": [2, 7, 9, 1],
+      "distractors": {
+        "7": {
+          "signature": "HALF_VALUE_CONFUSION",
+          "explanation": "Stated half of 14 (7) instead of finding the distance from 5.",
+          "teacherInquiry": "Half of 14 is 7. How many jumps from 5 to reach 7?",
+          "activity": "NCERT p. 111 Number line: Mark 7, count backward to 5 (2 steps).",
+          "studentHint": "Half of 14 is 7! From 5 to 7 is 2 steps: 7 - 5 = 2!"
+        },
+        "9": {
+          "signature": "ADDED_5_PLUS_HALF",
+          "explanation": "Added 5 + 7 = 12 or 14 - 5 = 9 instead of measuring distance.",
+          "teacherInquiry": "We want the distance from 5 to 7. Subtract: 7 - 5 = 2.",
+          "activity": "Count steps on number line.",
+          "studentHint": "Find the difference between 5 and 7: 7 - 5 = 2!"
+        },
+        "1": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Calculation slip in 7 - 5.",
+          "teacherInquiry": "Count: 5, 6, 7. How many steps?",
+          "activity": "Step from 5 to 7.",
+          "studentHint": "5 to 6 is 1, 6 to 7 is 2! 2 steps!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_riddle_double_3_half_8",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 112,
+      "domain": "DOUBLE_AND_HALF_RELATIONS",
+      "context": "Riddle on page 112: 'I have less than the double of 3 marbles. I have more than the half of 8 marbles.'",
+      "prompt": "How many marbles do I have?",
+      "correctAnswer": 5,
+      "options": [5, 4, 6, 8],
+      "distractors": {
+        "4": {
+          "signature": "LOWER_BOUND_CONFUSION",
+          "explanation": "Selected half of 8 (4), violating 'more than half of 8'.",
+          "teacherInquiry": "Half of 8 is 4. The clue says 'MORE than 4'. Can it be 4?",
+          "activity": "NCERT p. 112 Marbles riddle: Double of 3 is 6. Half of 8 is 4. Number between 4 and 6 is 5.",
+          "studentHint": "Half of 8 is 4, and we have MORE than 4! Double of 3 is 6, and we have LESS than 6! The number is 5!"
+        },
+        "6": {
+          "signature": "UPPER_BOUND_CONFUSION",
+          "explanation": "Selected double of 3 (6), violating 'less than double of 3'.",
+          "teacherInquiry": "Double of 3 is 6. The clue says 'LESS than 6'. Can it be 6?",
+          "activity": "Check strict inequalities: 4 < x < 6.",
+          "studentHint": "It must be LESS than 6 and MORE than 4: exactly 5!"
+        },
+        "8": {
+          "signature": "OPERAND_DEFAULT",
+          "explanation": "Repeated the number 8 from the question prompt.",
+          "teacherInquiry": "8 is not less than 6. Check the clues carefully.",
+          "activity": "Test 8 against clues.",
+          "studentHint": "Double of 3 is 6, so it must be less than 6! It's 5 marbles!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_quarters_in_a_whole_count",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 112,
+      "domain": "FRACTION_EQUAL_PARTITIONING",
+      "context": "When a whole chikki is shared equally among 4 friends, each share is called a quarter.",
+      "prompt": "How many quarters make one complete whole?",
+      "correctAnswer": 4,
+      "options": [4, 2, 1, 3],
+      "distractors": {
+        "2": {
+          "signature": "HALF_QUARTER_CONFUSION",
+          "explanation": "Confused quarters with halves (2 halves make a whole, but 4 quarters make a whole).",
+          "teacherInquiry": "A quarter is 1 out of 4 equal parts. How many fourths do you need to assemble the whole square?",
+          "activity": "NCERT p. 112 Quarter Cutouts: Fit 4 square quarter tiles together to make 1 whole.",
+          "studentHint": "A quarter is 1 piece out of 4! You need all 4 quarters to make 1 whole!"
+        },
+        "1": {
+          "signature": "SINGLE_PIECE_CONFUSION",
+          "explanation": "Thought 1 quarter alone is the whole.",
+          "teacherInquiry": "1 quarter is only 1 person's share. What about the other 3 friends?",
+          "activity": "Put 4 quarters together.",
+          "studentHint": "1 quarter is just one part! 4 quarters make the complete whole!"
+        },
+        "3": {
+          "signature": "THREE_QUARTERS_DEFAULT",
+          "explanation": "Confused with three-quarters (3 quarters leaves 1 quarter missing).",
+          "teacherInquiry": "If you have 3 quarters, is the whole complete or is 1 slice missing?",
+          "activity": "Look at the fraction circle with 3 shaded and 1 white.",
+          "studentHint": "3 quarters is not complete! You need 4 quarters for a full whole!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_birds_fraction_half_vs_quarter",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 114,
+      "domain": "FRACTION_QUANTITY_OPERATIONS",
+      "context": "There are 8 birds in the flock. Shabnam coloured 4 birds. Mukta coloured 2 birds.",
+      "prompt": "Shabnam coloured _____ of the birds, and Mukta coloured _____ of the birds.",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Shabnam: half, Mukta: a quarter",
+        "Shabnam: a quarter, Mukta: half",
+        "Both coloured half",
+        "Both coloured a quarter"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "REVERSED_FRACTION_ATTRIBUTION",
+          "explanation": "Swapped the fractions for Shabnam and Mukta.",
+          "teacherInquiry": "Half of 8 is 4. Who coloured 4 birds? Shabnam! Quarter of 8 is 2. Who coloured 2 birds? Mukta!",
+          "activity": "NCERT p. 114 Birds Coloring: Divide 8 birds into 2 equal groups of 4 (half) and 4 equal groups of 2 (quarter).",
+          "studentHint": "4 is half of 8 (Shabnam)! 2 is a quarter of 8 (Mukta)!"
+        },
+        "3": {
+          "signature": "HOMOGENIZATION_FRACTION_BIAS",
+          "explanation": "Assumed both children coloured the same fraction.",
+          "teacherInquiry": "Did Shabnam and Mukta colour the same number of birds? 4 is not equal to 2!",
+          "activity": "Count birds coloured by each girl.",
+          "studentHint": "4 birds is half, but 2 birds is only a quarter!"
+        },
+        "4": {
+          "signature": "QUARTER_DEFAULT",
+          "explanation": "Thought 4 out of 8 is a quarter.",
+          "teacherInquiry": "4 + 4 = 8. When 8 is divided into 2 equal parts, each part is a HALF, not a quarter.",
+          "activity": "Check 4 + 4 = 8.",
+          "studentHint": "4 out of 8 is half! 2 out of 8 is a quarter!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_flowers_subsets_16_flowers",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 114,
+      "domain": "DOUBLE_AND_HALF_RELATIONS",
+      "context": "Lakshanya and Peehu have 16 flowers each. Lakshanya tied half her flowers (8). Peehu tied a quarter of her flowers (4).",
+      "prompt": "Lakshanya tied _____ the number of flowers that Peehu tied.",
+      "correctAnswer": 2,
+      "options": [1, 2, 3, 4],
+      "optionLabels": ["half", "double", "equal to", "four times"],
+      "distractors": {
+        "1": {
+          "signature": "INVERSE_RELATION_CONFUSION",
+          "explanation": "Confused 'double' with 'half', thinking 8 is half of 4 instead of double of 4.",
+          "teacherInquiry": "Lakshanya tied 8 flowers. Peehu tied 4 flowers. Is 8 bigger or smaller than 4? 8 is DOUBLE of 4!",
+          "activity": "NCERT p. 114 Flower Garland: Compare 8 flowers with 4 flowers (4 + 4 = 8).",
+          "studentHint": "Lakshanya tied 8 and Peehu tied 4! 8 is DOUBLE of 4!"
+        },
+        "3": {
+          "signature": "EQUALITY_BIAS",
+          "explanation": "Assumed both girls tied the same number of flowers.",
+          "teacherInquiry": "Lakshanya has 8, Peehu has 4. Are 8 and 4 equal?",
+          "activity": "Compare two groups of flowers.",
+          "studentHint": "8 is not equal to 4! 8 is twice as many (double)!"
+        },
+        "4": {
+          "signature": "QUARTER_OVERMULTIPLICATION",
+          "explanation": "Used factor 4 because of the word 'quarter'.",
+          "teacherInquiry": "Is 8 four times 4? 4 x 4 = 16. 8 is only 2 times 4 (double).",
+          "activity": "Count: 4, 8 (2 times).",
+          "studentHint": "4 x 2 = 8, so Lakshanya tied DOUBLE what Peehu tied!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch08_three_quarters_identification",
+      "chapter": "Chapter 8: Fair Share",
+      "page": 115,
+      "domain": "FRACTION_EQUAL_PARTITIONING",
+      "context": "A paper strip is divided into 4 equal blocks. 3 blocks are colored green and 1 block is white.",
+      "prompt": "What fraction of the strip is colored?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Three-quarters (3 quarters)",
+        "One quarter (1 quarter)",
+        "Half (2 quarters)",
+        "Complete whole (4 quarters)"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "UNSHADED_PART_FOCUS",
+          "explanation": "Reported the 1 unshaded block instead of the 3 shaded blocks.",
+          "teacherInquiry": "How many blocks are COLORED green? 1, 2, 3 blocks! That is three-quarters.",
+          "activity": "NCERT p. 115 Three-Quarters: Count shaded blocks out of 4.",
+          "studentHint": "Count the colored blocks: 1, 2, 3! That is 3 quarters (three-quarters)!"
+        },
+        "3": {
+          "signature": "HALF_APPROXIMATION_BIAS",
+          "explanation": "Defaulted to half.",
+          "teacherInquiry": "Half would be 2 blocks out of 4. Here 3 blocks are colored, which is more than half!",
+          "activity": "Compare 2 out of 4 vs 3 out of 4.",
+          "studentHint": "2 blocks is half! 3 blocks is THREE-QUARTERS!"
+        },
+        "4": {
+          "signature": "WHOLE_DEFAULT",
+          "explanation": "Thought the entire strip is colored.",
+          "teacherInquiry": "Is the last block colored? No, 1 block is white, so it is not a complete whole.",
+          "activity": "Check uncolored block.",
+          "studentHint": "One block is left white, so it is 3 quarters, not the whole!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_rakhi_material_multiplication_beads",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 84,
+      "domain": "MULTIPLICATION_EQUAL_GROUPS",
+      "context": "Dhara makes 5 Rakhis. Each Rakhi uses 4 beads. Dhara takes 4 + 4 + 4 + 4 + 4 beads.",
+      "prompt": "5 × 4 = ? beads for 5 Rakhis.",
+      "correctAnswer": 20,
+      "options": [20, 9, 24, 16],
+      "distractors": {
+        "9": {
+          "signature": "ADDITION_INSTEAD_OF_MULTIPLICATION",
+          "explanation": "Added 5 + 4 = 9 instead of multiplying 5 groups of 4 beads.",
+          "teacherInquiry": "Each of the 5 Rakhis needs 4 beads. That is 5 times 4, not 5 + 4.",
+          "activity": "NCERT p. 84 Rakhi Beads: Place 5 plates with 4 beads on each plate. Count by 4s: 4, 8, 12, 16, 20.",
+          "studentHint": "5 groups of 4! Count by 4s: 4, 8, 12, 16, 20 beads!"
+        },
+        "24": {
+          "signature": "COUNTING_OVERSHOOT",
+          "explanation": "Overshot by 1 group of 4 (computed 6 x 4 = 24).",
+          "teacherInquiry": "Count how many groups of 4: 1, 2, 3, 4, 5 groups. 5 x 4 = 20.",
+          "activity": "Verify with 5 groups of counters.",
+          "studentHint": "Only 5 Rakhis! 5 x 4 = 20!"
+        },
+        "16": {
+          "signature": "SUBOPTIMAL_GROUP_COUNT",
+          "explanation": "Counted only 4 groups (4 x 4 = 16).",
+          "teacherInquiry": "You need 5 Rakhis, not 4. Add 4 more beads to 16: 20.",
+          "activity": "Add the 5th group of beads.",
+          "studentHint": "Don't forget the 5th Rakhi: 16 + 4 = 20 beads!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_limiting_material_rakhis",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 85,
+      "domain": "LIMITING_RESOURCE_REASONING",
+      "context": "Dhara has 30 flowers, 30 threads, and 30 beads. Each Rakhi needs 1 flower, 2 threads, and 4 beads. How many complete Rakhis can she make?",
+      "prompt": "How many complete Rakhis can be made with 30 flowers, 30 threads, and 30 beads?",
+      "correctAnswer": 7,
+      "options": [7, 30, 15, 10],
+      "distractors": {
+        "30": {
+          "signature": "RESOURCE_NEGLECT_FLOWERS_ONLY",
+          "explanation": "Looked only at 30 flowers (1 per rakhi = 30) and ignored that beads run out first.",
+          "teacherInquiry": "Each Rakhi needs 4 beads. For 30 Rakhis, you would need 30 x 4 = 120 beads! But Dhara only has 30 beads. How many 4s in 30?",
+          "activity": "NCERT p. 85 Try it Out: Group 30 beads into sets of 4: 7 sets of 4 = 28 beads, with 2 beads leftover.",
+          "studentHint": "Beads run out first! 30 beads divided by 4 beads per Rakhi = 7 Rakhis (with 2 beads left)!"
+        },
+        "15": {
+          "signature": "THREADS_LIMIT_ONLY",
+          "explanation": "Calculated 30 threads / 2 threads = 15 Rakhis, forgetting that beads run out even sooner.",
+          "teacherInquiry": "Can you make 15 Rakhis with only 30 beads? 15 x 4 = 60 beads needed! Do you have 60 beads?",
+          "activity": "Check beads constraint: 30 / 4 = 7.",
+          "studentHint": "Check the beads! 15 Rakhis needs 60 beads, but we only have 30! Only 7 Rakhis can be made!"
+        },
+        "10": {
+          "signature": "DECIMAL_ROUNDING_ERROR",
+          "explanation": "Guessed 10 without checking constraints.",
+          "teacherInquiry": "10 Rakhis needs 10 x 4 = 40 beads. You only have 30 beads.",
+          "activity": "Multiply: 7 x 4 = 28 beads.",
+          "studentHint": "7 x 4 = 28 beads! 8 Rakhis would need 32 beads, which is more than 30!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_sweet_shop_2_boxes_laddoos",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 86,
+      "domain": "MULTIPLICATION_EQUAL_GROUPS",
+      "context": "At Jagannath Sweet Shop, 1 box holds 9 laddoos in a 3 x 3 grid. Bappa buys 2 boxes of laddoos.",
+      "prompt": "2 boxes of 9 laddoos = ? laddoos (2 × 9).",
+      "correctAnswer": 18,
+      "options": [18, 11, 27, 81],
+      "distractors": {
+        "11": {
+          "signature": "ADDITION_INSTEAD_OF_MULTIPLICATION",
+          "explanation": "Added 2 + 9 = 11 instead of 2 times 9.",
+          "teacherInquiry": "There are 9 laddoos in box 1, and 9 laddoos in box 2. 9 + 9 = 18.",
+          "activity": "NCERT p. 86 Laddoos Boxes: Count 9 + 9 = 18.",
+          "studentHint": "2 boxes of 9 laddoos is 9 + 9 = 18 laddoos!"
+        },
+        "27": {
+          "signature": "THREE_BOXES_OVERSHOOT",
+          "explanation": "Calculated 3 boxes of 9 (3 x 9 = 27).",
+          "teacherInquiry": "Bappa bought only 2 boxes, not 3. 2 x 9 = 18.",
+          "activity": "Count 2 boxes only.",
+          "studentHint": "Only 2 boxes! 2 x 9 = 18!"
+        },
+        "81": {
+          "signature": "EXPONENTIATION_ERROR",
+          "explanation": "Multiplied 9 x 9 = 81 instead of 2 x 9.",
+          "teacherInquiry": "Are there 9 boxes of 9, or just 2 boxes?",
+          "activity": "Observe 2 boxes on counter.",
+          "studentHint": "Two boxes with 9 each: 2 x 9 = 18!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_distribute_18_laddoos_9_people",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 87,
+      "domain": "DIVISION_EQUAL_SHARING_REPEATED_SUBTRACTION",
+      "context": "Dhara distributes 18 laddoos equally among 9 people in the house.",
+      "prompt": "18 ÷ 9 = ? laddoos each.",
+      "correctAnswer": 2,
+      "options": [2, 9, 3, 27],
+      "distractors": {
+        "9": {
+          "signature": "DIVIDEND_HALF_CONFUSION",
+          "explanation": "Confused the number of people (9) with the share each person gets.",
+          "teacherInquiry": "If everyone got 9 laddoos, 9 people would need 9 x 9 = 81 laddoos! We only have 18 laddoos.",
+          "activity": "NCERT p. 87 Deal laddoos onto 9 plates: 1st round takes 9 laddoos, 2nd round takes 9 laddoos (2 each).",
+          "studentHint": "18 shared equally by 9 people is 2 each! Because 9 x 2 = 18!"
+        },
+        "3": {
+          "signature": "DIVISION_CALCULATION_SLIP",
+          "explanation": "Calculation slip in 18 / 9.",
+          "teacherInquiry": "Check 9 x 3 = 27. Does 9 x 2 equal 18?",
+          "activity": "Multiply divisor by quotient to verify.",
+          "studentHint": "9 x 2 = 18! So 18 ÷ 9 = 2 laddoos!"
+        },
+        "27": {
+          "signature": "ADDITION_INSTEAD_OF_DIVISION",
+          "explanation": "Added 18 + 9 = 27 instead of dividing.",
+          "teacherInquiry": "Sharing means dividing into smaller portions, not adding.",
+          "activity": "Distribute 18 counters among 9 cups.",
+          "studentHint": "Sharing means DIVIDE: 18 ÷ 9 = 2 each!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_repeated_subtraction_20_kaju_katlis_5_people",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 88,
+      "domain": "DIVISION_EQUAL_SHARING_REPEATED_SUBTRACTION",
+      "context": "Dhara distributes 20 kaju katlis equally among 5 people by giving 1 katli to each person in rounds: 20 - 5 = 15, 15 - 5 = 10, 10 - 5 = 5, 5 - 5 = 0.",
+      "prompt": "20 ÷ 5 = ? kaju katlis each.",
+      "correctAnswer": 4,
+      "options": [4, 5, 15, 3],
+      "distractors": {
+        "5": {
+          "signature": "DIVISOR_DEFAULT",
+          "explanation": "Reported the number of people (5) as the answer.",
+          "teacherInquiry": "Count how many times Dhara subtracted 5 from 20: 1, 2, 3, 4 rounds! So each person gets 4.",
+          "activity": "NCERT p. 88-89 Repeated Subtraction Ladder: Count the 4 subtraction steps.",
+          "studentHint": "Dhara gave sweets in 4 rounds: 20 ÷ 5 = 4 kaju katlis each!"
+        },
+        "15": {
+          "signature": "FIRST_SUBTRACTION_DIFFERENCE",
+          "explanation": "Stopped after the first subtraction step (20 - 5 = 15).",
+          "teacherInquiry": "There were 15 sweets left on the tray! Did Dhara stop sharing, or did she continue until 0?",
+          "activity": "Continue subtracting until 0 items left.",
+          "studentHint": "Keep sharing until the tray is empty! 4 rounds of 5 = 4 each!"
+        },
+        "3": {
+          "signature": "UNDER_ALLOCATION",
+          "explanation": "Subtracted only 3 times, leaving 5 sweets undistributed.",
+          "teacherInquiry": "3 x 5 = 15. What about the remaining 5 sweets?",
+          "activity": "Distribute the last 5 sweets.",
+          "studentHint": "5 x 4 = 20! Exactly 4 sweets each!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_wheels_12_wheels_cycles",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 91,
+      "domain": "DIVISION_EQUAL_SHARING_REPEATED_SUBTRACTION",
+      "context": "Each bicycle needs 2 wheels. A mechanic has 12 wheels.",
+      "prompt": "12 ÷ 2 = ? bicycles can be fitted.",
+      "correctAnswer": 6,
+      "options": [6, 10, 24, 5],
+      "distractors": {
+        "10": {
+          "signature": "SUBTRACTION_INSTEAD_OF_DIVISION",
+          "explanation": "Subtracted 12 - 2 = 10 instead of dividing into pairs.",
+          "teacherInquiry": "Each cycle takes 2 wheels. Pair up all 12 wheels: 2, 4, 6, 8, 10, 12. How many pairs?",
+          "activity": "NCERT p. 91 Bicycles: Pair 12 wheels into sets of 2.",
+          "studentHint": "Pair the wheels: 12 divided by 2 is 6 bicycles!"
+        },
+        "24": {
+          "signature": "MULTIPLICATION_INSTEAD_OF_DIVISION",
+          "explanation": "Multiplied 12 x 2 = 24 instead of dividing.",
+          "teacherInquiry": "If you had 24 bicycles, you would need 48 wheels! We only have 12 wheels.",
+          "activity": "Divide 12 by 2.",
+          "studentHint": "We are making bicycles from wheels, so divide: 12 ÷ 2 = 6!"
+        },
+        "5": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Computed 10 / 2 = 5.",
+          "teacherInquiry": "Check: 5 x 2 = 10. We have 12 wheels, so 1 more cycle can be made!",
+          "activity": "Count: 6 x 2 = 12.",
+          "studentHint": "6 x 2 = 12 wheels! Exactly 6 cycles!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_family_jalebis_shortfall_36_minus_24",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 92,
+      "domain": "MULTIPLICATION_EQUAL_GROUPS",
+      "context": "Bappa bought 24 jalebis. At home, there are 9 members and each wants 4 jalebis (9 x 4 = 36 jalebis needed).",
+      "prompt": "How many more jalebis should Dhara buy so everyone gets 4?",
+      "correctAnswer": 12,
+      "options": [12, 36, 4, 6],
+      "distractors": {
+        "36": {
+          "signature": "TOTAL_NEEDED_INSTEAD_OF_SHORTFALL",
+          "explanation": "Gave the total needed (36) instead of subtracting the 24 already bought.",
+          "teacherInquiry": "Bappa already bought 24 jalebis. How many MORE are needed to reach 36? 36 - 24 = 12.",
+          "activity": "NCERT p. 92 Jalebis Problem: 36 total needed minus 24 already bought.",
+          "studentHint": "36 are needed in total, but we already have 24! 36 - 24 = 12 more jalebis!"
+        },
+        "4": {
+          "signature": "PER_PERSON_SHARE_CONFUSION",
+          "explanation": "Reported the per-person share (4) instead of the total shortage.",
+          "teacherInquiry": "4 is how many each person gets. How many people are missing their 4 jalebis?",
+          "activity": "Calculate 3 missing people x 4 = 12.",
+          "studentHint": "3 people still need 4 jalebis each: 3 x 4 = 12 more jalebis!"
+        },
+        "6": {
+          "signature": "PLATE_COUNT_CONFUSION",
+          "explanation": "Confused plates count (6 plates bought) with jalebis count.",
+          "teacherInquiry": "6 was the number of plates bought (6 x 4 = 24). Subtract 36 - 24 = 12.",
+          "activity": "Count needed plates: 9 plates - 6 plates = 3 plates = 12 jalebis.",
+          "studentHint": "We need 3 more plates of 4: 3 x 4 = 12 jalebis!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_flower_bed_commutativity_8x6_vs_6x8",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 93,
+      "domain": "MULTIPLICATION_ARRAY_COMMUTATIVITY",
+      "context": "Dhara sees 8 rows of 6 plants (8 x 6). Gopal sees 6 columns of 8 plants (6 x 8).",
+      "prompt": "Who is correct, and what is the total number of plants?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Both are correct: 8 × 6 = 6 × 8 = 48",
+        "Only Dhara is correct: 8 × 6 = 48",
+        "Only Gopal is correct: 6 × 8 = 48",
+        "Neither is correct: rows and columns give different totals"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "PERSPECTIVE_RIGIDITY_BIAS",
+          "explanation": "Believed only the row perspective is mathematically valid.",
+          "teacherInquiry": "Turn the page sideways. Does the total number of plants change? 8 x 6 and 6 x 8 both equal 48!",
+          "activity": "NCERT p. 93 Dot Array: Rotate a 6 x 8 dot card 90 degrees to see 8 x 6.",
+          "studentHint": "Both are right! In multiplication, order does not change the answer: 8 x 6 = 6 x 8 = 48!"
+        },
+        "3": {
+          "signature": "PERSPECTIVE_RIGIDITY_BIAS",
+          "explanation": "Believed only column perspective is valid.",
+          "teacherInquiry": "Count by 6s eight times: 48. Count by 8s six times: 48. Both are correct!",
+          "activity": "Verify with counting.",
+          "studentHint": "Both are correct! Rows or columns both give 48 plants!"
+        },
+        "4": {
+          "signature": "COMMUTATIVITY_MISUNDERSTANDING",
+          "explanation": "Thought changing row/column grouping changes the total count.",
+          "teacherInquiry": "Multiplication is commutative: a x b = b x a.",
+          "activity": "Count all plants one by one to verify 48.",
+          "studentHint": "Turning the garden around doesn't change the number of plants: always 48!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_table_5_ending_digit_patterns",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 99,
+      "domain": "MULTIPLICATION_TABLE_PATTERNS",
+      "context": "Looking at the 5-times table: 5, 10, 15, 20, 25, 30... An even number multiplied by 5 ends in 0; an odd number multiplied by 5 ends in 5.",
+      "prompt": "Without multiplying, what are the last digits of 18 × 5 and 23 × 5?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "18 × 5 ends in 0; 23 × 5 ends in 5",
+        "Both end in 5",
+        "Both end in 0",
+        "18 × 5 ends in 8; 23 × 5 ends in 3"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "ALL_FIVES_DEFAULT",
+          "explanation": "Assumed all multiples of 5 must end in the digit 5.",
+          "teacherInquiry": "Look at 2 x 5 = 10, 4 x 5 = 20. What do even numbers x 5 end in? They end in 0!",
+          "activity": "NCERT p. 99 Seeing Patterns in 5-Times Table: Highlight even multiples (end in 0) and odd multiples (end in 5).",
+          "studentHint": "18 is EVEN, so 18 x 5 ends in 0! 23 is ODD, so 23 x 5 ends in 5!"
+        },
+        "3": {
+          "signature": "ALL_ZEROS_DEFAULT",
+          "explanation": "Assumed all multiples of 5 end in 0 like multiples of 10.",
+          "teacherInquiry": "Look at 1 x 5 = 5, 3 x 5 = 15. Do odd multiples end in 0?",
+          "activity": "Check odd multiples of 5.",
+          "studentHint": "Odd numbers x 5 always end in 5: 23 x 5 ends in 5!"
+        },
+        "4": {
+          "signature": "OPERAND_LAST_DIGIT_COPY_ERROR",
+          "explanation": "Copied the last digit of the multiplier (8 from 18, 3 from 23).",
+          "teacherInquiry": "Multiples of 5 can ONLY end in 0 or 5. Can a multiple of 5 end in 8 or 3?",
+          "activity": "Examine the ones column of the 5-times table.",
+          "studentHint": "Multiples of 5 can ONLY end in 0 or 5! Even ends in 0, odd ends in 5!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_cow_horns_and_legs_riddle",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 103,
+      "domain": "MULTIPLICATION_EQUAL_GROUPS",
+      "context": "Karry the crow can see 24 horns of cows in the shed. Each cow has 2 horns and 4 legs.",
+      "prompt": "What is the total number of cow legs in the shed?",
+      "correctAnswer": 48,
+      "options": [48, 24, 96, 12],
+      "distractors": {
+        "24": {
+          "signature": "HORN_COUNT_DUPLICATION",
+          "explanation": "Assumed number of legs equals number of horns.",
+          "teacherInquiry": "Each cow has 2 horns and 4 legs. 24 horns means 24 ÷ 2 = 12 cows. How many legs on 12 cows? 12 x 4 = 48.",
+          "activity": "NCERT p. 103 Animal Legs Riddle: Step 1: 24 horns / 2 = 12 cows. Step 2: 12 cows x 4 legs = 48 legs.",
+          "studentHint": "First find the cows: 24 horns ÷ 2 = 12 cows! Then find legs: 12 cows x 4 legs = 48 legs!"
+        },
+        "96": {
+          "signature": "HORN_MULTIPLIED_BY_LEGS",
+          "explanation": "Directly multiplied 24 horns x 4 legs = 96, skipping the division by 2 horns per cow.",
+          "teacherInquiry": "Does each horn belong to a separate cow? No, each cow has TWO horns!",
+          "activity": "Draw pairs of horns.",
+          "studentHint": "Each cow has 2 horns, so there are only 12 cows! 12 x 4 = 48 legs!"
+        },
+        "12": {
+          "signature": "COW_COUNT_INSTEAD_OF_LEGS",
+          "explanation": "Found the number of cows (12) but stopped before calculating total legs.",
+          "teacherInquiry": "12 is the number of cows! The question asks: 'What is the total number of LEGS?'",
+          "activity": "Multiply cows by 4 legs.",
+          "studentHint": "12 cows, but each has 4 legs: 12 x 4 = 48 legs!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch07_sea_shells_necklace_repeated_subtraction",
+      "chapter": "Chapter 7: Raksha Bandhan",
+      "page": 104,
+      "domain": "DIVISION_EQUAL_SHARING_REPEATED_SUBTRACTION",
+      "context": "Dhruv collected 112 sea-shells. He makes necklaces of 28 shells each for his friends: 112 - 28 = 84, 84 - 28 = 56, 56 - 28 = 28, 28 - 28 = 0.",
+      "prompt": "How many necklaces can Dhruv make from 112 shells?",
+      "correctAnswer": 4,
+      "options": [4, 3, 5, 28],
+      "distractors": {
+        "3": {
+          "signature": "INCOMPLETE_SUBTRACTION",
+          "explanation": "Stopped after 3 necklaces when 28 shells were left, failing to make the 4th necklace.",
+          "teacherInquiry": "There were 28 shells left after 3 necklaces. Can Dhruv make one more necklace with 28 shells? Yes! 3 + 1 = 4.",
+          "activity": "NCERT p. 104-105 Sea-Shells: Trace the 4 subtraction steps: 112 -> 84 -> 56 -> 28 -> 0.",
+          "studentHint": "He had 28 shells left, which makes 1 more necklace: 4 necklaces in total!"
+        },
+        "5": {
+          "signature": "OVERSHOOT_ERROR",
+          "explanation": "Estimated 5 necklaces (5 x 28 = 140 > 112).",
+          "teacherInquiry": "Check 5 x 28: 140 shells needed. Dhruv only has 112 shells.",
+          "activity": "Multiply: 4 x 28 = 112.",
+          "studentHint": "4 x 28 is exactly 112! So he can make 4 necklaces!"
+        },
+        "28": {
+          "signature": "DIVISOR_CONFUSION",
+          "explanation": "Stated the number of shells per necklace (28) instead of the count of necklaces.",
+          "teacherInquiry": "28 is how many shells in ONE necklace. How many necklaces did he make?",
+          "activity": "Count necklaces made.",
+          "studentHint": "112 ÷ 28 = 4 necklaces!"
+        }
+      }
+    }
+  ]
+}

@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Building, ArrowRight, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, Building, ArrowRight, AlertCircle, GraduationCap } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
 import { useAuth } from '../context/AuthContext';
+import { AppContext } from '../context/AppContext';
 
 const Register = () => {
   const navigate = useNavigate();
   const { register, isLoading, error: authError, clearError } = useAuth();
+  const { setActiveTeacher } = useContext(AppContext);
   const [name, setName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,7 +20,7 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     setFormError(null);
-    clearError();
+    if (clearError) clearError();
 
     if (!name.trim()) {
       setFormError('Please enter your full name.');
@@ -35,12 +37,22 @@ const Register = () => {
 
     try {
       setIsSubmitting(true);
-      await register({
-        name: name.trim(),
-        email: email.trim(),
-        password,
-        schoolName: schoolName.trim() || 'Kendriya Vidyalaya',
-      });
+      if (register) {
+        await register({
+          name: name.trim(),
+          email: email.trim(),
+          password,
+          schoolName: schoolName.trim() || 'Kendriya Vidyalaya',
+        });
+      }
+      if (setActiveTeacher) {
+        setActiveTeacher({
+          name: name.trim(),
+          greeting: 'Good Morning',
+          email: email.trim() || 'teacher@demo.com',
+          avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name.trim().split(' ')[0])}`,
+        });
+      }
       navigate('/dashboard');
     } catch (err) {
       setFormError(err.message || 'Registration failed. Please try again.');
@@ -143,6 +155,12 @@ const Register = () => {
         <p className="text-center text-sm text-gray-500 mt-6 font-medium">
           Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in</Link>
         </p>
+
+        <div className="mt-8 text-center border-t border-gray-100 pt-5">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-primary font-semibold transition">
+            <GraduationCap size={16} /> Switch to Student Mode
+          </Link>
+        </div>
       </div>
     </MobileWrapper>
   );

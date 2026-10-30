@@ -1,0 +1,721 @@
+{
+  "curriculum": "NCERT Class 3 Mathematics",
+  "textbook": "Maths Mela (First Edition 2024 / Reprint 2026-27)",
+  "chapters": [
+    "Chapter 5: Fun with Shapes (pp. 44-63)",
+    "Chapter 6: House of Hundreds - I (pp. 64-81)"
+  ],
+  "learning_outcomes": [
+    "M3.2a: Identifies 2D shapes (rectangles, squares, triangles, circles) and traces faces of 3D solids (cuboids, cylinders, cones)",
+    "M3.2b: Discovers properties of squares vs rectangles, classifies square corners (right angles) using paper-strip corner testers",
+    "M3.2c: Identifies circle properties: curved boundary, zero corners, and finds center by folding circular paper plates twice",
+    "M3.1a: Understands 3-digit place value from 200 to 500+, unitizes hundreds, tens, and ones using matchstick bundles and sweet boxes (HTO)",
+    "M3.1b: Navigates multi-story high-rise apartment grids (Hop Hundreds Home, Jump Joy Residency) where floor corresponds to tens and column corresponds to ones",
+    "M3.1c: Compares 3-digit numbers using inequality signs (> and <) by systematically evaluating hundreds, tens, and ones place values",
+    "M3.1d: Solves combinatorial digit arrangement problems ('Who am I?' riddles, greatest and smallest 3-digit numbers)"
+  ],
+  "probes": [
+    {
+      "id": "ncert_ch05_cuboid_faces_shapes_tracing",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 48,
+      "domain": "2D_SHAPES_AND_FACES",
+      "context": "Children trace all the faces of a cuboidal wooden box and an eraser on paper. What shapes do they get for the faces?",
+      "prompt": "The faces of a cuboid are _____ in shape.",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Rectangles or squares",
+        "Triangles or circles",
+        "Only circles",
+        "Hexagons only"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "CURVED_OR_TRIANGULAR_FACES_BIAS",
+          "explanation": "Confused a cuboid with a cone, pyramid, or cylinder having curved or triangular faces.",
+          "teacherInquiry": "Look at a cuboid box or brick. Can it stand on a sharp pointed corner or round curved face?",
+          "activity": "NCERT p. 48 Face Tracing: Place a matchbox on paper, trace each face, and count 6 rectangular faces.",
+          "studentHint": "A box has flat sides shaped like rectangles or squares, not triangles!"
+        },
+        "3": {
+          "signature": "SOLID_2D_CONFUSION",
+          "explanation": "Confused a 3D rectangular prism with a circular cylinder.",
+          "teacherInquiry": "Does an eraser roll like a ball or sit flat on a rectangular desk?",
+          "activity": "Roll vs slide test with classroom objects.",
+          "studentHint": "Cuboids have flat rectangular faces! They slide, they don't roll!"
+        },
+        "4": {
+          "signature": "POLYGON_VOCABULARY_DEFAULT",
+          "explanation": "Used higher polygon terminology inappropriately.",
+          "teacherInquiry": "Count the edges of one face: 1, 2, 3, 4 sides. That makes it a 4-sided rectangle.",
+          "activity": "Count sides of a traced face.",
+          "studentHint": "Count the sides of a box's face: 1, 2, 3, 4! It's a rectangle!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_cuboid_triangle_face_impossibility",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 48,
+      "domain": "2D_SHAPES_AND_FACES",
+      "context": "A student looks at a cuboidal gift box and wonders if any of its 6 flat faces can be a triangle.",
+      "prompt": "Can a cuboid have a face shaped like a triangle?",
+      "correctAnswer": 2,
+      "options": [1, 2],
+      "optionLabels": ["Yes", "No"],
+      "distractors": {
+        "1": {
+          "signature": "PRISM_CUBOID_CONFUSION",
+          "explanation": "Confused a triangular prism or pyramid with a cuboid.",
+          "teacherInquiry": "In a cuboid, all opposite faces are identical rectangles. Can a box have 3-sided triangle walls and still be a cuboid?",
+          "activity": "NCERT p. 46 Flattened Boxes: Open a sweet box to examine its net of 6 rectangles.",
+          "studentHint": "No! A cuboid has only 4-sided faces (rectangles and squares), never triangles!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_rectangle_opposite_sides_equal",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 50,
+      "domain": "2D_SHAPES_PROPERTIES",
+      "context": "Teji and Jojo look at various rectangular biscuit boxes and pencil cases to observe their side lengths.",
+      "prompt": "In any rectangle, which sides are equal in length?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Opposite sides are equal in length",
+        "All four sides must be equal in length",
+        "No sides are equal in length",
+        "Only adjacent sides are equal in length"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "SQUARE_ATTRIBUTE_OVERGENERALIZATION",
+          "explanation": "Overgeneralized the square property (all 4 sides equal) onto all rectangles.",
+          "teacherInquiry": "Look at your rectangular pencil box or mobile phone. Is its long side the same length as its short side?",
+          "activity": "NCERT p. 51 Side Comparison: Use two long pencils and two short sticks to build a rectangle.",
+          "studentHint": "Look at a door: the top matches the bottom, and the left matches the right! Opposite sides are equal!"
+        },
+        "3": {
+          "signature": "IRREGULAR_POLYGON_CONFUSION",
+          "explanation": "Believed rectangles have completely unequal, random side lengths.",
+          "teacherInquiry": "Fold a rectangular sheet in half. Do the two opposite edges match up perfectly?",
+          "activity": "Fold paper in half along length and width.",
+          "studentHint": "Opposite sides always match up evenly in a rectangle!"
+        },
+        "4": {
+          "signature": "ADJACENT_SIDE_CONFUSION",
+          "explanation": "Confused opposite sides with adjacent neighboring sides.",
+          "teacherInquiry": "Adjacent sides meet at a corner to make an 'L'. Are the two parts of an 'L' always equal?",
+          "activity": "Corner strip comparison.",
+          "studentHint": "Opposite sides face each other across the shape!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_nested_squares_counting_diagram",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 51,
+      "domain": "2D_SHAPES_PROPERTIES",
+      "context": "Look at the window grill drawing on page 51 made of a large square divided into 4 small square panes.",
+      "prompt": "How many squares do you see in this drawing in all?",
+      "correctAnswer": 5,
+      "options": [5, 4, 1, 8],
+      "distractors": {
+        "4": {
+          "signature": "SUB_PARTS_ONLY_COUNT",
+          "explanation": "Counted only the 4 smaller inner squares, missing the large enclosing outer square.",
+          "teacherInquiry": "You counted the 4 little square panes. What shape is the whole big outer frame?",
+          "activity": "NCERT p. 51 Drawing Inspection: Trace the big border with your finger: 4 small + 1 big = 5 squares.",
+          "studentHint": "Don't forget the BIG square frame around the 4 little ones: 4 + 1 = 5!"
+        },
+        "1": {
+          "signature": "OUTER_WHOLE_ONLY",
+          "explanation": "Saw only the single outer frame, ignoring the 4 internal subdivisions.",
+          "teacherInquiry": "Look inside the frame. How many small square rooms are drawn inside?",
+          "activity": "Color each small square with a different crayon.",
+          "studentHint": "Count the small squares inside too! There are 4 inside plus 1 big one: 5!"
+        },
+        "8": {
+          "signature": "RECTANGLES_INCLUDED_AS_SQUARES",
+          "explanation": "Counted 2-pane rectangles as squares.",
+          "teacherInquiry": "Does a shape made of 2 squares have all 4 sides equal, or is it longer in one direction?",
+          "activity": "Test side lengths with a ruler.",
+          "studentHint": "Remember, a square must have ALL 4 sides equal length!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_square_corners_right_angles_identification",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 54,
+      "domain": "SQUARE_CORNERS_ANGLES_2D",
+      "context": "Children test the corners of their math book and desk using square tiles. The corners of a square and rectangle are square corners.",
+      "prompt": "How many square corners does a rectangle or square have?",
+      "correctAnswer": 4,
+      "options": [4, 2, 0, 8],
+      "distractors": {
+        "2": {
+          "signature": "OPPOSITE_CORNERS_ONLY",
+          "explanation": "Counted only a single pair of opposite corners.",
+          "teacherInquiry": "Touch every corner of your math textbook: top-left, top-right, bottom-left, bottom-right. How many corners did your finger touch?",
+          "activity": "NCERT p. 54 Corner Piling: Touch and count all 4 corners of a sheet of paper.",
+          "studentHint": "Every corner of a book makes an 'L' shape: 1, 2, 3, 4 square corners!"
+        },
+        "0": {
+          "signature": "CORNER_TERMINOLOGY_CONFUSION",
+          "explanation": "Confused square corners with circles having zero corners.",
+          "teacherInquiry": "Does a book have sharp corners or round edges?",
+          "activity": "Compare a round coin with a square tile.",
+          "studentHint": "Squares and rectangles have 4 sharp square corners!"
+        },
+        "8": {
+          "signature": "DOUBLE_COUNT_INSIDE_OUTSIDE",
+          "explanation": "Counted both inner angles and outer vertices.",
+          "teacherInquiry": "A rectangle has 4 sides that meet at 4 vertices.",
+          "activity": "Count vertices using stickers on the corners.",
+          "studentHint": "There are 4 corners on a rectangle!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_corner_tester_acute_angle",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 55,
+      "domain": "SQUARE_CORNERS_ANGLES_2D",
+      "context": "Using two paper strips joined with a pin as a corner tester, Teji makes a corner sharper/narrower than an 'L'.",
+      "prompt": "A corner that is narrower than a square corner is called:",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "Less than a square corner",
+        "A square corner",
+        "More than a square corner"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "RIGHT_ANGLE_DEFAULT",
+          "explanation": "Defaulted to square corner without checking opening size.",
+          "teacherInquiry": "Fit the paper strip onto your math book's corner. Is it exact, or is the strip closed tighter like scissors?",
+          "activity": "NCERT p. 55 Paper Strip Corner Tester: Compare scissor opening with book corner.",
+          "studentHint": "If the jaws are closed narrower than an 'L', it is LESS than a square corner!"
+        },
+        "3": {
+          "signature": "MORE_THAN_SQUARE_CONFUSION",
+          "explanation": "Reversed the inequality, confusing acute with obtuse.",
+          "teacherInquiry": "When the strips close together, is the opening bigger or smaller than a square corner?",
+          "activity": "Open and close paper strips from 0 to 90 degrees.",
+          "studentHint": "Narrower opening means LESS than a square corner!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_circle_paper_plate_center_creases",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 59,
+      "domain": "CIRCLE_PROPERTIES",
+      "context": "Children fold a circular paper plate in half to get a straight red crease line. They fold it in half again to get a second blue line.",
+      "prompt": "The point where the two straight fold lines meet is the:",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Center of the circle",
+        "Corner of the circle",
+        "Edge of the circle",
+        "Curved boundary of the circle"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "CORNER_IN_CIRCLE_CONFUSION",
+          "explanation": "Called the internal crease intersection a corner, misapplying polygon vertex concepts to circles.",
+          "teacherInquiry": "Does a round circle have sharp pointy corners on its outside? Where is this point located?",
+          "activity": "NCERT p. 59 Paper Plate Folding: Fold circular paper plate twice; the point in the exact middle is the CENTER.",
+          "studentHint": "A circle has 0 corners! That point right in the middle is the CENTER!"
+        },
+        "3": {
+          "signature": "EDGE_CIRCUMFERENCE_CONFUSION",
+          "explanation": "Confused the central point with the outer perimeter edge.",
+          "teacherInquiry": "Is the meeting point on the outer rim of the plate, or deep in the center?",
+          "activity": "Place a sticker on the center vs trace the rim.",
+          "studentHint": "The fold lines cross right in the exact middle: the CENTER!"
+        },
+        "4": {
+          "signature": "BOUNDARY_CONFUSION",
+          "explanation": "Confused the point with the continuous circle perimeter.",
+          "teacherInquiry": "The boundary is the round circle rim. The point inside is the center.",
+          "activity": "Point to center vs touch boundary.",
+          "studentHint": "The center is the point in the middle, not the boundary!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_circle_boundary_and_corners",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 58,
+      "domain": "CIRCLE_PROPERTIES",
+      "context": "At the circus, the ringmaster uses circular hoops and round circus rings. How is a circle different from a rectangle?",
+      "prompt": "How many straight sides and sharp corners does a circle have?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "0 straight sides and 0 sharp corners",
+        "1 straight side and 1 corner",
+        "4 curved corners",
+        "2 straight sides and 0 corners"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "ONE_BOUNDARY_CONFUSION",
+          "explanation": "Equated having one continuous curved boundary with having 1 straight side.",
+          "teacherInquiry": "Run your finger all around a bangle or plate. Does your finger ever turn a sharp corner or stop at a straight edge?",
+          "activity": "NCERT p. 58 Circus with Circles: Trace bottle caps and bangles to see smooth continuous curves.",
+          "studentHint": "A circle is perfectly round: 0 straight sides and 0 sharp corners!"
+        },
+        "3": {
+          "signature": "CURVED_CORNER_OVERSIMPLIFICATION",
+          "explanation": "Assumed every shape must have 4 corners like a paper sheet.",
+          "teacherInquiry": "Can a round ball or circle have corners? What happens when you roll it?",
+          "activity": "Roll a cylinder and a rectangular box.",
+          "studentHint": "Circles roll smoothly because they have ZERO sharp corners!"
+        },
+        "4": {
+          "signature": "SEMICIRCLE_CONFUSION",
+          "explanation": "Confused a full circle with a folded semicircle having a straight diameter edge.",
+          "teacherInquiry": "Look at an unfolded full circle plate. Are there any straight edges?",
+          "activity": "Observe circular rings and bangles.",
+          "studentHint": "A full circle has NO straight edges at all!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_shape_comparison_square_vs_triangle",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 60,
+      "domain": "2D_SHAPES_PROPERTIES",
+      "context": "Children compare a red square and a green triangle on page 60. Both have straight edges.",
+      "prompt": "Comparing a square and a triangle: their corners are _____ and number of sides is _____.",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Corners are different, Number of sides is different",
+        "Corners are same, Number of sides is same",
+        "Corners are same, Number of sides is different",
+        "Corners are different, Number of sides is same"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "POLYGON_HOMOGENIZATION_BIAS",
+          "explanation": "Assumed all 2D straight-edged shapes have the same number of sides and corners.",
+          "teacherInquiry": "Count the sides of the square: 1, 2, 3, 4. Now count the triangle: 1, 2, 3. Are 4 and 3 the same?",
+          "activity": "NCERT p. 60 Shape Comparison Table: Count sides and corners of cutout shapes.",
+          "studentHint": "A square has 4 sides and 4 corners, but a triangle has only 3 sides and 3 corners: they are DIFFERENT!"
+        },
+        "3": {
+          "signature": "RIGHT_ANGLE_CONFUSION",
+          "explanation": "Assumed triangles also have square corners.",
+          "teacherInquiry": "Check triangle corners with your square paper-strip tester. Do they match an 'L'?",
+          "activity": "Test equilateral triangle corners with corner tester.",
+          "studentHint": "The corners are different (square corners vs sharp corners) and side counts are different (4 vs 3)!"
+        },
+        "4": {
+          "signature": "SIDE_COUNT_HOMOGENIZATION",
+          "explanation": "Thought squares and triangles have equal number of sides.",
+          "teacherInquiry": "Does a triangle have 4 sides?",
+          "activity": "Build a triangle with 3 matchsticks and a square with 4.",
+          "studentHint": "Triangles have 3 sides, squares have 4 sides!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_triangular_torans_200_50",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 64,
+      "domain": "THREE_DIGIT_PLACE_VALUE_HTO",
+      "context": "Ajji, Teji and Jojo count triangular torans at the mela. There are 2 hundred triangles in 2 long lines, and 5 bunches of 10 triangles each.",
+      "prompt": "50 more than 200 is:",
+      "correctAnswer": 250,
+      "options": [250, 205, 70, 2500],
+      "distractors": {
+        "205": {
+          "signature": "REVERSE_TENS_ONES_MAPPING",
+          "explanation": "Placed the 5 tens in the ones place ($205$ instead of $250$).",
+          "teacherInquiry": "5 bunches of 10 is 50. 50 has 5 tens and 0 ones. Where does the 5 go in H-T-O?",
+          "activity": "NCERT p. 64 Toran Counting: Count by tens from 200: 210, 220, 230, 240, 250.",
+          "studentHint": "5 tens is 50! 200 + 50 = 250, not 205!"
+        },
+        "70": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 20 + 50 = 70, dropping the hundreds entirely.",
+          "teacherInquiry": "We started with 2 HUNDRED (200), not 20. What is 200 plus 50?",
+          "activity": "Matchstick bundles: 2 big bundles of 100 plus 5 bundles of 10.",
+          "studentHint": "Don't forget the 2 hundreds! 200 + 50 is 250!"
+        },
+        "2500": {
+          "signature": "MAGNITUDE_OVERESTIMATION",
+          "explanation": "Appended extra zeros, confusing hundreds with thousands.",
+          "teacherInquiry": "Write 2 hundreds, 5 tens, 0 ones on the place value chart.",
+          "activity": "Place value chart: H-T-O.",
+          "studentHint": "2 hundreds, 5 tens, and 0 ones writes as 250!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_bangles_teji_280",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 65,
+      "domain": "THREE_DIGIT_PLACE_VALUE_HTO",
+      "context": "Teji counts bangles at the mela: '10, 20... 100, 110... 200, 210... 270, 280'. Total bangles: 200 and 80 more.",
+      "prompt": "200 and 80 more is:",
+      "correctAnswer": 280,
+      "options": [280, 208, 28, 2008],
+      "distractors": {
+        "208": {
+          "signature": "REVERSE_TENS_ONES_MAPPING",
+          "explanation": "Placed 8 in the ones column instead of tens column (208 instead of 280).",
+          "teacherInquiry": "80 has 8 tens. In H-T-O, does 8 belong under Tens or under Ones?",
+          "activity": "NCERT p. 65 Bangles Counting: Count 8 bundles of 10 after 200 to land at 280.",
+          "studentHint": "80 means 8 tens! 2 hundreds and 8 tens is 280!"
+        },
+        "28": {
+          "signature": "HUNDREDS_TRUNCATION",
+          "explanation": "Dropped the hundreds digit completely.",
+          "teacherInquiry": "There are over two hundred bangles. Can the answer be only 28?",
+          "activity": "Compare 28 bangles with 280 bangles.",
+          "studentHint": "There are 2 hundreds! Put 2 in the hundreds place: 280!"
+        },
+        "2008": {
+          "signature": "LITERAL_CONCATENATION_ERROR",
+          "explanation": "Wrote 200 and 8 side by side ('200' + '8' = 2008).",
+          "teacherInquiry": "A 3-digit number has only 3 places: H-T-O. 2008 has four digits!",
+          "activity": "Use 3-digit place value cards: 200 + 80 = 280.",
+          "studentHint": "Combine into 3 digits: [2 hundreds] [8 tens] [0 ones] = 280!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_toffees_century_boundary_299",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 65,
+      "domain": "THREE_DIGIT_PLACE_VALUE_HTO",
+      "context": "Jojo has 298 toffees in the jar. He adds 1 more to make 299. Then he adds 1 more toffee from his hand.",
+      "prompt": "299 + 1 = ?",
+      "correctAnswer": 300,
+      "options": [300, 2910, 2100, 2991],
+      "distractors": {
+        "2910": {
+          "signature": "DECADE_CROSSING_STUMBLE",
+          "explanation": "Replaced the 9 ones with 10 without regrouping into tens and hundreds (2910).",
+          "teacherInquiry": "When 1 is added to 9 ones, it bundles into 1 ten. 9 tens + 1 ten = 10 tens, which bundles into 1 hundred! What is 200 + 100?",
+          "activity": "NCERT p. 65 Matchstick Bundles: Unbundle/bundle loose sticks into bundles to reach 300.",
+          "studentHint": "299 and one more reaches the next hundred: 300!"
+        },
+        "2100": {
+          "signature": "HUNDRED_TRANSITION_OVERSHOOT",
+          "explanation": "Wrote 2 followed by 100.",
+          "teacherInquiry": "1 more than 299 is three hundred (300), not 2100.",
+          "activity": "Slide counter on number line from 299 to 300.",
+          "studentHint": "After 299 comes 300! Three full hundreds!"
+        },
+        "2991": {
+          "signature": "LITERAL_CONCATENATION_ERROR",
+          "explanation": "Appended '1' to '299' side by side.",
+          "teacherInquiry": "Does adding 1 candy create three thousand candies?",
+          "activity": "Count on: 299, 300.",
+          "studentHint": "Add 1 to 299: 299 + 1 = 300!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_matchstick_bundles_sentences_235",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 67,
+      "domain": "THREE_DIGIT_PLACE_VALUE_HTO",
+      "context": "Teji and Jojo write number sentences for 235 in more than one way: 200 + 35, or as '_____ less than 250'.",
+      "prompt": "250 - _____ = 235",
+      "correctAnswer": 15,
+      "options": [15, 25, 35, 5],
+      "distractors": {
+        "25": {
+          "signature": "TENS_DIFFERENCE_SLIP",
+          "explanation": "Subtracted 250 - 25 = 225, missing 235 by 10.",
+          "teacherInquiry": "Check: 250 - 25 = 225. We want 235. How far is 35 from 50?",
+          "activity": "NCERT p. 67 Number Line: Jump back from 250 to 235 on number line.",
+          "studentHint": "From 235 to 250 is 15 steps! So 250 - 15 = 235!"
+        },
+        "35": {
+          "signature": "ADDITIVE_COMPONENT_CONFUSION",
+          "explanation": "Confused the additive part (200 + 35) with the subtraction deficit from 250.",
+          "teacherInquiry": "250 - 35 = 215, not 235. 35 is how much more than 200, but how much LESS than 250?",
+          "activity": "Part-Whole box: 250 broken into 235 and 15.",
+          "studentHint": "235 is 35 more than 200, but it is only 15 less than 250!"
+        },
+        "5": {
+          "signature": "ONES_ONLY_DIFFERENCE",
+          "explanation": "Looked only at ones place difference ($250 - 5 = 245$).",
+          "teacherInquiry": "250 - 5 = 245. We need to reach 235. Take away 10 more!",
+          "activity": "Step back on number line by 10 then 5.",
+          "studentHint": "250 - 5 is 245! Take away 10 more to reach 235: 15 less!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_number_slider_operations_289_minus_10",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 68,
+      "domain": "THREE_DIGIT_PLACE_VALUE_HTO",
+      "context": "Teji uses the 3-digit number slider showing 289 and slides the tens strip to decrease the number by 10.",
+      "prompt": "289 decreased by 10 = ?",
+      "correctAnswer": 279,
+      "options": [279, 288, 189, 299],
+      "distractors": {
+        "288": {
+          "signature": "SUBTRACTED_FROM_ONES",
+          "explanation": "Subtracted 1 from the ones column instead of 10 from the tens column.",
+          "teacherInquiry": "The slider says decrease by TEN. Which digit is the tens digit in 289? 8 tens minus 1 ten = 7 tens.",
+          "activity": "NCERT p. 68 Number Slider: Slide the middle strip down by 1 unit.",
+          "studentHint": "Decrease by 10 changes the tens place! 8 tens - 1 ten = 7 tens: 279!"
+        },
+        "189": {
+          "signature": "SUBTRACTED_FROM_HUNDREDS",
+          "explanation": "Subtracted 100 from hundreds instead of 10 from tens.",
+          "teacherInquiry": "Did we decrease by a hundred or by ten? Hundreds stays 2!",
+          "activity": "Check place values: Hundreds, Tens, Ones.",
+          "studentHint": "Only change the middle tens number! 289 - 10 = 279!"
+        },
+        "299": {
+          "signature": "ADDED_INSTEAD_OF_SUBTRACTED",
+          "explanation": "Increased by 10 instead of decreasing.",
+          "teacherInquiry": "'Decrease' means make smaller (subtract). 289 minus 10 is 279.",
+          "activity": "Follow slider down arrow for decrease.",
+          "studentHint": "Decrease means go DOWN! 289 - 10 = 279!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_flag_game_inequality_207",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 69,
+      "domain": "NUMBER_COMPARISON_INEQUALITY",
+      "context": "Teji thinks of a secret number between 200 and 210. Jojo guesses 205 (flag points right: number > 205), then 208 (flag points left: number < 208), then 206 (wrong, points right).",
+      "prompt": "Which secret number was Teji thinking of?",
+      "correctAnswer": 207,
+      "options": [207, 209, 204, 206],
+      "distractors": {
+        "209": {
+          "signature": "OUT_OF_BOUNDS_HIGH",
+          "explanation": "Ignored the left-pointing flag at 208, which proved the number is strictly less than 208.",
+          "teacherInquiry": "At 208, the flag pointed LEFT. That means the number is SMALLER than 208. Can it be 209?",
+          "activity": "NCERT p. 69 Flag Game: Mark arrows on a 200-210 number line strip.",
+          "studentHint": "The number is less than 208 and more than 206: it has to be 207!"
+        },
+        "204": {
+          "signature": "OUT_OF_BOUNDS_LOW",
+          "explanation": "Ignored the right-pointing flag at 205.",
+          "teacherInquiry": "At 205, the flag pointed RIGHT. That means the number is BIGGER than 205.",
+          "activity": "Eliminate numbers 200 to 205 on the line.",
+          "studentHint": "The flag pointed right at 205, so the secret number is bigger than 205!"
+        },
+        "206": {
+          "signature": "KNOWN_FALSE_TRIAL",
+          "explanation": "Guessed 206 which was already tested and reported as wrong.",
+          "teacherInquiry": "Teji already said 206 is wrong! What number is between 206 and 208?",
+          "activity": "Look at the remaining gap on the line.",
+          "studentHint": "206 was wrong! Between 206 and 208 is 207!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_apartment_grid_step_113_above_13",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 73,
+      "domain": "HIGH_RISE_APARTMENT_GRID_COORDINATES",
+      "context": "In 'Hop Hundreds Home', each floor has 10 houses. Teji notices 113 is 10 floors above 13. Going 1 floor straight up adds 10.",
+      "prompt": "Which house is 1 floor directly above 105?",
+      "correctAnswer": 115,
+      "options": [115, 106, 104, 205],
+      "distractors": {
+        "106": {
+          "signature": "RIGHT_STEP_CONFUSION",
+          "explanation": "Moved 1 house to the right (+1) instead of 1 floor straight up (+10).",
+          "teacherInquiry": "Moving right goes to the next door neighbor (106). Moving UP goes to the next floor (+10). What is 105 + 10?",
+          "activity": "NCERT p. 73 Hop Hundreds Home: Trace vertical elevator line from 105 to 115.",
+          "studentHint": "Going UP one floor adds 10! 105 + 10 = 115!"
+        },
+        "104": {
+          "signature": "LEFT_STEP_CONFUSION",
+          "explanation": "Moved 1 house to the left (-1).",
+          "teacherInquiry": "Going up increases the floor number, it does not step backward to the left.",
+          "activity": "Follow the floor grid up.",
+          "studentHint": "Going up one floor increases by 10: 115!"
+        },
+        "205": {
+          "signature": "HUNDRED_FLOOR_LEAP",
+          "explanation": "Added 100 instead of 10 for a single floor.",
+          "teacherInquiry": "Each floor has 10 apartments, not 100. Adding 1 floor adds 10.",
+          "activity": "Count rows on the apartment grid.",
+          "studentHint": "Each floor adds 10, so 1 floor above 105 is 115!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_who_am_i_riddle_digits_9_1_5",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 75,
+      "domain": "COMBINATORIAL_DIGIT_REASONING",
+      "context": "Riddle on page 75: 'I have digits 9, 1 and 5. I am less than 200. I have 9 ones. Which number am I?'",
+      "prompt": "Which number am I?",
+      "correctAnswer": 159,
+      "options": [159, 195, 519, 915],
+      "distractors": {
+        "195": {
+          "signature": "ONES_TENS_INVERSION",
+          "explanation": "Swapped the tens and ones digits, putting 5 in ones instead of 9 ones.",
+          "teacherInquiry": "The riddle says 'I have 9 ones'. In 195, what is the ones digit? 5 ones! We need 9 ones.",
+          "activity": "NCERT p. 75 Who Am I?: Write H-T-O slots: [_] [_] [9]. Since < 200, H must be 1, so 159.",
+          "studentHint": "It has 9 ones, so it ends in 9! And less than 200 means hundreds is 1: 159!"
+        },
+        "519": {
+          "signature": "MAGNITUDE_CONSTRAINT_VIOLATION",
+          "explanation": "Violated the condition 'I am less than 200'.",
+          "teacherInquiry": "Is 519 less than 200? 519 has 5 hundreds, which is much greater than 200!",
+          "activity": "Check constraints one by one.",
+          "studentHint": "The riddle says LESS than 200! 519 is too big; it must start with 1: 159!"
+        },
+        "915": {
+          "signature": "HUNDREDS_GREATER_THAN_200",
+          "explanation": "Placed the largest digit in hundreds, ignoring the < 200 constraint.",
+          "teacherInquiry": "915 has 9 hundreds. We need a number less than 200 with 9 in ones.",
+          "activity": "Test each digit slot.",
+          "studentHint": "Hundreds digit must be 1 to be less than 200: 159!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_who_am_i_riddle_same_digits_300_400",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 75,
+      "domain": "COMBINATORIAL_DIGIT_REASONING",
+      "context": "Riddle: 'I am greater than 300 but less than 400. I have no tens. My ones and hundreds digits are the same. Which number am I?'",
+      "prompt": "Which number am I?",
+      "correctAnswer": 303,
+      "options": [303, 333, 300, 404],
+      "distractors": {
+        "333": {
+          "signature": "ZERO_TENS_VIOLATION",
+          "explanation": "Ignored 'I have no tens', putting 3 in the tens place.",
+          "teacherInquiry": "'I have no tens' means the tens digit must be ZERO. What is the tens digit in 333?",
+          "activity": "Slot chart: H=3, T=0, O=3.",
+          "studentHint": "No tens means 0 in the middle! Hundreds and ones are both 3: 303!"
+        },
+        "300": {
+          "signature": "ONES_HUNDREDS_INEQUALITY",
+          "explanation": "Put 0 in ones, so ones (0) does not equal hundreds (3).",
+          "teacherInquiry": "In 300, hundreds is 3 and ones is 0. Are 3 and 0 the same?",
+          "activity": "Compare ones digit and hundreds digit.",
+          "studentHint": "Hundreds and ones digits must be the SAME (3 and 3): 303!"
+        },
+        "404": {
+          "signature": "RANGE_OVERSTEP_GREATER_THAN_400",
+          "explanation": "Exceeded the upper bound 'less than 400'.",
+          "teacherInquiry": "Is 404 less than 400? No, it is greater than 400!",
+          "activity": "Check number line between 300 and 400.",
+          "studentHint": "Must be less than 400, so it starts with 3: 303!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_packing_tens_into_hundred_boxes",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 77,
+      "domain": "THREE_DIGIT_PLACE_VALUE_HTO",
+      "context": "Arvind Dada wants to pack small boxes of 10 sweets each into big boxes of 100 sweets. How many boxes of 10 fit in four boxes of 100?",
+      "prompt": "How many small boxes of 10 fit in 4 big boxes of 100?",
+      "correctAnswer": 40,
+      "options": [40, 4, 14, 400],
+      "distractors": {
+        "4": {
+          "signature": "UNIT_CONFUSION_GROUP_AS_ITEM",
+          "explanation": "Counted only the number of big boxes (4) instead of small 10-boxes inside.",
+          "teacherInquiry": "In ONE big box of 100, there are 10 small boxes. So in FOUR big boxes, how many tens?",
+          "activity": "NCERT p. 77 Packing Boxes: Count tens in four 100s: 10, 20, 30, 40 boxes.",
+          "studentHint": "Each 100 has 10 small boxes! 4 big boxes has 4 x 10 = 40 small boxes!"
+        },
+        "14": {
+          "signature": "ADDITION_INSTEAD_OF_MULTIPLICATION",
+          "explanation": "Added 10 + 4 = 14 instead of multiplying 4 x 10.",
+          "teacherInquiry": "Does 4 boxes of 10 each mean 10 + 4 or 4 groups of 10?",
+          "activity": "Count groups of 10 on fingers: 10, 20, 30, 40.",
+          "studentHint": "4 groups of 10 is 10, 20, 30, 40 boxes!"
+        },
+        "400": {
+          "signature": "INDIVIDUAL_SWEETS_OVERCOUNT",
+          "explanation": "Counted the total number of sweets (400) instead of the number of 10-boxes.",
+          "teacherInquiry": "400 is the total sweets. The question asks how many BOXES of 10 sweets.",
+          "activity": "Divide 400 sweets by 10 sweets per box = 40 boxes.",
+          "studentHint": "There are 400 sweets, which makes 40 boxes of 10 sweets!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_comparison_place_value_priority_209_vs_290",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 79,
+      "domain": "NUMBER_COMPARISON_INEQUALITY",
+      "context": "Compare 209 and 290. Both numbers have 2 hundreds. But 9 ones is less than 9 tens.",
+      "prompt": "209 _____ 290",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": ["< (less than)", "> (more than)", "= (equal to)"],
+      "distractors": {
+        "2": {
+          "signature": "ONES_MAGNITUDE_OVERRIDE_TENS",
+          "explanation": "Saw 9 in the ones place of 209 and assumed it is greater than 0 in 290, ignoring that 290 has 9 tens (90).",
+          "teacherInquiry": "Compare column by column: hundreds are equal (2=2). Next look at tens: 209 has 0 tens, 290 has 9 tens. Which is more: 0 tens or 9 tens?",
+          "activity": "NCERT p. 79 Dienes Blocks: 2 flats + 9 unit cubes vs 2 flats + 9 ten-rods.",
+          "studentHint": "290 has 9 tens (90), but 209 has 0 tens! So 209 is LESS than 290: 209 < 290!"
+        },
+        "3": {
+          "signature": "SAME_DIGITS_EQUALITY_BIAS",
+          "explanation": "Saw both numbers contain digits 2, 0, and 9 and assumed they are equal.",
+          "teacherInquiry": "Does digit position matter? Is having ₹9 in ones the same as having ₹90 in tens?",
+          "activity": "Exchange money notes: ₹9 vs ₹90.",
+          "studentHint": "Place value matters! 9 in tens is 90, but 9 in ones is just 9! 209 < 290!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch06_digits_greatest_3_digit_3_2_4",
+      "chapter": "Chapter 6: House of Hundreds - I",
+      "page": 81,
+      "domain": "COMBINATORIAL_DIGIT_REASONING",
+      "context": "Make the greatest 3-digit number using the digits 3, 2, and 4 without repeating any digit.",
+      "prompt": "What is the greatest 3-digit number you can make using 3, 2, and 4?",
+      "correctAnswer": 432,
+      "options": [432, 423, 342, 444],
+      "distractors": {
+        "423": {
+          "signature": "TENS_ONES_SUBOPTIMAL",
+          "explanation": "Put 4 in hundreds correctly, but placed 2 in tens and 3 in ones ($423 < 432$).",
+          "teacherInquiry": "Between 432 and 423, both have 4 hundreds. Which has more tens: 3 tens or 2 tens?",
+          "activity": "NCERT p. 81 Digit Cards: Arrange cards from largest to smallest: 4, then 3, then 2.",
+          "studentHint": "To make the BIGGEST number, put the largest digits first: 4 in hundreds, 3 in tens, 2 in ones = 432!"
+        },
+        "342": {
+          "signature": "HUNDREDS_SUBOPTIMAL",
+          "explanation": "Failed to place the largest digit (4) in the hundreds place.",
+          "teacherInquiry": "Can you put 4 in the hundreds place to make four hundred instead of three hundred?",
+          "activity": "Compare 342 vs 432 on number line.",
+          "studentHint": "Put the biggest digit (4) in the hundreds place: 432!"
+        },
+        "444": {
+          "signature": "ILLEGAL_DIGIT_REPETITION",
+          "explanation": "Repeated digit 4 three times, violating 'without repeating any digit'.",
+          "teacherInquiry": "You can only use each digit (3, 2, 4) exactly once! You cannot repeat 4.",
+          "activity": "Hold physical digit cards: 1 card of 3, 1 card of 2, 1 card of 4.",
+          "studentHint": "No repeating digits allowed! Use each digit once: 432!"
+        }
+      }
+    }
+  ]
+}

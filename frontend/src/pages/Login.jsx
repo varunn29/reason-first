@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
+import { Mail, Lock, ArrowRight, AlertCircle, Sparkles, GraduationCap } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
 import { useAuth } from '../context/AuthContext';
+import { AppContext } from '../context/AppContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login, isLoading, error: authError, clearError } = useAuth();
+  const { setActiveTeacher } = useContext(AppContext);
   const [email, setEmail] = useState('teacher@demo.com');
   const [password, setPassword] = useState('password123');
   const [formError, setFormError] = useState(null);
@@ -16,7 +18,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setFormError(null);
-    clearError();
+    if (clearError) clearError();
 
     if (!email.trim() || !password) {
       setFormError('Please enter both email and password.');
@@ -25,7 +27,16 @@ const Login = () => {
 
     try {
       setIsSubmitting(true);
-      await login(email, password);
+      if (login) {
+        await login(email, password);
+      }
+      if (setActiveTeacher) {
+        setActiveTeacher((prev) => ({
+          ...prev,
+          email,
+          name: email.includes('vikram') ? 'Mr. Vikram Patel' : (prev?.name || 'Ms. Sharma'),
+        }));
+      }
       navigate('/dashboard');
     } catch (err) {
       setFormError(err.message || 'Login failed. Please verify credentials.');
@@ -38,7 +49,7 @@ const Login = () => {
     setEmail('teacher@demo.com');
     setPassword('password123');
     setFormError(null);
-    clearError();
+    if (clearError) clearError();
   };
 
   const activeError = formError || authError;
@@ -121,14 +132,11 @@ const Login = () => {
           Don't have an account? <Link to="/register" className="text-primary font-bold hover:underline">Sign up</Link>
         </p>
 
-        {/* Small student link */}
-        <button 
-          type="button"
-          onClick={() => navigate('/')} 
-          className="mt-6 text-center text-xs text-gray-400 font-semibold hover:text-primary transition active:scale-95"
-        >
-          I am a Student (Enter Class Code)
-        </button>
+        <div className="mt-8 text-center border-t border-gray-100 pt-5">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-primary font-semibold transition">
+            <GraduationCap size={16} /> Switch to Student Mode (Enter Class Code)
+          </Link>
+        </div>
       </div>
     </MobileWrapper>
   );

@@ -16,17 +16,30 @@ if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
 
 from math_diagnostic.engine import (
+    ALL_PROBES,
     APPROVED_PROBES,
+    FOUNDATION_PROBES,
+    CH03_CH04_PROBES,
+    CH05_CH06_PROBES,
+    CH07_CH08_PROBES,
+    CH09_CH10_PROBES,
+    CH11_CH13_CH14_PROBES,
     SIG_BORROW_WITHOUT_DECREMENT,
+    SIG_OPERATION_CONFUSION_ADD,
     SIG_SMALLER_FROM_LARGER,
+    SIG_ZERO_ACROSS_BORROW,
     STATUS_SUPPORTED_HYPOTHESIS,
+    TEXTBOOK_PROBES,
     calculate_signature_answer,
     diagnose_responses,
+    diagnose_single_response,
+    get_calibrated_model,
 )
 
 PORT = int(os.environ.get("PORT", 8000))
 
-PROBE_METADATA = [
+# Canonical 5 probes
+CANONICAL_PROBES_METADATA = [
     {
         "id": "probe_01",
         "text": "61 - 24 = ?",
@@ -94,107 +107,66 @@ PROBE_METADATA = [
     },
 ]
 
+# Load unified aligned master curriculum dataset
+curriculum_json_path = os.path.join(current_dir, "data", "ncert_class3_mathematics_full_curriculum.json")
+ncert_probe_details = {}
+COMBINED_PROBE_METADATA = []
+
+if os.path.exists(curriculum_json_path):
+    try:
+        with open(curriculum_json_path, "r", encoding="utf-8") as f:
+            curr_raw = json.load(f)
+            for p in curr_raw.get("probes", []):
+                ncert_probe_details[p["id"]] = p
+                dist_map = {}
+                for opt_val, dist_data in p.get("distractors", {}).items():
+                    if isinstance(dist_data, dict):
+                        dist_map[int(opt_val) if str(opt_val).lstrip('-').isdigit() else opt_val] = dist_data.get("explanation", dist_data.get("signature", "Distractor"))
+                    else:
+                        dist_map[int(opt_val) if str(opt_val).lstrip('-').isdigit() else opt_val] = str(dist_data)
+
+                COMBINED_PROBE_METADATA.append({
+                    "id": p["id"],
+                    "chapter": p.get("chapter", "NCERT Class 3"),
+                    "text": p.get("prompt") or p.get("text", ""),
+                    "context": p.get("context", ""),
+                    "page": p.get("page", 1),
+                    "domain": p.get("domain", "GENERAL"),
+                    "correctAnswer": p.get("correctAnswer", 0),
+                    "options": p.get("options", []),
+                    "optionLabels": p.get("optionLabels", []),
+                    "distractors": dist_map,
+                    "is_regrouping": p.get("is_regrouping", False),
+                    "minuend": p.get("minuend", 0),
+                    "subtrahend": p.get("subtrahend", 0),
+                    "dienes_blocks_scaffolding": p.get("dienes_blocks_scaffolding", ""),
+                    "number_line_jumps": p.get("number_line_jumps", []),
+                })
+    except Exception as err:
+        print(f"Warning: could not load master aligned curriculum dataset: {err}")
+
+# Fallback to canonical probes if master dataset failed
+if not COMBINED_PROBE_METADATA:
+    COMBINED_PROBE_METADATA = list(CANONICAL_PROBES_METADATA)
+
+# Maintain backward compatibility
+PROBE_METADATA = COMBINED_PROBE_METADATA
+
 
 def evaluate_single_answer(question_id: str, answer: int):
-    """Evaluate a single question response against known probes and misconceptions."""
-    # Check if question is one of the approved probes
-    probe = APPROVED_PROBES.get(question_id)
-    if probe:
-        correct = probe.correct_answer
-        sfl_ans = calculate_signature_answer(probe, SIG_SMALLER_FROM_LARGER)
-        bwd_ans = calculate_signature_answer(probe, SIG_BORROW_WITHOUT_DECREMENT)
+    """Evaluate a single question response against known probes using calibrated cognitive engine."""
+    result = diagnose_single_response(question_id, answer)
 
-        if answer == correct:
-            return {
-                "observations": f"Correct answer ({answer}) on problem {probe.minuend} - {probe.subtrahend}.",
-                "evidence": {"observed": answer, "expected": correct, "is_correct": True},
-                "alternatives": [],
-                "confidence": "HIGH",
-                "followUpQuestion": "Explain the step-by-step strategy you used to solve this problem.",
-                "suggestedActivity": "Advance to multi-digit subtraction or word problems with regrouping.",
-                "ruleId": "CORRECT",
-                "status": "Pass",
-            }
-        elif probe.is_regrouping and answer == sfl_ans:
-            return {
-                "observations": (
-                    f"Answer {answer} on {probe.minuend} - {probe.subtrahend} matches Smaller-From-Larger error: "
-                    f"student subtracted smaller digit from larger digit ({probe.subtrahend_ones} - {probe.minuend_ones}) "
-                    "without regrouping."
-                ),
-                "evidence": {
-                    "observed": answer,
-                    "expected": correct,
-                    "signature": SIG_SMALLER_FROM_LARGER,
-                    "predicted_signature_answer": sfl_ans,
-                },
-                "alternatives": [
-                    "Bottom-to-top reading reversal",
-                    "Arithmetic calculation slip",
-                ],
-                "confidence": "HIGH",
-                "followUpQuestion": f"Can you show how you solved the ones column in {probe.minuend} - {probe.subtrahend}?",
-                "suggestedActivity": "Tens-and-Ones Bundling Mat: unbundle 1 ten into 10 loose units before subtracting.",
-                "ruleId": SIG_SMALLER_FROM_LARGER,
-                "status": "Fail",
-            }
-        elif probe.is_regrouping and answer == bwd_ans:
-            return {
-                "observations": (
-                    f"Answer {answer} on {probe.minuend} - {probe.subtrahend} matches Borrow-Without-Decrement: "
-                    "student added 10 to the ones column, but forgot to decrement the tens column."
-                ),
-                "evidence": {
-                    "observed": answer,
-                    "expected": correct,
-                    "signature": SIG_BORROW_WITHOUT_DECREMENT,
-                    "predicted_signature_answer": bwd_ans,
-                },
-                "alternatives": [
-                    "Forgot to record crossing-out on tens",
-                    "Arithmetic recall slip in tens column",
-                ],
-                "confidence": "HIGH",
-                "followUpQuestion": "Look at the tens digit after borrowing. What happened to it?",
-                "suggestedActivity": "The Banker's Exchange: cross out and reduce the tens digit before taking 10 ones.",
-                "ruleId": SIG_BORROW_WITHOUT_DECREMENT,
-                "status": "Fail",
-            }
-        else:
-            return {
-                "observations": f"Answer {answer} on {probe.minuend} - {probe.subtrahend} is incorrect (expected {correct}).",
-                "evidence": {"observed": answer, "expected": correct, "is_correct": False},
-                "alternatives": ["Calculation slip", "Place value error"],
-                "confidence": "MEDIUM",
-                "followUpQuestion": "Walk me through how you subtracted each column.",
-                "suggestedActivity": "Column subtraction review using base-10 manipulatives.",
-                "ruleId": "GENERAL_SUBTRACTION_ERROR",
-                "status": "Fail",
-            }
+    # Enrich with textbook scaffolding if applicable
+    details = ncert_probe_details.get(question_id)
+    if details:
+        result["chapter"] = details.get("chapter", "NCERT Class 3")
+        result["context"] = details.get("context", "")
+        result["page"] = details.get("page", 1)
+        result["dienesBlocksScaffolding"] = details.get("dienes_blocks_scaffolding", "")
+        result["numberLineJumps"] = details.get("number_line_jumps", [])
 
-    # If legacy or custom question (e.g. 42 - 15 = 27)
-    if answer == 27:
-        return {
-            "observations": "Answer 27 is correct for 42 - 15.",
-            "evidence": {"observed": answer, "expected": 27, "is_correct": True},
-            "alternatives": [],
-            "confidence": "HIGH",
-            "followUpQuestion": "How did you regroup the 40 into 30 + 10?",
-            "suggestedActivity": "Advance to 3-digit subtraction.",
-            "ruleId": "CORRECT",
-            "status": "Pass",
-        }
-    else:
-        return {
-            "observations": f"Answer {answer} for 42 - 15 indicates a borrowing/regrouping misconception.",
-            "evidence": {"observed": answer, "expected": 27, "is_correct": False},
-            "alternatives": ["Borrowing error", "Calculation slip"],
-            "confidence": "HIGH",
-            "followUpQuestion": "Remember to borrow 1 ten from 40 to make 12 before subtracting 5.",
-            "suggestedActivity": "Use 10 physical sticks to explain tens-to-ones regrouping.",
-            "ruleId": "BORROWING_ERROR",
-            "status": "Fail",
-        }
+    return result
 
 
 def format_full_diagnosis(engine_result: dict) -> dict:
@@ -211,9 +183,13 @@ def format_full_diagnosis(engine_result: dict) -> dict:
     activity = guidance.get("suggested_hands_on_activity") or "Use base-10 blocks to demonstrate regrouping."
     alternatives = misconception.get("alternative_explanations") or ["Calculation slip", "Guessing"]
 
+    evidence_dict = pattern if pattern else {"summary": engine_result.get("summary")}
+    if "cognitive_skill_mastery" in engine_result:
+        evidence_dict["cognitive_skill_mastery"] = engine_result["cognitive_skill_mastery"]
+
     return {
         "observations": engine_result.get("summary", "Diagnostic assessment completed."),
-        "evidence": pattern if pattern else {"summary": engine_result.get("summary")},
+        "evidence": evidence_dict,
         "alternatives": alternatives,
         "confidence": confidence,
         "followUpQuestion": follow_up,
@@ -221,6 +197,7 @@ def format_full_diagnosis(engine_result: dict) -> dict:
         "ruleId": rule_id,
         "raw_engine_result": engine_result,
         "status": "Pass" if engine_result.get("all_correct") else "Fail",
+        "cognitive_skill_mastery": engine_result.get("cognitive_skill_mastery", {}),
     }
 
 
@@ -241,16 +218,66 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/health" or self.path == "/":
             self._set_headers(200)
+            model = get_calibrated_model()
             payload = {
                 "ok": True,
                 "service": "math-diagnostic-ml",
-                "engine_version": "0.1.0",
+                "engine_version": "0.3.0",
+                "model_version": model.get("model_metadata", {}).get("model_version", "2.0.0"),
+                "curriculum": "NCERT Class 3 Mathematics (Maths Mela)",
+                "chapters": [
+                    "Chapter 1: What's in a Name?",
+                    "Chapter 2: Toy Joy",
+                    "Chapter 3: Double Century",
+                    "Chapter 4: Vacation with My Nani Maa",
+                    "Chapter 5: Fun with Shapes",
+                    "Chapter 6: House of Hundreds - I",
+                    "Chapter 7: Raksha Bandhan",
+                    "Chapter 8: Fair Share",
+                    "Chapter 9: House of Hundreds - II",
+                    "Chapter 10: Fun at Class Party!",
+                    "Chapter 11: Filling and Lifting",
+                    "Chapter 12: Give and Take",
+                    "Chapter 13: Time Goes On",
+                    "Chapter 14: The Surajkund Fair",
+                ],
                 "approved_probes": list(APPROVED_PROBES.keys()),
+                "textbook_probes": list(TEXTBOOK_PROBES.keys()),
+                "foundation_probes": list(FOUNDATION_PROBES.keys()),
+                "ncert_ch03_ch04_probes": list(CH03_CH04_PROBES.keys()),
+                "ncert_ch05_ch06_probes": list(CH05_CH06_PROBES.keys()),
+                "ncert_ch07_ch08_probes": list(CH07_CH08_PROBES.keys()),
+                "ncert_ch09_ch10_probes": list(CH09_CH10_PROBES.keys()),
+                "ncert_ch11_ch13_ch14_probes": list(CH11_CH13_CH14_PROBES.keys()),
+                "total_probes": len(ALL_PROBES),
+                "model_connected": bool(model),
+                "total_calibrated_items": len(model.get("calibrated_items", {})),
+                "total_latent_skills": len(model.get("latent_cognitive_skills", [])),
+                "total_misconception_signatures": len(model.get("pedagogical_catalog", {})),
+                "calibration_metrics": model.get("calibration_metrics", {}),
+            }
+            self.wfile.write(json.dumps(payload).encode("utf-8"))
+        elif self.path == "/model":
+            self._set_headers(200)
+            model = get_calibrated_model()
+            payload = {
+                "ok": True,
+                "model_metadata": model.get("model_metadata", {}),
+                "latent_cognitive_skills": model.get("latent_cognitive_skills", []),
+                "calibration_metrics": model.get("calibration_metrics", {}),
+                "priors": model.get("priors", {}),
+                "total_items": len(model.get("calibrated_items", {})),
+                "total_signatures": len(model.get("pedagogical_catalog", {})),
             }
             self.wfile.write(json.dumps(payload).encode("utf-8"))
         elif self.path == "/probes":
             self._set_headers(200)
-            payload = {"ok": True, "probes": PROBE_METADATA}
+            payload = {
+                "ok": True,
+                "curriculum": "NCERT Class 3 Mathematics (Maths Mela)",
+                "total_probes": len(COMBINED_PROBE_METADATA),
+                "probes": COMBINED_PROBE_METADATA,
+            }
             self.wfile.write(json.dumps(payload).encode("utf-8"))
         else:
             self._set_headers(404)
@@ -278,10 +305,19 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
                     response_payload = format_full_diagnosis(engine_result)
                 else:
                     # Single answer or partial assessment
-                    qid = str(data.get("questionId") or data.get("probe_id") or "probe_01")
+                    qid = str(data.get("questionId") or data.get("probe_id") or "")
                     raw_ans = data.get("answer")
                     if raw_ans is None:
-                        raw_ans = data.get("selectedAnswer", 0)
+                        raw_ans = data.get("selectedAnswer")
+
+                    if not qid and len(probe_dict) == 1:
+                        qid, raw_ans = next(iter(probe_dict.items()))
+                    elif not qid:
+                        qid = "probe_01"
+
+                    if raw_ans is None:
+                        raw_ans = 0
+
                     try:
                         ans = int(raw_ans)
                     except (ValueError, TypeError):
@@ -293,6 +329,8 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps(response_payload).encode("utf-8"))
 
             except Exception as exc:
+                import traceback
+                traceback.print_exc()
                 self._set_headers(500)
                 err_payload = {
                     "error": str(exc),

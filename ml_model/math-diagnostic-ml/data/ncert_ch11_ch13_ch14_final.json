@@ -1,0 +1,1013 @@
+{
+  "curriculum": "NCERT Class 3 Mathematics",
+  "textbook": "Maths Mela (First Edition 2024 / Reprint 2026-27)",
+  "chapters": [
+    "Chapter 11: Filling and Lifting (pp. 139-149)",
+    "Chapter 13: Time Goes On (pp. 165-176)",
+    "Chapter 14: The Surajkund Fair (pp. 177-192, Material Sheets pp. 193-208)"
+  ],
+  "learning_outcomes": [
+    "M3.6a: Compares and measures capacity using non-standard units (glasses, bowls, jugs) and the standard unit Litre (1 L)",
+    "M3.6b: Discovers fractional litre subdivisions: 2 half-litres = 1 litre, 4 quarter-litres = 1 litre",
+    "M3.6c: Compares weights using pan-balance and standard unit Kilogram (1 kg salt packet, 1/2 kg daal, 1/4 kg tea)",
+    "M3.6d: Applies deductive logic to balance puzzles (identifying heavy ball in 1 weighing)",
+    "M3.7a: Reads calendars, calculates intervals and vacation reopenings, and knows 52 weeks in a standard year",
+    "M3.7b: Distinguishes fixed-date solar festivals from lunar calendar festivals",
+    "M3.7c: Solves multi-generational age problems and interprets birth certificates (age, elapsed days)",
+    "M3.7d: Reads analog clocks to the quarter-hour (quarter past, half past) and measures activity durations in minutes/hours/months",
+    "M3.8a: Identifies bilateral symmetry in malas, rangolis (kolam), masks, and mirror reflections",
+    "M3.8b: Understands tiling (tessellation) of surfaces with no gaps and no overlaps",
+    "M3.8c: Interprets spatial directional maps with legends to navigate real-world spaces",
+    "M3.8d: Deconstructs 3D solids into their 2D nets (Cube, Cuboid, Cylinder, Cone)"
+  ],
+  "probes": [
+    {
+      "id": "ncert_ch11_juice_glass_size_invariance",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 139,
+      "domain": "CAPACITY_AND_VOLUME",
+      "context": "At Shambhu's sugarcane juice stall, the poster says: 'Drink 6 glasses of juice and get your money back.' Chintu says he can drink 6 small glasses, but not 6 big glasses.",
+      "prompt": "Why can Chintu drink 6 small glasses of juice, but NOT 6 big glasses?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "6 glasses is always the exact same amount of juice regardless of glass size",
+        "Bigger glasses hold more juice, so 6 big glasses is a much larger total volume",
+        "Smaller glasses take longer to drink"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "CAPACITY_UNIT_SIZE_NEGLECT",
+          "explanation": "Focused only on the count '6' and ignored that volume depends on the capacity of each container.",
+          "teacherInquiry": "If you drink 6 big bottles of water, is that the same as 6 small cups? Container size determines total liquid!",
+          "activity": "NCERT p. 139 Sugarcane Juice: Pour 6 small glasses into a jug, then compare with 6 large mugs.",
+          "studentHint": "Big glasses hold way more juice inside! 6 big glasses is too much to drink!"
+        },
+        "3": {
+          "signature": "IRRELEVANT_PROCEDURAL_ATTRIBUTE",
+          "explanation": "Focused on drinking speed rather than volume capacity.",
+          "teacherInquiry": "Is it about how fast he drinks or how full his stomach gets?",
+          "activity": "Discuss stomach capacity vs glass volume.",
+          "studentHint": "It's about the amount of juice: big glasses hold a lot more!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_glass_shape_conservation_milk",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 140,
+      "domain": "CAPACITY_AND_VOLUME",
+      "context": "Nita, Monu, and Ritu receive milk in 3 differently shaped glasses (tall/narrow, short/wide, medium). Ritu's sister pours each into identical same-sized glasses to see who drank the most.",
+      "prompt": "Why does pouring the milk into identical same-sized glasses show who drank the most milk?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "Identical glasses have the same width, so liquid height directly reveals the true volume",
+        "A tall glass always holds more milk than a wide glass",
+        "Pouring milk into another glass makes the milk increase in quantity"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "HEIGHT_ONLY_VOLUME_BIAS",
+          "explanation": "Judged volume purely by liquid column height, ignoring container width.",
+          "teacherInquiry": "Can a short wide bowl hold more than a tall thin test tube? Pour them into identical cups to check!",
+          "activity": "NCERT p. 140 Water Pouring: Pour water from a tall narrow glass and a short wide glass into two identical glasses.",
+          "studentHint": "Tall glasses can trick your eyes! Using same-sized glasses shows the real amount!"
+        },
+        "3": {
+          "signature": "CONSERVATION_OF_VOLUME_VIOLATION",
+          "explanation": "Believed transferring liquid to another container changes its quantity.",
+          "teacherInquiry": "Did any milk spill or get added? The amount of milk stays the exact same!",
+          "activity": "Pour water back and forth between cups.",
+          "studentHint": "Pouring doesn't add any milk! The quantity stays exactly the same!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_jug_glasses_lemonade_multiplication",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 142,
+      "domain": "CAPACITY_AND_VOLUME",
+      "context": "At the school lemonade stall on page 142, 1 jug fills exactly 5 glasses of lemonade.",
+      "prompt": "How many glasses can be filled with 3 jugs of lemonade?",
+      "correctAnswer": 15,
+      "options": [15, 8, 2, 12],
+      "distractors": {
+        "8": {
+          "signature": "ADDITION_INSTEAD_OF_MULTIPLICATION",
+          "explanation": "Added 3 + 5 = 8 instead of multiplying 3 groups of 5.",
+          "teacherInquiry": "Each jug fills 5 glasses. Jug 1 has 5, Jug 2 has 5, Jug 3 has 5. 5 + 5 + 5 = 15.",
+          "activity": "NCERT p. 142 Lemonade Stall: Draw 3 jugs with 5 glasses next to each.",
+          "studentHint": "3 jugs of 5 glasses: 5 + 5 + 5 = 15 glasses!"
+        },
+        "2": {
+          "signature": "SUBTRACTION_INSTEAD_OF_MULTIPLICATION",
+          "explanation": "Subtracted 5 - 3 = 2.",
+          "teacherInquiry": "Are you taking jugs away or serving lemonade from all 3 jugs?",
+          "activity": "Count total glasses from all jugs.",
+          "studentHint": "More jugs mean MORE glasses! 3 times 5 = 15 glasses!"
+        },
+        "12": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Arithmetic calculation error in 3 x 5.",
+          "teacherInquiry": "Count by fives three times: 5, 10, 15.",
+          "activity": "Skip count by 5s.",
+          "studentHint": "Count by 5s: 5, 10, 15 glasses!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_measuring_bottle_1_litre_benchmark",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 143,
+      "domain": "CAPACITY_AND_VOLUME",
+      "context": "Nita has a standard measuring bottle that holds exactly 1 litre of water.",
+      "prompt": "Which of these household containers holds MORE than 1 litre of water?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "A bathroom bathing bucket",
+        "A small teacup",
+        "A medicine dropper",
+        "A soup spoon"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Underestimated 1 litre, thinking a teacup holds more than 1 litre.",
+          "teacherInquiry": "Pour 1 litre of water into cups. A 1-litre bottle fills about 4 to 5 teacups! So a teacup is much less than 1 litre.",
+          "activity": "NCERT p. 143 1-Litre Bottle Benchmark: Fill teacup from 1 L bottle.",
+          "studentHint": "1 litre is a big bottle! A bucket holds 10 to 15 litres, way MORE than 1 litre!"
+        },
+        "3": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Selected a dropper.",
+          "teacherInquiry": "A dropper holds only tiny drops of water.",
+          "activity": "Compare dropper with 1 L bottle.",
+          "studentHint": "A dropper holds only drops! A bucket holds more than 1 litre!"
+        },
+        "4": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Selected a spoon.",
+          "teacherInquiry": "A spoon holds less than 15 ml, much less than 1 litre.",
+          "activity": "Count spoons in 1 litre.",
+          "studentHint": "A spoon is tiny! A bucket holds more than 1 litre!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_quarter_litre_glasses_in_one_litre",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 144,
+      "domain": "CAPACITY_AND_VOLUME",
+      "context": "In the classroom activity on page 144, children find that 1 glass holds a quarter of a litre (1/4 litre).",
+      "prompt": "How many quarter-litre glasses of water are needed to fill a 1-litre bottle?",
+      "correctAnswer": 4,
+      "options": [4, 2, 1, 8],
+      "distractors": {
+        "2": {
+          "signature": "HALF_QUARTER_CAPACITY_CONFUSION",
+          "explanation": "Confused quarter litre with half litre (2 half-litres make 1 L, but 4 quarter-litres make 1 L).",
+          "teacherInquiry": "A quarter is 1 out of 4 parts. How many fourths make a whole litre? 4 quarters!",
+          "activity": "NCERT p. 144 Teacher's Note: Pour four 1/4 L glasses into a 1 L container.",
+          "studentHint": "Quarters mean FOUR parts! You need 4 quarter-litre glasses to fill 1 litre!"
+        },
+        "1": {
+          "signature": "SINGLE_UNIT_CONFUSION",
+          "explanation": "Thought 1 glass equals 1 litre.",
+          "teacherInquiry": "The glass is only a quarter litre. 1 glass leaves the bottle 3/4 empty.",
+          "activity": "Pour 1 glass into 1 L bottle.",
+          "studentHint": "1 glass is only a quarter! You need 4 of them!"
+        },
+        "8": {
+          "signature": "DOUBLE_COUNT_OVERSHOOT",
+          "explanation": "Overmultiplied by 2.",
+          "teacherInquiry": "4 glasses fill 1 litre. 8 glasses would fill 2 litres!",
+          "activity": "Count 4 quarters = 1 whole.",
+          "studentHint": "4 quarters make 1 whole litre!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_heavier_or_lighter_pan_balance_tilt",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 145,
+      "domain": "WEIGHT_AND_MASS",
+      "context": "Chintu holds 3 heavy textbooks in his left hand and a light pencil box in his right hand for 30 seconds.",
+      "prompt": "Why does Chintu's left hand go down lower than his right hand?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "The 3 textbooks are heavier, so gravity pulls the heavier side down",
+        "The pencil box is heavier, so it pushes the textbooks down",
+        "Lighter objects always pull hands down lower"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "PAN_BALANCE_TILT_INVERSION",
+          "explanation": "Thought the pencil box is heavier than 3 textbooks.",
+          "teacherInquiry": "Which object makes your arm feel tired: 3 thick books or 1 light plastic pencil box? 3 books are much heavier!",
+          "activity": "NCERT p. 145 Heavy or Light: Hold books and pencil box in both hands.",
+          "studentHint": "Heavy things pull your hand DOWN! The 3 books are heavier!"
+        },
+        "3": {
+          "signature": "PAN_BALANCE_TILT_INVERSION",
+          "explanation": "Confused the physics of a balance beam (thought lighter side goes down).",
+          "teacherInquiry": "On a seesaw, which side goes down? The heavier child goes down!",
+          "activity": "Demonstrate with a toy pan balance.",
+          "studentHint": "Heavier things go DOWN, lighter things go UP!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_salt_packet_1_kg_benchmark",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 147,
+      "domain": "WEIGHT_AND_MASS",
+      "context": "On page 147, children hold a standard 1-kilogram (1 kg) salt packet to feel how heavy 1 kg is.",
+      "prompt": "Which of these objects is likely to be LESS than 1 kilogram?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "A single wooden pencil",
+        "A heavy wooden dining table",
+        "A large watermelon",
+        "A school bag full of 10 textbooks"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Thought a large dining table weighs less than a 1 kg salt packet.",
+          "teacherInquiry": "Can you easily lift a 1 kg salt packet with one hand? Yes. Can you lift a dining table with one hand? No, a table is 20 kg or more!",
+          "activity": "NCERT p. 147 Weight Hunt: Compare objects against 1 kg salt packet.",
+          "studentHint": "A table is very heavy! A pencil is tiny and weighs much LESS than 1 kg!"
+        },
+        "3": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Selected a watermelon (typically 2 to 5 kg).",
+          "teacherInquiry": "A watermelon weighs 2 to 5 kg, more than 1 kg.",
+          "activity": "Weigh watermelon on scale.",
+          "studentHint": "Watermelons are heavy! A pencil weighs much less than 1 kg!"
+        },
+        "4": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Selected a full school bag (typically 3 to 6 kg).",
+          "teacherInquiry": "A bag with 10 books weighs several kilograms.",
+          "activity": "Weigh school bag.",
+          "studentHint": "A bag with 10 books is heavier than 1 kg! A pencil is less than 1 kg!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_daal_packets_half_kg_balance",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 148,
+      "domain": "WEIGHT_AND_MASS",
+      "context": "On a pan balance (page 148), 2 identical daal packets on the left pan balance exactly with a 1 kg salt packet on the right pan.",
+      "prompt": "What is the weight of EACH daal packet?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "A half kilogram (1/2 kg)",
+        "One kilogram (1 kg)",
+        "A quarter kilogram (1/4 kg)"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "TOTAL_EQUAL_PART_CONFUSION",
+          "explanation": "Thought each packet weighs 1 kg (which would total 2 kg on the left pan).",
+          "teacherInquiry": "If each packet was 1 kg, two packets would be 1 + 1 = 2 kg. But the right pan has only 1 kg! 1 kg divided by 2 is half a kg.",
+          "activity": "NCERT p. 148 Balance Daal: Place two 500 g packets against 1 kg.",
+          "studentHint": "Two packets together make 1 kg, so each packet is a HALF kilogram!"
+        },
+        "3": {
+          "signature": "HALF_QUARTER_CAPACITY_CONFUSION",
+          "explanation": "Confused half kilogram with quarter kilogram (two quarter-kg packets make only half a kg).",
+          "teacherInquiry": "Two quarter kilograms make half a kg. You need two HALF kilograms to make 1 kg!",
+          "activity": "Check 1/2 + 1/2 = 1.",
+          "studentHint": "Half + Half = 1 Whole! Each daal packet is half a kilogram!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_tea_packets_quarter_kg_balance",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 148,
+      "domain": "WEIGHT_AND_MASS",
+      "context": "On page 148, 4 identical tea packets on the left pan balance exactly with a 1 kg salt packet on the right pan.",
+      "prompt": "What is the weight of EACH tea packet?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "A half kilogram",
+        "A quarter kilogram (1/4 kg)",
+        "One kilogram"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "HALF_QUARTER_CAPACITY_CONFUSION",
+          "explanation": "Confused quarter kilogram with half kilogram.",
+          "teacherInquiry": "If each packet was half kg, 4 packets would be 1/2 + 1/2 + 1/2 + 1/2 = 2 kg! 1 kg split into 4 equal packets is a quarter kg.",
+          "activity": "NCERT p. 148 Tea Packets: Balance 4 quarter kg packets against 1 kg.",
+          "studentHint": "4 equal parts make 1 kg: each packet is a QUARTER kilogram!"
+        },
+        "3": {
+          "signature": "TOTAL_EQUAL_PART_CONFUSION",
+          "explanation": "Assumed each packet is 1 kg.",
+          "teacherInquiry": "4 packets of 1 kg would be 4 kg! The total is 1 kg.",
+          "activity": "Divide 1 kg by 4.",
+          "studentHint": "1 kg shared into 4 packets is a quarter kg each!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch11_tricky_balls_one_weighing_puzzle",
+      "chapter": "Chapter 11: Filling and Lifting",
+      "page": 149,
+      "domain": "WEIGHT_AND_MASS",
+      "context": "Montu poses a puzzle on page 149: 3 balls look identical in size and appearance. 1 ball is heavier and 2 balls are equal in weight. You have only a pan balance and no weights.",
+      "prompt": "How can you identify the heavy ball using the pan balance only ONE time?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "Put 1 ball on the left pan and 1 ball on the right pan; if one tilts down it is heavy, if balanced the 3rd unweighed ball is heavy",
+        "Put all 3 balls on one pan together",
+        "It is impossible in 1 weighing; you must always weigh 3 times"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "WEIGH_ALL_TOGETHER_ERROR",
+          "explanation": "Weighing all 3 balls together does not compare any ball against another.",
+          "teacherInquiry": "If all 3 balls sit on one pan, how will you know which one was heavy? You must compare them!",
+          "activity": "NCERT p. 149 Tricky Balls Puzzle: Test the logic with 3 balls on a balance.",
+          "studentHint": "Put 1 ball on each pan! If one goes down, that's it! If they balance, the ball in your hand is the heavy one!"
+        },
+        "3": {
+          "signature": "DEDUCTIVE_REASONING_DEFICIT",
+          "explanation": "Failed to deduce that a balanced state proves the unweighed ball is the heavy one.",
+          "teacherInquiry": "If ball A and ball B balance equally, could either of them be the heavy ball? No! So ball C MUST be the heavy ball without weighing it!",
+          "activity": "Follow deductive branch: Balanced -> 3rd ball.",
+          "studentHint": "If the two pans balance, the 3rd ball left on the table is the heavy one! Exactly 1 weighing!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_calendar_july_interval_calculation",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 166,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "Question 4 on page 166: A school closes for vacation on July 7 for 15 days.",
+      "prompt": "On which date will the school reopen after the 15-day vacation?",
+      "correctAnswer": 23,
+      "options": [23, 22, 21, 15],
+      "distractors": {
+        "22": {
+          "signature": "CALENDAR_REOPEN_OFFSET_ERROR",
+          "explanation": "Computed 7 + 15 = 22 as the reopen date, forgetting that the 22nd is the last day of vacation, so the school reopens on July 23.",
+          "teacherInquiry": "If the school is closed FOR 15 days starting July 7: closed on 7, 8, ... up to 21 (or 7+15=22). The school reopens the day AFTER the vacation ends: July 23!",
+          "activity": "NCERT p. 166 July Calendar: Cross out 15 closed days starting July 7, then circle the reopen day.",
+          "studentHint": "July 22 is the last day of holidays! The school opens the NEXT day: July 23!"
+        },
+        "21": {
+          "signature": "OFF_BY_ONE_DAY_ERROR",
+          "explanation": "Subtracted an extra day.",
+          "teacherInquiry": "Count 15 full days of vacation on the calendar grid.",
+          "activity": "Count 15 days forward.",
+          "studentHint": "Count 15 holiday days from July 7: school reopens on July 23!"
+        },
+        "15": {
+          "signature": "OPERAND_DEFAULT",
+          "explanation": "Repeated the number 15 from the problem prompt.",
+          "teacherInquiry": "15 is the number of days of holiday, not the date of reopening.",
+          "activity": "Add vacation duration to start date.",
+          "studentHint": "Add the 15 days to July 7: reopens on July 23!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_calendar_days_in_a_year_and_weeks",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 167,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "On page 167: 'Hetal says there are 53 weeks in a year. Is she right? If not, how many weeks did you find in a year?'",
+      "prompt": "How many weeks are there in a standard year of 365 days?",
+      "correctAnswer": 52,
+      "options": [52, 53, 50, 48],
+      "distractors": {
+        "53": {
+          "signature": "CALENDAR_WEEKS_DEFAULT",
+          "explanation": "Agreed with Hetal's incorrect statement of 53 weeks.",
+          "teacherInquiry": "Multiply 52 weeks x 7 days: 364 days! 53 weeks would be 53 x 7 = 371 days (more than 365 days!). So there are 52 weeks and 1 day.",
+          "activity": "NCERT p. 167 Calendar Exploration: Calculate 52 x 7 = 364.",
+          "studentHint": "52 x 7 = 364 days! There are 52 weeks in a year (not 53)!"
+        },
+        "50": {
+          "signature": "ROUND_NUMBER_ESTIMATION_BIAS",
+          "explanation": "Rounded to 50 weeks (50 x 7 = 350 days, missing 15 days).",
+          "teacherInquiry": "50 x 7 = 350 days. A year has 365 days, so 2 more weeks fit: 52 weeks.",
+          "activity": "Divide 365 by 7.",
+          "studentHint": "365 ÷ 7 = 52 weeks and 1 extra day!"
+        },
+        "48": {
+          "signature": "MONTH_WEEKS_APPROXIMATION_ERROR",
+          "explanation": "Computed 12 months x 4 weeks = 48 weeks, ignoring that most months have more than 28 days.",
+          "teacherInquiry": "Only February has 28 days (4 weeks). Other months have 30 or 31 days (4 weeks + 2 or 3 days).",
+          "activity": "Count extra days across 12 months.",
+          "studentHint": "Months have extra days! 52 full weeks in a year!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_calendar_fixed_vs_changing_festivals",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 167,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "On page 167, children collect calendars for two consecutive years and circle festivals that fall on the exact same date each year.",
+      "prompt": "Which of these festivals falls on the exact same date every single year?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Independence Day (always 15 August)",
+        "Diwali (Deepawali)",
+        "Eid-al-Fitr",
+        "Ganesh Chaturthi"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "LUNAR_SOLAR_FESTIVAL_CONFUSION",
+          "explanation": "Thought Diwali has a fixed solar calendar date (it follows the Hindu lunar calendar and changes dates).",
+          "teacherInquiry": "Look at the date of Diwali last year and this year. Were they on the same date? No! But Independence Day is ALWAYS on August 15.",
+          "activity": "NCERT p. 167 Festival Table: Compare Diwali dates across two consecutive years.",
+          "studentHint": "Diwali changes dates every year! Independence Day is ALWAYS on August 15!"
+        },
+        "3": {
+          "signature": "LUNAR_SOLAR_FESTIVAL_CONFUSION",
+          "explanation": "Thought Eid has a fixed date (it follows the Islamic lunar calendar and shifts by ~11 days).",
+          "teacherInquiry": "Eid shifts earlier each year according to the moon.",
+          "activity": "Check Eid dates in two calendars.",
+          "studentHint": "Eid follows the moon and changes date! Independence Day is always August 15!"
+        },
+        "4": {
+          "signature": "LUNAR_SOLAR_FESTIVAL_CONFUSION",
+          "explanation": "Thought Ganesh Chaturthi has a fixed date.",
+          "teacherInquiry": "Ganesh Chaturthi changes date according to the lunar calendar.",
+          "activity": "Compare festival dates.",
+          "studentHint": "National days like August 15 never change date!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_age_fun_twice_and_10_years_older",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 168,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "Riddle on page 168: 'Hetal is twice as old as her brother. She is also 10 years older than her brother.'",
+      "prompt": "How old are Hetal and her brother?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Brother is 10 years old; Hetal is 20 years old",
+        "Brother is 5 years old; Hetal is 15 years old",
+        "Brother is 10 years old; Hetal is 12 years old",
+        "Brother is 20 years old; Hetal is 40 years old"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "ADDITION_ONLY_AGE_SLIP",
+          "explanation": "Matched '10 years older' (15 - 5 = 10) but failed 'twice as old' (15 is 3 times 5, not twice 5).",
+          "teacherInquiry": "Check both clues: 15 is 10 more than 5, but is 15 TWICE 5? 5 x 2 = 10, not 15!",
+          "activity": "NCERT p. 168 Age Fun: Test: Brother = 10 -> Twice = 20 -> 20 - 10 = 10 years older!",
+          "studentHint": "If brother is 10: twice his age is 20, and 20 is exactly 10 years older! 10 and 20!"
+        },
+        "3": {
+          "signature": "TWICE_CONFUSED_WITH_PLUS_TWO",
+          "explanation": "Confused 'twice' with 'plus 2' (10 + 2 = 12).",
+          "teacherInquiry": "Twice means MULTIPLY by 2, not add 2!",
+          "activity": "Review 'twice' = 2 times.",
+          "studentHint": "Twice means double! 10 doubled is 20!"
+        },
+        "4": {
+          "signature": "DIFFERENCE_CONSTRAINT_VIOLATION",
+          "explanation": "Brother 20 and Hetal 40 gives difference of 20 years, not 10 years.",
+          "teacherInquiry": "40 - 20 = 20 years older. The riddle says only 10 years older!",
+          "activity": "Check difference constraint.",
+          "studentHint": "40 - 20 = 20! It must be only 10 years older: Brother is 10, Hetal is 20!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_birth_certificate_age_calculation",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 169,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "On Bincy's birth certificate (page 169), her Date of Birth is 02/05/2015 (2 May 2015).",
+      "prompt": "How old will Bincy be on 2 May 2025?",
+      "correctAnswer": 10,
+      "options": [10, 11, 9, 20],
+      "distractors": {
+        "11": {
+          "signature": "OFF_BY_ONE_YEAR_ERROR",
+          "explanation": "Counted both endpoint years inclusive (2025 - 2015 + 1 = 11).",
+          "teacherInquiry": "Age is the elapsed years: 2025 minus 2015. 2025 - 2015 = 10 years.",
+          "activity": "NCERT p. 169 Birth Certificate Q2: Subtract birth year from target year.",
+          "studentHint": "2025 - 2015 = 10! Bincy will be exactly 10 years old!"
+        },
+        "9": {
+          "signature": "OFF_BY_ONE_YEAR_ERROR",
+          "explanation": "Subtracted 1 year prematurely.",
+          "teacherInquiry": "Since the date is May 2 and she was born on May 2, the full year has completed: exactly 10.",
+          "activity": "Check exact day and month match.",
+          "studentHint": "Her birthday is on May 2! On May 2, 2025 she completes 10 years!"
+        },
+        "20": {
+          "signature": "CENTURY_SUBTRACTION_ERROR",
+          "explanation": "Subtracted 2015 from 2035 instead of 2025.",
+          "teacherInquiry": "Check the year: 2025 - 2015 = 10.",
+          "activity": "Subtract 2025 - 2015.",
+          "studentHint": "2025 - 2015 = 10 years old!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_birth_certificate_issue_delay",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 169,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "On Bincy's birth certificate, Date of Birth is 02/05/2015 and Date of Making Certificate is 18/05/2015.",
+      "prompt": "After how many days of her birth was the certificate issued?",
+      "correctAnswer": 16,
+      "options": [16, 18, 20, 14],
+      "distractors": {
+        "18": {
+          "signature": "DATE_AS_DURATION_CONFUSION",
+          "explanation": "Reported the issue day (18) directly, forgetting to subtract the birth day (2).",
+          "teacherInquiry": "Was she born on day 0 or day 2? Day 2! How many days passed between day 2 and day 18? 18 - 2 = 16 days.",
+          "activity": "NCERT p. 169 Q6: Subtract birth date from certificate date: 18 - 2 = 16.",
+          "studentHint": "She was born on May 2! From May 2 to May 18 is 18 - 2 = 16 days!"
+        },
+        "20": {
+          "signature": "ADDITION_INSTEAD_OF_SUBTRACTION",
+          "explanation": "Added 18 + 2 = 20 instead of finding the difference.",
+          "teacherInquiry": "To find elapsed time between two dates, subtract: 18 - 2.",
+          "activity": "Count days on calendar between 2 and 18.",
+          "studentHint": "Find the difference between 2 and 18: 18 - 2 = 16 days!"
+        },
+        "14": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Calculation slip in 18 - 2.",
+          "teacherInquiry": "Check 18 - 2: 18 - 2 = 16.",
+          "activity": "Step back 2 from 18.",
+          "studentHint": "18 - 2 = 16 days!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_analog_clock_breakfast_duration",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 171,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "Hetal started her breakfast at 07:00 in the morning and finished at 07:15 in the morning.",
+      "prompt": "How many minutes did Hetal take to eat her breakfast?",
+      "correctAnswer": 15,
+      "options": [15, 7, 30, 45],
+      "distractors": {
+        "7": {
+          "signature": "HOUR_MINUTE_CONFUSION",
+          "explanation": "Reported the hour number (7) instead of the minutes elapsed.",
+          "teacherInquiry": "7 is the hour of the morning. Look at the minute hand: it moved from 12 to 3! How many minutes from 12 to 3? 15 minutes!",
+          "activity": "NCERT p. 171 Clock Face: Count 5, 10, 15 minutes as minute hand moves from 12 to 3.",
+          "studentHint": "The hour stayed 7! The minutes moved from 00 to 15: exactly 15 minutes!"
+        },
+        "30": {
+          "signature": "HALF_HOUR_DEFAULT",
+          "explanation": "Defaulted to half an hour.",
+          "teacherInquiry": "Did the minute hand reach 6? No, it stopped at 3 (15 minutes).",
+          "activity": "Observe minute hand at 3.",
+          "studentHint": "At 3, it is 15 minutes, not 30 minutes!"
+        },
+        "45": {
+          "signature": "COMPLEMENT_TO_HOUR_CONFUSION",
+          "explanation": "Calculated 60 - 15 = 45 minutes remaining in the hour.",
+          "teacherInquiry": "We want elapsed time from 7:00 to 7:15, which is 15 minutes.",
+          "activity": "Track start to finish time.",
+          "studentHint": "From 7:00 to 7:15 is 15 minutes!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_analog_clock_quarter_past_eight",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 171,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "Question 2(a) on page 171: 'Draw the hour hand and minute hand on the clock to show 8:15 or quarter past 8.'",
+      "prompt": "At 'quarter past 8' (8:15), where does the long MINUTE hand point?",
+      "correctAnswer": 3,
+      "options": [3, 4, 8, 15],
+      "distractors": {
+        "4": {
+          "signature": "QUARTER_POINTS_AT_FOUR_ERROR",
+          "explanation": "Associated the word 'quarter' with the numeral 4 on the clock face.",
+          "teacherInquiry": "A quarter of an hour is 60 / 4 = 15 minutes. On a clock, where is 15 minutes? At the number 3 (5 x 3 = 15)!",
+          "activity": "NCERT p. 171 Clock: Point minute hand to 3 for quarter past.",
+          "studentHint": "A quarter hour is 15 minutes! On the clock, 15 minutes is at 3 (5, 10, 15)!"
+        },
+        "8": {
+          "signature": "HOUR_MINUTE_HAND_INVERSION",
+          "explanation": "Confused the minute hand with the hour hand (hour hand is near 8).",
+          "teacherInquiry": "The hour hand points near 8. The MINUTE hand shows 15 minutes at 3.",
+          "activity": "Distinguish short hour hand from long minute hand.",
+          "studentHint": "8 is the hour! The long minute hand points at 3 for 15 minutes!"
+        },
+        "15": {
+          "signature": "DIGITAL_TIME_ON_ANALOG_CLOCK_ERROR",
+          "explanation": "Looked for numeral 15 on an analog clock dial with only numbers 1 to 12.",
+          "teacherInquiry": "An analog clock only has numbers 1 to 12. Each number is 5 minutes: 3 x 5 = 15.",
+          "activity": "Count by 5s around the clock face.",
+          "studentHint": "Clocks go 1 to 12! 15 minutes is at the number 3!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_duration_scale_sorting",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 173,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "On page 173, children sort activities into: Takes minutes, Takes hours, Takes days, Takes weeks, Takes months.",
+      "prompt": "Which of these events takes MONTHS to complete?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Changing from summer season to winter season",
+        "Taking a morning bath or shower",
+        "Stitching a school uniform shirt",
+        "A school lunch break"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "DURATION_SCALE_MISMATCH",
+          "explanation": "Selected an activity that takes minutes.",
+          "teacherInquiry": "Does a shower take months or about 10 minutes? Minutes!",
+          "activity": "NCERT p. 173 Duration Table: Place shower under 'Takes minutes'.",
+          "studentHint": "A shower takes only minutes! Changing seasons takes several MONTHS!"
+        },
+        "3": {
+          "signature": "DURATION_SCALE_MISMATCH",
+          "explanation": "Selected stitching a shirt (takes hours).",
+          "teacherInquiry": "A tailor stitches a shirt in a few hours.",
+          "activity": "Place shirt under 'Takes hours'.",
+          "studentHint": "A tailor stitches a shirt in hours! Summer to winter takes months!"
+        },
+        "4": {
+          "signature": "DURATION_SCALE_MISMATCH",
+          "explanation": "Selected lunch break (takes 30 minutes).",
+          "teacherInquiry": "Lunch break is 30 minutes.",
+          "activity": "Check school timetable.",
+          "studentHint": "Lunch is 30 minutes! Season change takes months!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch13_analog_clock_minute_hand_five_minute_jump",
+      "chapter": "Chapter 13: Time Goes On",
+      "page": 175,
+      "domain": "TIME_AND_CALENDAR",
+      "context": "Page 175: Looking at an analog clock face as the minute hand moves from one number to the very next number (e.g. from 12 to 1, or 1 to 2).",
+      "prompt": "How many minutes pass when the minute hand moves from one number to the next number?",
+      "correctAnswer": 5,
+      "options": [5, 1, 10, 15],
+      "distractors": {
+        "1": {
+          "signature": "ONE_NUMBER_ONE_MINUTE_ERROR",
+          "explanation": "Assumed moving 1 number means 1 minute (confusing minute markings with major hour numerals).",
+          "teacherInquiry": "Look at the tiny marks between 12 and 1: 1, 2, 3, 4, 5 tiny spaces! So each jump between numbers is 5 minutes.",
+          "activity": "NCERT p. 175 Clock Steps: Count the 5 individual minute ticks between 12 and 1.",
+          "studentHint": "Each big number on the clock is 5 minutes! 12 to 1 is 5 minutes!"
+        },
+        "10": {
+          "signature": "DECADE_MINUTE_OVERESTIMATION",
+          "explanation": "Overestimated jump as 10 minutes.",
+          "teacherInquiry": "Count by fives: 1 is 5, 2 is 10. So moving 1 step is 5 minutes.",
+          "activity": "Count by 5s around the dial.",
+          "studentHint": "Moving 1 number is 5 minutes! Moving 2 numbers is 10 minutes!"
+        },
+        "15": {
+          "signature": "QUARTER_HOUR_DEFAULT",
+          "explanation": "Confused 1 number jump with a quarter turn (which is 3 numbers = 15 mins).",
+          "teacherInquiry": "15 minutes takes 3 numbers (12 to 3). Moving just 1 number is 5 minutes.",
+          "activity": "Compare 1 number (5 min) vs 3 numbers (15 min).",
+          "studentHint": "1 number = 5 minutes! 3 numbers = 15 minutes!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_mala_bilateral_symmetry",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 179,
+      "domain": "SYMMETRY_AND_REFLECTIONS",
+      "context": "At the Surajkund Fair, Soni and Avi make malas with 8 beads. Soni says: 'The two halves of my mala are exactly the same. My mala is symmetrical.'",
+      "prompt": "When is a bead mala symmetrical across its central axis?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "When the left half and right half have matching bead colors in mirrored order",
+        "Whenever it has 4 beads of one color and 4 of another, regardless of order",
+        "Only when all 8 beads are the exact same color"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "COLOR_COUNT_WITHOUT_ORDER_SYMMETRY",
+          "explanation": "Thought having equal color counts makes a necklace symmetrical even if the sequence is asymmetric (e.g. Avi's mala on p. 179).",
+          "teacherInquiry": "Look at Avi's mala on page 179: it has 4 yellow and 4 blue beads, but one side has blue first and other side has yellow first. Avi says: 'My mala is NOT symmetrical!'",
+          "activity": "NCERT p. 179 Symmetry in Malas: Compare Soni's mirrored mala with Avi's unmirrored mala.",
+          "studentHint": "The beads must MIRROR each other! Both sides must match in reverse order!"
+        },
+        "3": {
+          "signature": "HOMOGENEOUS_COLOR_BIAS",
+          "explanation": "Believed symmetry requires monochrome identical items.",
+          "teacherInquiry": "Can you have red-blue-blue-red? Yes! That has two colors and is completely symmetrical.",
+          "activity": "Build a two-color symmetrical pattern.",
+          "studentHint": "You can use two colors as long as left and right mirror each other!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_kolam_line_of_symmetry",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 180,
+      "domain": "SYMMETRY_AND_REFLECTIONS",
+      "context": "Amma makes a traditional Tamil Nadu kolam (rangoli) on page 180. Soni traces it on paper and folds along the middle line.",
+      "prompt": "What happens when you fold a symmetrical rangoli along its line of symmetry?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "One half of the rangoli lies exactly on top of the other half with no overlapping gaps",
+        "The lines cross each other and stick out on both sides",
+        "The pattern disappears completely"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "ASYMMETRIC_FOLD_MISCONCEPTION",
+          "explanation": "Believed folding a symmetrical shape produces mismatching overhangs.",
+          "teacherInquiry": "Fold a paper heart or butterfly in half. Do the wings match up completely? In symmetry, both halves superimpose perfectly!",
+          "activity": "NCERT p. 180 Fold Kolam: Fold tracing paper along the center line.",
+          "studentHint": "Both halves match up EXACTLY! Like folding butterfly wings!"
+        },
+        "3": {
+          "signature": "IRRELEVANT_PROCEDURAL_ATTRIBUTE",
+          "explanation": "Absurd distractor.",
+          "teacherInquiry": "The pattern is still visible on the folded paper.",
+          "activity": "Observe folded pattern.",
+          "studentHint": "Both sides match up perfectly!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_cat_mask_paper_folding_symmetry",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 182,
+      "domain": "SYMMETRY_AND_REFLECTIONS",
+      "context": "On page 182, Soni makes a cat mask by folding paper in half first. Avi tries making a mask and complains: 'Oh! I can only see with one eye. I wonder what's wrong?'",
+      "prompt": "Why did Avi's mask end up with only one eyehole?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "Avi's scissors were too small",
+        "Avi did not fold the paper along the middle line of symmetry before cutting the eye",
+        "Cats only have one eye"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "IRRELEVANT_PROCEDURAL_ATTRIBUTE",
+          "explanation": "Blamed the tool rather than the geometric symmetry principle.",
+          "teacherInquiry": "Look at step 1 on page 182: 'Fold the paper along the middle.' If you fold it in half, 1 cut makes TWO matching eyeholes! Avi cut flat paper without folding.",
+          "activity": "NCERT p. 182 Make Masks: Fold paper, cut 1 eye hole, unfold to see 2 symmetrical eyes.",
+          "studentHint": "Fold first! One cut through folded paper makes TWO matching eyes!"
+        },
+        "3": {
+          "signature": "ABSURD_DISTRACTOR",
+          "explanation": "Factually incorrect assertion.",
+          "teacherInquiry": "Cats have two eyes. Masks need two eyeholes.",
+          "activity": "Observe cat face symmetry.",
+          "studentHint": "You need 2 eyes! Folding the paper makes both eyes at once!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_mirror_game_counter_reflection",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 184,
+      "domain": "SYMMETRY_AND_REFLECTIONS",
+      "context": "In 'The Mirror Game' on page 184, Soni places a counter in row 2, 1st column away from the mirror line.",
+      "prompt": "Where must Avi place his counter so it is the true MIRROR IMAGE of Soni's counter?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "In row 2, 1st column away from the mirror line on Avi's side (same distance from the mirror line)",
+        "In row 2, 4th column at the far outside edge",
+        "In row 4, 1st column at the bottom"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "TRANSLATION_INSTEAD_OF_REFLECTION",
+          "explanation": "Copied the absolute left-to-right position (translation) instead of reflecting across the mirror axis.",
+          "teacherInquiry": "Place a physical mirror on the line. When an object is close to the mirror, is its reflection close to the mirror or far away? Close to the mirror!",
+          "activity": "NCERT p. 184 Mirror Game: Place a pocket mirror on the dividing line.",
+          "studentHint": "In a mirror, close things look close! Place it in the 1st column next to the line!"
+        },
+        "3": {
+          "signature": "ROW_AXIS_INVERSION",
+          "explanation": "Changed the vertical row position.",
+          "teacherInquiry": "Does a vertical mirror move things up or down? No, rows stay the same!",
+          "activity": "Check row alignment across mirror line.",
+          "studentHint": "Keep the same row! Just mirror across the line!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_tessellation_tiling_without_gaps",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 186,
+      "domain": "TILING_AND_TESSELLATION",
+      "context": "On page 186, Dada ji's foot gets stuck in a gap between footpath stones. Children learn about 'Tiling the Paths'.",
+      "prompt": "What is the mathematical rule for tiling a surface properly with geometric shapes?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "The tiles must fit together with NO gaps and NO overlaps",
+        "The tiles must overlap on top of each other like stairs",
+        "The tiles must leave wide gaps between them so feet can fit"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "OVERLAP_PERMISSIBLE_MISCONCEPTION",
+          "explanation": "Thought tiling allows overlapping surfaces.",
+          "teacherInquiry": "If tiles overlap, the floor will be bumpy and people will trip! A tiled floor must be completely flat.",
+          "activity": "NCERT p. 186 Tiling Paths: Fit rangometry tiles flat on a sheet.",
+          "studentHint": "Tiles must fit smoothly together with NO gaps and NO overlaps!"
+        },
+        "3": {
+          "signature": "GAP_PERMISSIBLE_MISCONCEPTION",
+          "explanation": "Believed gaps are normal in tessellations.",
+          "teacherInquiry": "Dada ji tripped because of gaps! True tiling has zero gaps.",
+          "activity": "Look at honeycomb or floor tile grid.",
+          "studentHint": "No gaps allowed! Tiles must touch edge to edge!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_map_reading_chaupal_navigation",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 189,
+      "domain": "MAP_READING_AND_DIRECTIONS",
+      "context": "Soni and Avi are looking for their grandparents at the Chaupal on the Surajkund Fair map (page 189).",
+      "prompt": "How does the map legend help Soni and Avi locate the Chaupal?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "It shows a specific symbol/picture and tells what location that symbol represents",
+        "It tells you the exact time of day to visit",
+        "It counts the number of trees in the fair"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "MAP_LEGEND_PURPOSE_MISCONCEPTION",
+          "explanation": "Confused spatial symbols on a map with a time schedule.",
+          "teacherInquiry": "Look at the side box on page 189: the picture of a hut shows 'Handicraft stalls', the symbol 'P' shows 'Parking'. That is a map legend!",
+          "activity": "NCERT p. 189-190 Map Reading: Match map symbols to locations.",
+          "studentHint": "Map legends are key guides! They tell you what each picture symbol means!"
+        },
+        "3": {
+          "signature": "MAP_LEGEND_PURPOSE_MISCONCEPTION",
+          "explanation": "Confused map symbols with decoration counting.",
+          "teacherInquiry": "The legend explains buildings, stalls, and gates.",
+          "activity": "Locate Chaupal on map.",
+          "studentHint": "Symbols show locations like the Chaupal and ATM!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_net_of_a_cube_faces_count",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 197,
+      "domain": "NETS_OF_3D_SOLIDS",
+      "context": "On Learning Material Sheet page 197, children cut along the dotted lines of the 'Net of a Cube' and fold it into a 3D box.",
+      "prompt": "How many square faces are there in the flat 2D net of a cube?",
+      "correctAnswer": 6,
+      "options": [6, 4, 8, 12],
+      "distractors": {
+        "4": {
+          "signature": "OPEN_BOX_FACIAL_OMISSION",
+          "explanation": "Counted only the 4 side walls, omitting the top and bottom faces.",
+          "teacherInquiry": "Count every square on page 197: 1, 2, 3, 4 in a row, plus 1 on top and 1 on bottom. A cube has 6 faces!",
+          "activity": "NCERT p. 197 Cut and fold the Net of a Cube.",
+          "studentHint": "A cube has 6 faces: top, bottom, and 4 sides! 6 squares in all!"
+        },
+        "8": {
+          "signature": "CUBE_VERTICES_CONFUSION",
+          "explanation": "Confused the number of corners/vertices (8) with the number of flat faces (6).",
+          "teacherInquiry": "8 is the number of corners! The question asks: how many flat SQUARE faces?",
+          "activity": "Touch the 6 faces of a die.",
+          "studentHint": "8 corners, but only 6 square faces! 6 squares!"
+        },
+        "12": {
+          "signature": "CUBE_EDGES_CONFUSION",
+          "explanation": "Confused edges (12) with faces (6).",
+          "teacherInquiry": "12 is the number of straight edges.",
+          "activity": "Count squares in net.",
+          "studentHint": "A cube has 12 edges, but only 6 faces!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_net_of_a_cylinder_components",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 201,
+      "domain": "NETS_OF_3D_SOLIDS",
+      "context": "On Learning Material Sheet page 201, children examine the 'Net of a Cylinder'.",
+      "prompt": "Which flat 2D shapes combine to make the unfolding net of a closed cylinder?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "1 rectangle (curved body) and 2 circles (top and bottom bases)",
+        "2 rectangles and 1 circle",
+        "3 circles and 0 rectangles",
+        "1 triangle and 1 circle"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "CYLINDER_NET_INVERSION",
+          "explanation": "Confused the number of curved body rectangles with circular bases.",
+          "teacherInquiry": "When you unroll a can't curved label, what shape is it? A rectangle! Top and bottom are two round circles.",
+          "activity": "NCERT p. 201 Net of Cylinder: Unroll cylinder to see 1 rectangle and 2 circular lids.",
+          "studentHint": "Unrolling a cylinder gives 1 wide rectangle, plus 2 circles for the top and bottom!"
+        },
+        "3": {
+          "signature": "CYLINDER_NET_INVERSION",
+          "explanation": "Ignored the rectangular body that wraps around.",
+          "teacherInquiry": "What connects the circular ends? The curved tube unwraps into a rectangle.",
+          "activity": "Wrap paper rectangle around two coins.",
+          "studentHint": "The tube unfolds into a rectangle! 1 rectangle and 2 circles!"
+        },
+        "4": {
+          "signature": "CONE_CYLINDER_CONFUSION",
+          "explanation": "Confused cylinder with a cone net (cone has a circular base and a sector).",
+          "teacherInquiry": "A cone has a triangle-like sector. A cylinder has straight parallel sides (a rectangle).",
+          "activity": "Compare cone net (p. 203) with cylinder net (p. 201).",
+          "studentHint": "That's a cone! A cylinder has 1 rectangle and 2 circles!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_tangram_seven_pieces_composition",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 195,
+      "domain": "TILING_AND_TESSELLATION",
+      "context": "On Learning Material Sheet page 195, children use the 7-piece ancient Chinese Tangram puzzle.",
+      "prompt": "Can the 7 flat geometric pieces of a tangram be arranged to form one complete large square without gaps?",
+      "correctAnswer": 1,
+      "options": [1, 2],
+      "optionLabels": ["Yes", "No"],
+      "distractors": {
+        "2": {
+          "signature": "SHAPE_COMPOSABILITY_DENIAL",
+          "explanation": "Believed different shapes (triangles, square, parallelogram) cannot combine into a large square.",
+          "teacherInquiry": "Look at page 195: all 7 pieces fit inside the large outer square frame! Geometric pieces compose larger shapes.",
+          "activity": "NCERT p. 195 Tangram: Assemble the 7 pieces into a square.",
+          "studentHint": "Yes! All 7 tangram pieces fit together to make a large square!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch14_tit_for_tat_half_money_symmetry",
+      "chapter": "Chapter 14: The Surajkund Fair",
+      "page": 183,
+      "domain": "SYMMETRY_AND_REFLECTIONS",
+      "context": "A painter paints only half of Soni's face and asks for full ₹200 saying 'The other half is exactly the same, just put a mirror to see the full picture!' Soni hands him a ₹100 note.",
+      "prompt": "Why was Soni giving a ₹100 note and asking the painter to put a mirror next to it clever?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "A mirror reflects the ₹100 note so it looks like ₹200, matching the painter's half-painting trick",
+        "Soni did not have enough money in her purse",
+        "A ₹100 note is bigger than a ₹200 note"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "LITERAL_POVERTY_ASSUMPTION",
+          "explanation": "Interpreted the story as a money shortage rather than a mathematical symmetry riddle.",
+          "teacherInquiry": "Read the story: Soni laughs 'Ha, ha! Put a mirror next to the note to get the full money!' It was a mirror trick!",
+          "activity": "NCERT p. 183 Tit for Tat: Place mirror against a currency note to see two notes.",
+          "studentHint": "Soni used mirror symmetry! A mirror next to ₹100 makes it look like ₹200, just like the half-painting!"
+        },
+        "3": {
+          "signature": "ABSURD_DISTRACTOR",
+          "explanation": "Irrelevant size assertion.",
+          "teacherInquiry": "₹100 is half of ₹200.",
+          "activity": "Discuss 100 x 2 = 200.",
+          "studentHint": "100 doubled in the mirror is 200!"
+        }
+      }
+    }
+  ]
+}
+

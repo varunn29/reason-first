@@ -1,0 +1,509 @@
+{
+  "curriculum": "NCERT Class 3 Mathematics",
+  "textbook": "Maths Mela (First Edition 2024 / Reprint 2026-27)",
+  "chapter": "Chapter 12: Give and Take (pp. 150-164)",
+  "learning_outcomes": [
+    "M3.1: Subtracts two-digit numbers with regrouping in context of real-world problems",
+    "M3.2: Solves three-digit subtraction with regrouping at ones and tens place",
+    "M3.3: Diagnoses specific systematic error rules in subtraction algorithms"
+  ],
+  "probes": [
+    {
+      "id": "ncert_ch12_saplings_230_75",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 152,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "Kishan has got an order to deliver 230 saplings to a school. He has packed 75 saplings in an open box. How many more saplings does he need to pack?",
+      "prompt": "230 - 75 = ?",
+      "correctAnswer": 155,
+      "options": [
+        155,
+        245,
+        165,
+        305
+      ],
+      "optionLabels": [
+        "155",
+        "245",
+        "165",
+        "305"
+      ],
+      "distractors": {
+        "245": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 5 - 0 = 5 in ones and 7 - 3 = 4 in tens without unbundling (Smaller-from-Larger error).",
+          "teacherInquiry": "Can you show how you subtracted the ones column (0 - 5) using base-10 blocks?",
+          "activity": "Dienes HTO Unbundling Mat: exchange 1 yellow rod (ten) for 10 small unit cubes before subtracting 5.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "165": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Added 10 to ones column (10 - 5 = 5) but forgot to decrement the tens column before taking away 70.",
+          "teacherInquiry": "Look at the tens column after unbundling. How many tens rods were left?",
+          "activity": "The Banker's Exchange: cross out and write the reduced number of tens rods immediately after trading.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "305": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 230 + 75 = 305 instead of subtracting to find the remaining saplings.",
+          "teacherInquiry": "The school needs 230 total and 75 are already packed. Does Kishan need more than 230 or fewer?",
+          "activity": "Draw a Part-Whole Box Diagram showing Whole (230), Part Packed (75), and Part Remaining (?).",
+          "studentHint": "Check the math sign! Are we taking away or putting together?"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 230,
+      "subtrahend": 75,
+      "dienes_blocks_scaffolding": "To take away 5 ones, unbundle 1 ten into 10 ones (10 - 5 = 5). To take away 70, unbundle 1 hundred into 10 tens (12 tens - 7 tens = 5 tens). Left with 1 hundred, 5 tens, 5 ones = 155.",
+      "number_line_jumps": [
+        {
+          "type": "jump_back",
+          "amount": 30,
+          "landing": 200
+        },
+        {
+          "type": "jump_back",
+          "amount": 40,
+          "landing": 160
+        },
+        {
+          "type": "jump_back",
+          "amount": 5,
+          "landing": 155
+        }
+      ]
+    },
+    {
+      "id": "ncert_ch12_herbs_270_36",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 154,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "Kishan has 270 saplings of herbs and his friend has 36 saplings of herbs. How many more saplings does Kishan have than his friend?",
+      "prompt": "270 - 36 = ?",
+      "correctAnswer": 234,
+      "options": [
+        234,
+        246,
+        244,
+        306
+      ],
+      "optionLabels": [
+        "234",
+        "246",
+        "244",
+        "306"
+      ],
+      "distractors": {
+        "246": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted smaller 0 from larger 6 (6 - 0 = 6) and 7 - 3 = 4 without regrouping.",
+          "teacherInquiry": "Look at the ones column: 0 minus 6. If you have 0 saplings, can you give 6 away without opening a bundle?",
+          "activity": "Open a 10-bundle of nursery saplings and count 10 loose plants, then remove 6.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "244": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Regrouped 10 ones (10 - 6 = 4) but forgot to reduce 7 tens to 6 tens (computed 7 - 3 = 4 tens).",
+          "teacherInquiry": "When you took 1 ten to make 10 ones, what happened to the 7 tens?",
+          "activity": "Physically move 1 ten rod to the ones column, leaving 6 tens rods on the mat.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "306": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 270 + 36 = 306 instead of calculating the comparison difference.",
+          "teacherInquiry": "Are we combining both friends' saplings, or finding how many more Kishan has?",
+          "activity": "Comparison open number line jumping from 36 forward to 270.",
+          "studentHint": "Check the math sign! Are we taking away or putting together?"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 270,
+      "subtrahend": 36,
+      "dienes_blocks_scaffolding": "Change 1 ten into 10 ones. 10 - 6 = 4 in ones. 6 tens - 3 tens = 3 tens. 2 hundreds remain. Total = 234."
+    },
+    {
+      "id": "ncert_ch12_library_356_138",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 154,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "The school library had 356 books. Children borrowed 138 books. How many books are left in the library?",
+      "prompt": "356 - 138 = ?",
+      "correctAnswer": 218,
+      "options": [
+        218,
+        222,
+        228,
+        216
+      ],
+      "optionLabels": [
+        "218",
+        "222",
+        "228",
+        "216"
+      ],
+      "distractors": {
+        "222": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 8 - 6 = 2 in ones without unbundling (Smaller-from-Larger error).",
+          "teacherInquiry": "Can you subtract 8 from 6 books, or do you need to borrow a packet of 10 books?",
+          "activity": "Library Book Packet Exchange: trade 1 packet of 10 for 10 individual books.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "228": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Computed 16 - 8 = 8 correctly, but forgot to reduce 5 tens to 4 tens (5 - 3 = 2 tens).",
+          "teacherInquiry": "After opening one packet of 10, how many tens packets remain on the shelf?",
+          "activity": "Cross out the 5 tens digit and write 4 above it before subtracting.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "216": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Regrouped properly, but made an off-by-two mental arithmetic slip in the ones column.",
+          "teacherInquiry": "Count backward from 16 by 8.",
+          "activity": "Verify with double check: 218 + 138 = 356.",
+          "studentHint": "Check your thinking carefully and try again!"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 356,
+      "subtrahend": 138,
+      "dienes_blocks_scaffolding": "Unbundle 1 ten into 10 ones (16 - 8 = 8). 4 tens - 3 tens = 1 ten. 3 hundreds - 1 hundred = 2 hundreds. Result = 218."
+    },
+    {
+      "id": "ncert_ch12_saplings_456_63",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 154,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "Kishan has 456 saplings in August. He distributed 63 saplings. How many saplings are left with him?",
+      "prompt": "456 - 63 = ?",
+      "correctAnswer": 393,
+      "options": [
+        393,
+        413,
+        493,
+        383
+      ],
+      "optionLabels": [
+        "393",
+        "413",
+        "493",
+        "383"
+      ],
+      "distractors": {
+        "413": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 6 - 5 = 1 in tens without regrouping from hundreds, yielding 413.",
+          "teacherInquiry": "Can you take away 6 tens from 5 tens? Where can we get more tens?",
+          "activity": "Exchange 1 hundred flat into 10 ten-rods to give 15 tens.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "493": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Unbundled tens correctly (15 - 6 = 9), but forgot to decrement 4 hundreds to 3 hundreds.",
+          "teacherInquiry": "If you took 1 hundred away, how many hundreds are left?",
+          "activity": "Cross out the 4 hundreds and write 3.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "383": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Regrouped properly, but made an off-by-one recall error in 15 - 6 = 8 instead of 9.",
+          "teacherInquiry": "Let us check: 6 + 9 = 15.",
+          "activity": "Number line jump check.",
+          "studentHint": "Check your thinking carefully and try again!"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 456,
+      "subtrahend": 63,
+      "dienes_blocks_scaffolding": "6 - 3 = 3 ones. In tens, unbundle 1 hundred into 10 tens (15 tens - 6 tens = 9 tens). 3 hundreds remain. Total = 393."
+    },
+    {
+      "id": "ncert_ch12_sacks_305_210",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 155,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "The farmers harvested 305 sacks of grain. 210 sacks were loaded onto the tractor trailer. How many sacks are left?",
+      "prompt": "305 - 210 = ?",
+      "correctAnswer": 95,
+      "options": [
+        95,
+        115,
+        195,
+        515
+      ],
+      "optionLabels": [
+        "95",
+        "115",
+        "195",
+        "515"
+      ],
+      "distractors": {
+        "115": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "In the tens column, subtracted 1 - 0 = 1 without regrouping from the hundreds.",
+          "teacherInquiry": "In 305, there are 0 tens. Can you take away 1 ten without opening a 100-sack?",
+          "activity": "Open 1 sack of 100 into 10 bags of 10 sacks each.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "195": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Unbundled 10 tens from hundreds, but forgot to reduce 3 hundreds to 2 hundreds (3 - 2 = 1 hundred).",
+          "teacherInquiry": "Look at the hundreds: if you took 1 hundred away to make tens, how many hundreds are left?",
+          "activity": "Remove 1 hundreds-flat from the table, leaving 2 flats.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "515": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 305 + 210 = 515 instead of subtracting to find remaining sacks.",
+          "teacherInquiry": "Sacks were taken away onto the trailer. Should the remaining number be bigger or smaller?",
+          "activity": "Use the box diagram: 305 Whole, 210 in trailer, ? left on ground.",
+          "studentHint": "Check the math sign! Are we taking away or putting together?"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 305,
+      "subtrahend": 210,
+      "dienes_blocks_scaffolding": "5 - 0 = 5 ones. In tens, unbundle 1 hundred into 10 tens. 10 tens - 1 ten = 9 tens. 2 hundreds - 2 hundreds = 0. Result = 95 sacks."
+    },
+    {
+      "id": "ncert_ch12_money_756_465",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 160,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "In the morning, Peter uncle has \u20b9465 in his money box. By afternoon, he has \u20b9756. How much money has he earned since morning?",
+      "prompt": "756 - 465 = ?",
+      "correctAnswer": 291,
+      "options": [
+        291,
+        311,
+        391,
+        281
+      ],
+      "optionLabels": [
+        "291",
+        "311",
+        "391",
+        "281"
+      ],
+      "distractors": {
+        "311": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted smaller 5 from larger 6 in tens (6 - 5 = 1) without unbundling from hundreds (got 311).",
+          "teacherInquiry": "In 756, there are 5 tens. Can you pay out 6 tens without breaking a \u20b9100 note?",
+          "activity": "Play Money Cashbox: exchange 1 note of \u20b9100 for 10 notes of \u20b910.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "391": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Exchanged \u20b9100 for 10 tens (15 - 6 = 9 tens), but forgot to decrement 7 hundreds to 6 hundreds (7 - 4 = 3).",
+          "teacherInquiry": "After exchanging a \u20b9100 note for tens, how many \u20b9100 notes are left in the cashbox?",
+          "activity": "Hand over the \u20b9100 note to the bank before taking out the 10 ten-rupee notes.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "281": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Regrouped properly, but made an off-by-one subtraction recall slip in the tens column (15 - 6 = 8 instead of 9).",
+          "teacherInquiry": "Let us check: 6 + 9 = 15. Count up from 6 to 15.",
+          "activity": "Jump backward on the number line: 756 - 100 - 100 - 100 - 100 - 50 - 10 - 5 = 291.",
+          "studentHint": "Check your thinking carefully and try again!"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 756,
+      "subtrahend": 465,
+      "dienes_blocks_scaffolding": "6 - 5 = 1 one. In tens, unbundle 1 hundred (\u20b9100) into 10 tens (\u20b910 notes). 15 tens - 6 tens = 9 tens (\u20b990). 6 hundreds - 4 hundreds = 2 hundreds (\u20b9200). Total earned = \u20b9291."
+    },
+    {
+      "id": "ncert_ch12_groceries_500_209",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 162,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "Reena bought groceries for \u20b9209. She gave a \u20b9500 note to Peter uncle. How much money should Peter uncle return to Reena?",
+      "prompt": "500 - 209 = ?",
+      "correctAnswer": 291,
+      "options": [
+        291,
+        309,
+        391,
+        301
+      ],
+      "optionLabels": [
+        "291",
+        "309",
+        "391",
+        "301"
+      ],
+      "distractors": {
+        "309": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted smaller 0 from larger 9 (9 - 0 = 9) and 5 - 2 = 3 without regrouping across zeros.",
+          "teacherInquiry": "If you have 0 one-rupee coins, can you give 9 coins without getting change from notes?",
+          "activity": "Step-by-step cash change: change \u20b9500 note into 5 \u20b9100 notes, change one \u20b9100 into 10 \u20b910 notes, change one \u20b910 into 10 \u20b91 coins.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "391": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Regrouped across zeros to ones, but forgot to reduce 5 hundreds to 4 hundreds (5 - 2 = 3).",
+          "teacherInquiry": "How many \u20b9100 notes are left after breaking one to make tens?",
+          "activity": "Cross out 5 hundreds, write 4; cross out 10 tens, write 9 tens.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "301": {
+          "signature": "ZERO_ACROSS_BORROW_ERROR",
+          "explanation": "Regrouped 10 ones from hundreds directly, leaving 0 tens in the middle.",
+          "teacherInquiry": "When you open a \u20b9100 note, it turns into 10 tens first, not ones directly.",
+          "activity": "Use Dienes 10-strips to see that hundreds must break into tens before ones.",
+          "studentHint": "Zeros can be tricky! Unbundle from the hundreds first to help the tens, then the ones!"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 500,
+      "subtrahend": 209,
+      "dienes_blocks_scaffolding": "Cannot take 9 ones from 0 ones, and no tens available. Unbundle 1 hundred into 10 tens, then 1 ten into 10 ones. 10 - 9 = 1. 9 tens - 0 tens = 9 tens. 4 hundreds - 2 hundreds = 2 hundreds. Change = \u20b9291."
+    },
+    {
+      "id": "ncert_ch12_cards_568_5",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 164,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "Solve equation (e) from the number cards activity: 568 - 5",
+      "prompt": "568 - 5 = ?",
+      "correctAnswer": 563,
+      "options": [
+        563,
+        560,
+        558,
+        573
+      ],
+      "optionLabels": [
+        "563",
+        "560",
+        "558",
+        "573"
+      ],
+      "distractors": {
+        "560": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Off-by-three arithmetic recall slip in single-digit subtraction.",
+          "teacherInquiry": "Count backward 5 steps from 8.",
+          "activity": "Single-digit subtraction fact flashcards.",
+          "studentHint": "Check your thinking carefully and try again!"
+        },
+        "558": {
+          "signature": "PLACE_VALUE_ALIGNMENT_ERROR",
+          "explanation": "Subtracted 5 from the tens column (6 - 5 = 1 or 5) instead of the ones column.",
+          "teacherInquiry": "Is 5 a ten or a single unit one? Where should it be aligned?",
+          "activity": "Column alignment chart placing 5 under the 8 in the ones column.",
+          "studentHint": "Check your thinking carefully and try again!"
+        },
+        "573": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 568 + 5 = 573 instead of subtracting.",
+          "teacherInquiry": "Check the sign: it is minus (-), not plus (+).",
+          "activity": "Highlight minus operator in red.",
+          "studentHint": "Check the math sign! Are we taking away or putting together?"
+        }
+      },
+      "is_regrouping": false,
+      "minuend": 568,
+      "subtrahend": 5,
+      "dienes_blocks_scaffolding": "8 ones - 5 ones = 3 ones. Tens remain 6, hundreds remain 5. Total = 563."
+    },
+    {
+      "id": "ncert_ch12_cards_600_82",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 164,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "Solve equation (d) from the number cards activity: 600 - 82",
+      "prompt": "600 - 82 = ?",
+      "correctAnswer": 518,
+      "options": [
+        518,
+        682,
+        618,
+        528
+      ],
+      "optionLabels": [
+        "518",
+        "682",
+        "618",
+        "528"
+      ],
+      "distractors": {
+        "682": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 2 - 0 = 2 and 8 - 0 = 8 without regrouping across zeros.",
+          "teacherInquiry": "Can you subtract 82 from 00? Remember the top number is 600.",
+          "activity": "HTO chart showing 6 Hundreds, 0 Tens, 0 Ones unbundling into 5 Hundreds, 9 Tens, 10 Ones.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "618": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Carried out regrouping to ones and tens, but did not decrement 6 hundreds to 5 hundreds.",
+          "teacherInquiry": "Where did the 10 tens come from? Did we reduce the hundreds from 6 to 5?",
+          "activity": "Cross out the 6 and write 5 above it before subtracting.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "528": {
+          "signature": "CALCULATION_SLIP",
+          "explanation": "Unbundled correctly, but made an error in tens: calculated 10 - 8 = 2 instead of 9 - 8 = 1.",
+          "teacherInquiry": "Remember one ten was traded for ones, leaving 9 tens on the board.",
+          "activity": "Count remaining yellow ten-rods on the HTO mat.",
+          "studentHint": "Check your thinking carefully and try again!"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 600,
+      "subtrahend": 82,
+      "dienes_blocks_scaffolding": "Unbundle 1 hundred into 10 tens, then 1 ten into 10 ones. 10 - 2 = 8 ones. 9 tens - 8 tens = 1 ten. 5 hundreds remain. Result = 518."
+    },
+    {
+      "id": "ncert_ch12_cards_653_356",
+      "chapter": "Chapter 12: Give and Take",
+      "page": 164,
+      "domain": "SUBTRACTION_REGROUPING",
+      "context": "Solve equation (f) from the number cards activity: 653 - 356",
+      "prompt": "653 - 356 = ?",
+      "correctAnswer": 297,
+      "options": [
+        297,
+        303,
+        397,
+        307
+      ],
+      "optionLabels": [
+        "297",
+        "303",
+        "397",
+        "307"
+      ],
+      "distractors": {
+        "303": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted smaller from larger in ones (6 - 3 = 3), tens (5 - 5 = 0), and hundreds (6 - 3 = 3), yielding 303.",
+          "teacherInquiry": "Look at 653 - 356: 3 is smaller than 6. Can we subtract upwards?",
+          "activity": "Strict top-to-bottom column subtraction rule using physical place value blocks.",
+          "studentHint": "Hold on! Look at the top digit! Can we take a bigger number from a smaller one without unbundling?"
+        },
+        "397": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Regrouped both ones and tens, but forgot to decrement 6 hundreds to 5 hundreds (computed 6 - 3 = 3).",
+          "teacherInquiry": "We borrowed from the hundreds column. How many hundreds remain?",
+          "activity": "Double crossing-out practice: cross tens to 4, cross hundreds to 5.",
+          "studentHint": "Great unbundling! But remember to cross out and reduce the higher column too!"
+        },
+        "307": {
+          "signature": "PARTIAL_REGROUPING_ERROR",
+          "explanation": "Regrouped in ones (13 - 6 = 7), but in tens subtracted 5 - 5 = 0 instead of regrouping 14 - 5 = 9.",
+          "teacherInquiry": "After lending to the ones, we had 4 tens. How do we take away 5 tens from 4 tens?",
+          "activity": "Exchange 1 hundred flat for 10 ten-rods to give 14 tens.",
+          "studentHint": "Check your thinking carefully and try again!"
+        }
+      },
+      "is_regrouping": true,
+      "minuend": 653,
+      "subtrahend": 356,
+      "dienes_blocks_scaffolding": "Unbundle 1 ten into 10 ones (13 - 6 = 7). In tens, 4 tens < 5 tens; unbundle 1 hundred into 10 tens (14 tens - 5 tens = 9 tens). 5 hundreds - 3 hundreds = 2 hundreds. Result = 297."
+    }
+  ]
+}

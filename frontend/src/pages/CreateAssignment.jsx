@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   ArrowLeft, 
   Search, 
@@ -7,16 +7,17 @@ import {
   BookOpen, 
   Brain, 
   ListTodo, 
-  PenTool, 
-  HelpCircle, 
   CheckCircle2, 
-  ChevronDown 
+  ChevronDown,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import Stepper from '../components/Stepper';
 import CustomButton from '../components/CustomButton';
 import { AppContext } from '../context/AppContext';
+import { api } from '../services/api';
 
 const CreateAssignment = () => {
   const navigate = useNavigate();
@@ -25,13 +26,57 @@ const CreateAssignment = () => {
   const [selectedTopic, setSelectedTopic] = useState('math');
   const [selectedClass, setSelectedClass] = useState('Grade 3 - Section A');
   const [isClassDropdownOpen, setIsClassDropdownOpen] = useState(false);
-  
-  // Interactive question types toggles
-  const [questionTypes, setQuestionTypes] = useState({
-    mcq: true,
-    shortAnswer: false,
-    fillBlanks: false,
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Default calibrated diagnostic probe set
+  const initialProbes = [
+    { id: 'probe_01', text: '61 - 24 = ?', options: [37, 43, 47, 35], correctAnswer: 37, tag: 'Unit Diff 3 (Regroup)', selected: true },
+    { id: 'probe_02', text: '72 - 38 = ?', options: [34, 46, 44, 36], correctAnswer: 34, tag: 'Unit Diff 6 (Regroup)', selected: true },
+    { id: 'probe_03', text: '83 - 49 = ?', options: [34, 46, 44, 38], correctAnswer: 34, tag: 'Unit Diff 6 (Consistency)', selected: true },
+    { id: 'ctrl_01', text: '58 - 23 = ?', options: [35, 31, 25, 33], correctAnswer: 35, tag: 'Non-Regrouping Control', selected: true },
+    { id: 'ctrl_02', text: '79 - 45 = ?', options: [34, 32, 24, 35], correctAnswer: 34, tag: 'Non-Regrouping Control', selected: true },
+  ];
+
+  const [probeList, setProbeList] = useState(initialProbes);
+  const [selectedChapter, setSelectedChapter] = useState('All Chapters');
+  const [isChapterDropdownOpen, setIsChapterDropdownOpen] = useState(false);
+  const [isLoadingProbes, setIsLoadingProbes] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadCurriculumProbes() {
+      setIsLoadingProbes(true);
+      try {
+        const remoteProbes = await api.getProbes();
+        if (isMounted && remoteProbes && remoteProbes.length > 0) {
+          setProbeList(
+            remoteProbes.map((p, idx) => ({
+              id: p.id,
+              text: p.text || p.prompt,
+              options: p.options,
+              optionLabels: p.optionLabels || [],
+              correctAnswer: p.correctAnswer,
+              chapter: p.chapter || 'NCERT Class 3',
+              domain: p.domain || 'GENERAL',
+              tag: p.domain || (p.is_regrouping ? 'Regrouping' : 'Concept Probe'),
+              selected: idx < 5,
+            }))
+          );
+        }
+      } catch (err) {
+        console.warn('Probe loading fallback:', err);
+      } finally {
+        if (isMounted) setIsLoadingProbes(false);
+      }
+    }
+    loadCurriculumProbes();
+    return () => { isMounted = false; };
+  }, []);
+
+  const availableChapters = ['All Chapters', ...Array.from(new Set(probeList.map(p => p.chapter || 'Canonical Diagnostic Baseline')))];
+  const filteredProbes = selectedChapter === 'All Chapters'
+    ? probeList
+    : probeList.filter(p => (p.chapter || 'Canonical Diagnostic Baseline') === selectedChapter);
 
   const availableClasses = [
     'Grade 3 - Section A',
@@ -40,32 +85,45 @@ const CreateAssignment = () => {
   ];
 
   const topics = [
-    { id: 'math', name: 'Math & Logic', icon: Calculator, text: 'text-blue-600', iconBg: 'bg-blue-100' },
-    { id: 'spelling', name: 'Spelling & Language', icon: SpellCheck, text: 'text-green-600', iconBg: 'bg-green-100' },
-    { id: 'reading', name: 'Reading Comprehension', icon: BookOpen, text: 'text-orange-600', iconBg: 'bg-orange-100' },
-    { id: 'logic', name: 'General Knowledge', icon: Brain, text: 'text-purple-600', iconBg: 'bg-purple-100' },
+    { id: 'math', name: 'Math & Logic', icon: Calculator, text: 'text-blue-600', iconBg: 'bg-blue-100', active: true },
+    { id: 'spelling', name: 'Spelling & Language', icon: SpellCheck, text: 'text-green-600', iconBg: 'bg-green-100', active: false },
+    { id: 'reading', name: 'Reading Comprehension', icon: BookOpen, text: 'text-orange-600', iconBg: 'bg-orange-100', active: false },
+    { id: 'logic', name: 'General Knowledge', icon: Brain, text: 'text-purple-600', iconBg: 'bg-purple-100', active: false },
   ];
 
-  // Dynamic stepper indicator
-  const currentStep = (questionTypes.mcq || questionTypes.shortAnswer || questionTypes.fillBlanks) && selectedTopic ? 3 : selectedTopic ? 2 : 1;
-
-  const toggleQuestionType = (key) => {
-    setQuestionTypes((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  const toggleProbe = (probeId) => {
+    setProbeList((prev) => 
+      prev.map((p) => p.id === probeId ? { ...p, selected: !p.selected } : p)
+    );
   };
 
-  const handleAssign = () => {
+  const handleAssign = async () => {
+    setIsSubmitting(true);
     const chosenTopicObj = topics.find((t) => t.id === selectedTopic);
-    setCurrentAssignment({
+    const activeProbes = probeList.filter((p) => p.selected);
+
+    const newAssignment = {
+      title: `${chosenTopicObj ? chosenTopicObj.name : 'Math'} Diagnostic for ${selectedClass}`,
       topic: chosenTopicObj ? chosenTopicObj.name : 'Math & Logic',
-      class: selectedClass,
-      questions: [
-        { id: 1, text: '42 - 15 = ?', options: [25, 27, 26, 28], correctAnswer: 27 }
-      ]
-    });
-    navigate('/dashboard');
+      classLabel: selectedClass,
+      questions: activeProbes.length > 0 ? activeProbes : initialProbes,
+    };
+
+    try {
+      // BUG-02 & BUG-03 FIXED: Persist assignment to backend database & memory
+      const result = await api.createAssignment(newAssignment);
+      if (result && result.assignment) {
+        setCurrentAssignment(result.assignment);
+      } else {
+        setCurrentAssignment(newAssignment);
+      }
+    } catch (err) {
+      console.warn('Assignment API save fallback:', err);
+      setCurrentAssignment(newAssignment);
+    } finally {
+      setIsSubmitting(false);
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -82,22 +140,16 @@ const CreateAssignment = () => {
             <ArrowLeft size={20} />
           </button>
           <h1 className="text-lg font-bold text-darkText">Create Assignment</h1>
-          <button 
-            type="button"
-            aria-label="Search topics or questions"
-            className="p-2 text-gray-400 hover:text-gray-600 transition"
-          >
-            <Search size={20} />
-          </button>
+          <div className="w-8"></div>
         </div>
 
         {/* Stepper Indicator */}
-        <Stepper currentStep={currentStep} />
+        <Stepper currentStep={3} />
 
         <div className="px-5 mt-1">
           {/* Step 1: Select Class */}
           <div className="mb-6 relative">
-            <h2 className="text-sm font-semibold text-darkText mb-3">1. Select Class</h2>
+            <h2 className="text-sm font-semibold text-darkText mb-3">1. Select Target Class</h2>
             <div 
               onClick={() => setIsClassDropdownOpen(!isClassDropdownOpen)}
               className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex justify-between items-center cursor-pointer hover:border-primary/30 transition"
@@ -132,7 +184,7 @@ const CreateAssignment = () => {
 
           {/* Step 2: Choose Topic */}
           <div className="mb-6">
-            <h2 className="text-sm font-semibold text-darkText mb-3">2. Choose Topic</h2>
+            <h2 className="text-sm font-semibold text-darkText mb-3">2. Choose Subject</h2>
             <div className="grid grid-cols-2 gap-3">
               {topics.map((topic) => {
                 const Icon = topic.icon;
@@ -142,13 +194,15 @@ const CreateAssignment = () => {
                     key={topic.id}
                     onClick={() => setSelectedTopic(topic.id)}
                     className={`p-4 rounded-2xl cursor-pointer border-2 transition-all duration-200 flex flex-col gap-3 active:scale-95
-                      ${isSelected ? 'border-primary bg-primary/5 shadow-sm' : 'border-transparent bg-white shadow-sm hover:shadow-md'}`}
+                      ${isSelected ? 'border-primary bg-primary/5 shadow-sm' : 'border-transparent bg-white shadow-sm hover:shadow-md'}
+                      ${!topic.active ? 'opacity-60' : ''}`}
                   >
                     <div className={`w-10 h-10 rounded-xl ${topic.iconBg} flex items-center justify-center ${topic.text}`}>
                       <Icon size={20} />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-darkText leading-tight">{topic.name}</h3>
+                      {!topic.active && <span className="text-[9px] text-gray-400 font-medium">Term 2</span>}
                     </div>
                   </div>
                 );
@@ -156,66 +210,79 @@ const CreateAssignment = () => {
             </div>
           </div>
 
-          {/* Step 3: Add Questions (Visual Toggles) */}
+          {/* Step 3: Diagnostic Probes (Select from all 14 NCERT chapters) */}
           <div className="mb-6">
-            <h2 className="text-sm font-semibold text-darkText mb-3">3. Add Questions</h2>
-            <div className="space-y-3">
-              {/* MCQ Toggle */}
-              <div 
-                onClick={() => toggleQuestionType('mcq')}
-                className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50/50 transition"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
-                    <ListTodo size={16} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-darkText">MCQ (Multiple Choice)</h4>
-                    <p className="text-[10px] text-gray-500">Best for objective questions</p>
-                  </div>
-                </div>
-                <div className={`w-10 h-6 rounded-full relative transition-colors duration-200 ${questionTypes.mcq ? 'bg-primary' : 'bg-gray-200'}`}>
-                  <div className={`absolute top-1 bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200 ${questionTypes.mcq ? 'right-1' : 'left-1'}`} />
-                </div>
-              </div>
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-sm font-semibold text-darkText flex items-center gap-1.5">
+                <Sparkles size={16} className="text-primary" />
+                3. Calibrated Diagnostic Probes
+              </h2>
+              <span className="text-[10px] text-primary font-bold bg-primary/10 px-2 py-0.5 rounded-full">
+                {probeList.filter(p => p.selected).length} Selected
+              </span>
+            </div>
 
-              {/* Short Answer Toggle */}
+            {/* Chapter Filter Dropdown */}
+            <div className="mb-3">
+              <label className="text-[11px] font-semibold text-gray-500 block mb-1">Filter by NCERT Chapter:</label>
               <div 
-                onClick={() => toggleQuestionType('shortAnswer')}
-                className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50/50 transition"
+                onClick={() => setIsChapterDropdownOpen(!isChapterDropdownOpen)}
+                className="bg-white rounded-xl shadow-xs border border-gray-200 p-2.5 flex justify-between items-center cursor-pointer hover:border-primary/40 transition"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
-                    <PenTool size={16} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-darkText">Short Answer</h4>
-                    <p className="text-[10px] text-gray-500">For written responses</p>
-                  </div>
-                </div>
-                <div className={`w-10 h-6 rounded-full relative transition-colors duration-200 ${questionTypes.shortAnswer ? 'bg-primary' : 'bg-gray-200'}`}>
-                  <div className={`absolute top-1 bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200 ${questionTypes.shortAnswer ? 'right-1' : 'left-1'}`} />
-                </div>
+                <span className="text-xs font-medium text-darkText truncate">{selectedChapter}</span>
+                <ChevronDown size={14} className={`text-gray-400 transition-transform ${isChapterDropdownOpen ? 'rotate-180' : ''}`} />
               </div>
+              {isChapterDropdownOpen && (
+                <div className="mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-30 max-h-48 overflow-y-auto">
+                  {availableChapters.map((chap) => (
+                    <div 
+                      key={chap}
+                      onClick={() => {
+                        setSelectedChapter(chap);
+                        setIsChapterDropdownOpen(false);
+                      }}
+                      className={`px-3 py-2 text-xs font-medium cursor-pointer transition ${
+                        selectedChapter === chap ? 'bg-primary/10 text-primary font-bold' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {chap}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-              {/* Fill in the blanks Toggle */}
-              <div 
-                onClick={() => toggleQuestionType('fillBlanks')}
-                className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50/50 transition"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center">
-                    <HelpCircle size={16} />
+            <p className="text-[11px] text-gray-500 mb-3">
+              Showing {filteredProbes.length} probe(s) from <strong>{selectedChapter}</strong>:
+            </p>
+
+            <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
+              {filteredProbes.map((probe) => (
+                <div 
+                  key={probe.id}
+                  onClick={() => toggleProbe(probe.id)}
+                  className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between ${
+                    probe.selected 
+                      ? 'bg-white border-primary/40 shadow-xs' 
+                      : 'bg-gray-50 border-gray-200 opacity-60'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-md flex items-center justify-center border transition ${
+                      probe.selected ? 'bg-primary border-primary text-white' : 'border-gray-300 bg-white'
+                    }`}>
+                      {probe.selected && <CheckCircle2 size={14} />}
+                    </div>
+                    <div>
+                      <span className="text-sm font-extrabold text-darkText block">{probe.text}</span>
+                      <span className="text-[10px] text-gray-500 font-medium">{probe.chapter} • {probe.tag}</span>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-darkText">Fill in the Blanks</h4>
-                    <p className="text-[10px] text-gray-500">Complete the missing words</p>
-                  </div>
+                  <span className="text-xs font-bold text-secondary bg-green-50 px-2 py-1 rounded-lg">
+                    Ans: {probe.correctAnswer}
+                  </span>
                 </div>
-                <div className={`w-10 h-6 rounded-full relative transition-colors duration-200 ${questionTypes.fillBlanks ? 'bg-primary' : 'bg-gray-200'}`}>
-                  <div className={`absolute top-1 bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200 ${questionTypes.fillBlanks ? 'right-1' : 'left-1'}`} />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -223,8 +290,9 @@ const CreateAssignment = () => {
         {/* Assign Button */}
         <div className="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 p-4 pb-safe z-50">
           <CustomButton 
-            text="Assign" 
+            text={isSubmitting ? "Creating Assignment..." : "Assign to Class"} 
             icon={<CheckCircle2 size={18} />}
+            disabled={isSubmitting || probeList.filter(p => p.selected).length === 0}
             onClick={handleAssign} 
           />
         </div>

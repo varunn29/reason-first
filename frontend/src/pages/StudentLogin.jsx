@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hash, ArrowRight, User, AlertCircle, Sparkles } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
 import { useAuth } from '../context/AuthContext';
+import { AppContext } from '../context/AppContext';
 
 const StudentLogin = () => {
   const navigate = useNavigate();
   const { loginStudent, isLoading, error: authError, clearError } = useAuth();
+  const { setStudentByCode, resetStudentQuiz } = useContext(AppContext);
   const [code, setCode] = useState('3A');
   const [name, setName] = useState('Rahul');
   const [formError, setFormError] = useState(null);
@@ -16,7 +18,7 @@ const StudentLogin = () => {
   const handleJoin = async (e) => {
     e.preventDefault();
     setFormError(null);
-    clearError();
+    if (clearError) clearError();
 
     const cleanCode = code.trim().toUpperCase();
     if (!cleanCode) {
@@ -26,7 +28,19 @@ const StudentLogin = () => {
 
     try {
       setIsSubmitting(true);
-      await loginStudent(cleanCode, name.trim() || 'Rahul');
+      if (setStudentByCode) {
+        setStudentByCode(cleanCode);
+      }
+      if (resetStudentQuiz) {
+        resetStudentQuiz();
+      }
+      if (loginStudent) {
+        try {
+          await loginStudent(cleanCode, name.trim() || 'Rahul');
+        } catch (authErr) {
+          console.warn('Backend student auth skipped, using local session:', authErr.message);
+        }
+      }
       navigate('/student');
     } catch (err) {
       setFormError(err.message || 'Could not find that class code. Please check with your teacher.');
@@ -39,7 +53,7 @@ const StudentLogin = () => {
     setCode('3A');
     setName('Rahul');
     setFormError(null);
-    clearError();
+    if (clearError) clearError();
   };
 
   const activeError = formError || authError;
@@ -122,21 +136,22 @@ const StudentLogin = () => {
           <div className="pt-2">
             <CustomButton 
               type="submit" 
-              text={isSubmitting || isLoading ? 'Joining...' : "Let's Go!"} 
-              icon={<ArrowRight size={20} />} 
+              text={isSubmitting || isLoading ? 'Joining...' : 'Start Learning 🚀'} 
+              icon={<ArrowRight size={18} />} 
               disabled={isSubmitting || isLoading}
             />
           </div>
         </form>
 
-        {/* Teacher login link at the bottom */}
-        <button 
-          type="button"
-          onClick={() => navigate('/login')} 
-          className="mt-8 text-center text-xs text-gray-500 font-semibold hover:text-primary transition active:scale-95 py-2"
-        >
-          Are you a Teacher? <span className="text-primary font-bold underline">Log in here</span>
-        </button>
+        <div className="mt-8 text-center border-t border-gray-100 pt-5">
+          <button 
+            type="button"
+            onClick={() => navigate('/login')} 
+            className="text-xs text-gray-400 font-semibold hover:text-primary transition"
+          >
+            I am a Teacher (Log In)
+          </button>
+        </div>
       </div>
     </MobileWrapper>
   );
