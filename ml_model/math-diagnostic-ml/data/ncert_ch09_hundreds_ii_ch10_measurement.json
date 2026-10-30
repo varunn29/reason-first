@@ -1,0 +1,687 @@
+{
+  "curriculum": "NCERT Class 3 Mathematics",
+  "textbook": "Maths Mela (First Edition 2024 / Reprint 2026-27)",
+  "chapters": [
+    "Chapter 9: House of Hundreds - II (pp. 117-127)",
+    "Chapter 10: Fun at Class Party! (pp. 128-138)"
+  ],
+  "learning_outcomes": [
+    "M3.1a: Reads, writes, and decomposes 3-digit numbers up to 1000 using place value (HTO), number lines, and landmark benchmarks",
+    "M3.1b: Identifies neighbouring hundreds, fifties, and tens, and calculates step distances on the number line",
+    "M3.1c: Explores skip counting patterns (+10, +25, +30, +100) and multi-representational equivalences for 3-digit numbers",
+    "M3.1d: Explores combinatorial constraints (paper slips, permutations of digits, inequality loops)",
+    "M3.1e: Understands ancient Indian mathematical heritage of Word Numerals (Bhutasankhya)",
+    "M3.5a: Distinguishes non-standard informal units of length (handspan, footsteps) and understands why standard units are necessary",
+    "M3.5b: Solves indirect measurement problems in 2D/3D (fitting table through door via breadth orientation)",
+    "M3.5c: Identifies and uses the standard unit Metre (1 m rope, tape, rod) and benchmarks objects (more than, less than, equal to 1 m)",
+    "M3.5d: Conceptualizes fractions of a metre (half metre = 50 cm, quarter metre = 25 cm) via paper/rope folding",
+    "M3.5e: Applies fencepost / partition logic (cutting rope into 4 equal pieces requires 3 cuts)"
+  ],
+  "probes": [
+    {
+      "id": "ncert_ch09_crows_963_place_value",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 117,
+      "domain": "THREE_DIGIT_NUMERATION_UP_TO_1000",
+      "context": "Birbal counted the crows in the city of Agra for Emperor Akbar: 'There are exactly Nine Hundred and Sixty Three crows in our city.'",
+      "prompt": "How is 'Nine Hundred and Sixty Three' written in numeral figures?",
+      "correctAnswer": 963,
+      "options": [963, 90063, 936, 9603],
+      "distractors": {
+        "90063": {
+          "signature": "CONCATENATION_WITHOUT_PLACE_VALUE",
+          "explanation": "Wrote 900 and 63 side by side without understanding place-value column compression.",
+          "teacherInquiry": "In 963, how many hundreds are there? Just 9 in the hundreds column, not 900.",
+          "activity": "NCERT p. 118 HTO Place Value Cards: Place card 900 under card 60 under card 3 to show 963.",
+          "studentHint": "Nine hundred is 9 in the hundreds place, 6 tens, and 3 ones: 963!"
+        },
+        "936": {
+          "signature": "ONES_TENS_VALUE_CONFUSION",
+          "explanation": "Reversed the tens (60) and ones (3) digits.",
+          "teacherInquiry": "Sixty means 6 tens, not 3 tens. Which digit belongs in the middle?",
+          "activity": "Say 'sixty' and point to the tens digit 6.",
+          "studentHint": "Sixty is 6 tens! 963, not 936!"
+        },
+        "9603": {
+          "signature": "ZERO_TENS_OMISSION_3DIGIT",
+          "explanation": "Inserted an extra zero into the tens place.",
+          "teacherInquiry": "Is 963 a 3-digit number or a 4-digit number?",
+          "activity": "Count digits: H-T-O has 3 places.",
+          "studentHint": "963 has 3 digits: 9 Hundreds, 6 Tens, 3 Ones!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_rice_sacks_504_zero_placeholder",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 118,
+      "domain": "THREE_DIGIT_NUMERATION_UP_TO_1000",
+      "context": "A truck driver shows tiles for his load of rice sacks: 5 big hundred-flats, 0 ten-strips, and 4 loose unit-squares.",
+      "prompt": "How many rice sacks is the driver carrying?",
+      "correctAnswer": 504,
+      "options": [504, 54, 540, 5004],
+      "distractors": {
+        "54": {
+          "signature": "ZERO_TENS_OMISSION_3DIGIT",
+          "explanation": "Omitted the zero tens placeholder, turning 5 hundreds into 5 tens.",
+          "teacherInquiry": "If you write 54, where did the 5 hundreds go? 54 is only 5 tens and 4 ones!",
+          "activity": "NCERT p. 118 Place Value Tiles: Lay out 5 hundred flats and 4 unit cubes. Keep the empty tens column as 0.",
+          "studentHint": "We have 0 tens in the middle! Don't forget the zero: 504!"
+        },
+        "540": {
+          "signature": "ONES_TENS_VALUE_CONFUSION",
+          "explanation": "Put 4 in the tens place and 0 in the ones place.",
+          "teacherInquiry": "Did the driver have 4 bundles of 10 or 4 loose single sacks? 4 singles means 4 ones!",
+          "activity": "Distinguish 4 ten-rods from 4 unit cubes.",
+          "studentHint": "4 is in the ONES place! The tens place has 0: 504!"
+        },
+        "5004": {
+          "signature": "CONCATENATION_WITHOUT_PLACE_VALUE",
+          "explanation": "Wrote 500 and 4 concatenated.",
+          "teacherInquiry": "A 3-digit number has only 3 columns: H, T, and O.",
+          "activity": "Assemble 500 and 4 on place value mat.",
+          "studentHint": "5 Hundreds and 4 Ones is written 504!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_crane_jump_667_to_650",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 119,
+      "domain": "LANDMARK_AND_NEIGHBOURING_BOUNDS",
+      "context": "A crane standing at 667 on the number line wants to step backward to reach a worm at 650: 667 - ? steps = 650.",
+      "prompt": "How many steps backward must the crane take from 667 to reach 650?",
+      "correctAnswer": 17,
+      "options": [17, 7, 27, 67],
+      "distractors": {
+        "7": {
+          "signature": "DECADE_JUMP_CALCULATION_SLIP",
+          "explanation": "Subtracted only 67 - 60 = 7, forgetting the remaining 10 steps to 650.",
+          "teacherInquiry": "667 minus 7 lands at 660. How many more steps from 660 back to 650? 10 more!",
+          "activity": "NCERT p. 119 Crane Number Line: Jump 7 steps back to 660, then 10 steps back to 650 (7 + 10 = 17).",
+          "studentHint": "From 667 to 660 is 7 steps, and 660 to 650 is 10 steps! 7 + 10 = 17 steps!"
+        },
+        "27": {
+          "signature": "OVERSTEP_BY_TEN",
+          "explanation": "Overshot by an extra decade jump of 10.",
+          "teacherInquiry": "Check: 667 - 27 = 640. Did the crane pass 650?",
+          "activity": "Count backwards on number line.",
+          "studentHint": "667 - 17 = 650! 27 steps would land on 640!"
+        },
+        "67": {
+          "signature": "MINUEND_ONES_COPY_ERROR",
+          "explanation": "Copied the last two digits (67) instead of finding the difference.",
+          "teacherInquiry": "667 - 67 lands at 600, not 650.",
+          "activity": "Trace path from 667 to 650.",
+          "studentHint": "We only need to reach 650, not 600! 667 - 650 = 17 steps!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_crane_jump_667_to_700",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 119,
+      "domain": "LANDMARK_AND_NEIGHBOURING_BOUNDS",
+      "context": "The crane standing at 667 wants to jump forward to catch a fish at 700: 667 + ? steps = 700.",
+      "prompt": "How many steps forward must the crane jump from 667 to reach 700?",
+      "correctAnswer": 33,
+      "options": [33, 43, 23, 37],
+      "distractors": {
+        "43": {
+          "signature": "BRIDGING_TEN_OVERSHOOT_ERROR",
+          "explanation": "Thought 60 + 40 = 100 without adjusting for the 7 ones (added 3 to 670, then added 40).",
+          "teacherInquiry": "667 + 3 = 670. From 670 to 700 is 30. What is 30 + 3? 33!",
+          "activity": "NCERT p. 119 Friendly jumps: 667 --(+3)--> 670 --(+30)--> 700.",
+          "studentHint": "First jump 3 steps to 670! Then jump 30 steps to 700! 30 + 3 = 33 steps!"
+        },
+        "23": {
+          "signature": "DECADE_JUMP_CALCULATION_SLIP",
+          "explanation": "Underestimated the decade step by 10 (calculated 670 to 700 as 20).",
+          "teacherInquiry": "Check 670 to 700: 680, 690, 700 (3 tens = 30).",
+          "activity": "Count by tens from 670 to 700.",
+          "studentHint": "From 670 to 700 is 3 tens = 30! Total jump is 33!"
+        },
+        "37": {
+          "signature": "COMPLEMENT_COMPUTATION_SLIP",
+          "explanation": "Used 7 instead of the 10-complement 3 for the ones place.",
+          "teacherInquiry": "7 + 7 = 14, not 10. To make a clean 10 from 7, you need 3!",
+          "activity": "Check 7 + 3 = 10.",
+          "studentHint": "To make 70 from 67, we need 3! 30 + 3 = 33!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_neighbouring_landmarks_468",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 119,
+      "domain": "LANDMARK_AND_NEIGHBOURING_BOUNDS",
+      "context": "On page 119, children find neighbouring landmark boundaries for numbers.",
+      "prompt": "What are the neighbouring FIFTIES between which 468 lies?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "450 and 500",
+        "400 and 500",
+        "460 and 470",
+        "450 and 460"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "NEIGHBOURING_LANDMARK_CONFUSION",
+          "explanation": "Gave neighbouring Hundreds (400 and 500) instead of neighbouring Fifties.",
+          "teacherInquiry": "400 and 500 are neighbouring hundreds. Fifties end in 50 or 00. Where does 468 sit?",
+          "activity": "NCERT p. 119 Table: Mark fifties: 400, 450, 500. 468 is between 450 and 500.",
+          "studentHint": "Fifties jump by 50: 450 then 500! 468 lies between 450 and 500!"
+        },
+        "3": {
+          "signature": "NEIGHBOURING_LANDMARK_CONFUSION",
+          "explanation": "Gave neighbouring Tens (460 and 470) instead of Fifties.",
+          "teacherInquiry": "460 and 470 jump by 10 (tens). The question asks for neighbouring FIFTIES (multiples of 50).",
+          "activity": "Highlight multiples of 50.",
+          "studentHint": "460 and 470 are tens! Neighbouring fifties are 450 and 500!"
+        },
+        "4": {
+          "signature": "UPPER_BOUND_CONFUSION",
+          "explanation": "Confused the upper boundary of fifties.",
+          "teacherInquiry": "Is 460 a fifty? No, 50-landmarks are 400, 450, 500.",
+          "activity": "Check multiples of 50.",
+          "studentHint": "Multiples of 50 are 450 and 500!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_tambola_tens_digit_one",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 120,
+      "domain": "THREE_DIGIT_NUMERATION_UP_TO_1000",
+      "context": "In the Tambola game grid on page 120, the clue is: 'A number with 1 as the tens digit'.",
+      "prompt": "Which of these numbers matches the clue: 'A number with 1 as the tens digit'?",
+      "correctAnswer": 614,
+      "options": [614, 581, 609, 570],
+      "distractors": {
+        "581": {
+          "signature": "TENS_DIGIT_POSITION_CONFUSION",
+          "explanation": "Confused the ones digit with the tens digit (581 has 1 in the ones place).",
+          "teacherInquiry": "In 581, which column has 1? Hundreds is 5, Tens is 8, Ones is 1. The clue asks for tens digit = 1!",
+          "activity": "NCERT p. 120 Tambola: Check the middle digit of each 3-digit number.",
+          "studentHint": "Look at the MIDDLE digit for tens! 614 has 1 ten, but 581 has 1 in the ones place!"
+        },
+        "609": {
+          "signature": "ZERO_TENS_CONFUSION",
+          "explanation": "Selected a number with 0 in the tens place.",
+          "teacherInquiry": "In 609, the tens digit is 0, not 1.",
+          "activity": "Check place value table.",
+          "studentHint": "609 has 0 tens! We need 1 ten in the middle: 614!"
+        },
+        "570": {
+          "signature": "TENS_DIGIT_POSITION_CONFUSION",
+          "explanation": "Selected 570 where tens digit is 7.",
+          "teacherInquiry": "In 570, tens digit is 7. In 614, tens digit is 1.",
+          "activity": "Compare middle digits.",
+          "studentHint": "Tens digit is the middle digit: in 614 it is 1!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_skip_counting_ladder_25s",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 121,
+      "domain": "NUMBER_CHAIN_AND_SKIP_PATTERNS",
+      "context": "In the 'Skip and Solve' pattern on page 121, Ajji gives a pattern jumping by +25: 830, 855, 880, ____, 930.",
+      "prompt": "What number completes the +25 pattern: 830, 855, 880, ____?",
+      "correctAnswer": 905,
+      "options": [905, 900, 895, 915],
+      "distractors": {
+        "900": {
+          "signature": "CENTURY_ROUNDING_ERROR",
+          "explanation": "Rounded to 900 without adding the full 25 (added only 20 to reach 900).",
+          "teacherInquiry": "880 + 20 = 900. But the rule says +25! How much is 900 + 5? 905!",
+          "activity": "NCERT p. 121 Skip and Solve: Add 20 to reach 900, then add 5 more to reach 905.",
+          "studentHint": "880 + 20 gets us to 900, plus 5 more is 905!"
+        },
+        "895": {
+          "signature": "DECADE_JUMP_CALCULATION_SLIP",
+          "explanation": "Added 15 instead of 25 (880 + 15 = 895).",
+          "teacherInquiry": "The jump arrow says '+25'. 80 + 25 = 105. 800 + 105 = 905.",
+          "activity": "Check 880 + 25 in columns.",
+          "studentHint": "Add 25: 880 + 25 = 905!"
+        },
+        "915": {
+          "signature": "BRIDGING_TEN_OVERSHOOT_ERROR",
+          "explanation": "Added 35 instead of 25.",
+          "teacherInquiry": "Check next step: 905 + 25 = 930 (matches the puzzle!). If you put 915, 915 + 25 = 940 (doesn't match 930).",
+          "activity": "Verify with the next puzzle number 930.",
+          "studentHint": "905 + 25 = 930! It matches perfectly!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_inequality_loop_4_numbers",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 122,
+      "domain": "LANDMARK_AND_NEIGHBOURING_BOUNDS",
+      "context": "In the number puzzle on page 122, four numbers must be arranged in order from smallest to greatest: 23, 176, 384, 905.",
+      "prompt": "Which arrangement correctly orders these numbers from smallest to greatest (<)?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "23 < 176 < 384 < 905",
+        "23 < 384 < 176 < 905",
+        "905 < 384 < 176 < 23",
+        "176 < 23 < 384 < 905"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "PLACE_VALUE_MAGNITUDE_SWAP",
+          "explanation": "Placed 384 before 176, failing to compare the hundreds digits (1 hundred < 3 hundreds).",
+          "teacherInquiry": "Compare 176 and 384: 176 has 1 hundred, 384 has 3 hundreds. Is 384 smaller than 176?",
+          "activity": "NCERT p. 122 Number Puzzles: Compare Hundreds digits first: 1 < 3.",
+          "studentHint": "176 has 1 hundred, so it is smaller than 384 (3 hundreds)!"
+        },
+        "3": {
+          "signature": "INEQUALITY_DIRECTION_INVERSION",
+          "explanation": "Arranged from greatest to smallest but used the '<' (less than) symbol.",
+          "teacherInquiry": "The mouth of '<' opens towards the bigger number! 23 is smallest, so 23 < 176.",
+          "activity": "Check '<' points to smaller number.",
+          "studentHint": "'<' means LESS than! Start with the smallest: 23 < 176 < 384 < 905!"
+        },
+        "4": {
+          "signature": "DIGIT_COUNT_PRIORITY_VIOLATION",
+          "explanation": "Placed 3-digit number 176 before 2-digit number 23.",
+          "teacherInquiry": "23 has only 2 digits, while 176 has 3 digits. Any 2-digit number is smaller than 100!",
+          "activity": "Sort numbers by number of digits first.",
+          "studentHint": "23 is a 2-digit number, so it is the smallest of all!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_six_slips_largest_and_231",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 125,
+      "domain": "THREE_DIGIT_NUMERATION_UP_TO_1000",
+      "context": "Teji has 6 blank paper slips. She can write 100, 10, or 1 on each slip. She wants to make the number 231.",
+      "prompt": "How many slips of 100, 10, and 1 are needed to make 231?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Two 100s, Three 10s, One 1 (Total: 6 slips)",
+        "Three 100s, Two 10s, One 1 (Total: 6 slips)",
+        "Two 100s, One 10, Three 1s (Total: 6 slips)",
+        "One 100, Five 10s, One 1 (Total: 7 slips)"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "ONES_TENS_VALUE_CONFUSION",
+          "explanation": "Confused hundreds and tens slips (Three 100s and Two 10s makes 321, not 231).",
+          "teacherInquiry": "In 231, the hundreds digit is 2 and tens digit is 3. How many 100s and 10s?",
+          "activity": "NCERT p. 125 Paper Slips: Write 100, 100, 10, 10, 10, 1 on 6 slips.",
+          "studentHint": "231 has 2 Hundreds and 3 Tens: two 100s and three 10s!"
+        },
+        "3": {
+          "signature": "ONES_TENS_VALUE_CONFUSION",
+          "explanation": "Swapped tens and ones count (made 213 instead of 231).",
+          "teacherInquiry": "231 has 3 tens and 1 one, not 1 ten and 3 ones.",
+          "activity": "Check place values.",
+          "studentHint": "3 tens = three 10s, 1 one = one 1! Total 6 slips!"
+        },
+        "4": {
+          "signature": "CONSTRAINT_VIOLATION_SLIP_COUNT",
+          "explanation": "Used 7 slips, violating the 6-slip limit.",
+          "teacherInquiry": "Teji only has 6 slips in total! 1 + 5 + 1 = 7 slips is too many.",
+          "activity": "Count slips: 2 + 3 + 1 = 6.",
+          "studentHint": "We must use exactly 6 slips: 2 + 3 + 1 = 6 slips!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch09_bhutasankhya_directions_eyes",
+      "chapter": "Chapter 9: House of Hundreds - II",
+      "page": 127,
+      "domain": "BHUTASANKHYA_WORD_NUMERALS",
+      "context": "In ancient India, numbers were written using word symbols (Bhutasankhya): 'Directions' represents 4 (North, South, East, West) and 'Eyes' represents 2.",
+      "prompt": "What number is formed by the cards: [Directions] [Eyes]?",
+      "correctAnswer": 42,
+      "options": [42, 24, 6, 8],
+      "distractors": {
+        "24": {
+          "signature": "BHUTASANKHYA_DIGIT_INVERSION",
+          "explanation": "Inverted the order of digits from left-to-right (wrote 24 instead of 42).",
+          "teacherInquiry": "Directions is 4 (first card) and Eyes is 2 (second card). Read them in order from left to right: 4 followed by 2 is 42.",
+          "activity": "NCERT p. 127 Word Numerals: Match Directions = 4, Eyes = 2 $\to$ 42.",
+          "studentHint": "Directions is 4, Eyes is 2! In order, they make 42!"
+        },
+        "6": {
+          "signature": "ADDITION_INSTEAD_OF_PLACE_VALUE",
+          "explanation": "Added the word values 4 + 2 = 6 instead of placing them as digits.",
+          "teacherInquiry": "Word numerals form place-value digits, not sums! 4 in tens place and 2 in ones place makes 42.",
+          "activity": "Place digit 4 in tens and 2 in ones.",
+          "studentHint": "Don't add them! They are digits: 4 tens and 2 ones = 42!"
+        },
+        "8": {
+          "signature": "MULTIPLICATION_INSTEAD_OF_PLACE_VALUE",
+          "explanation": "Multiplied 4 x 2 = 8.",
+          "teacherInquiry": "These are word numerals representing the digits of a 2-digit number.",
+          "activity": "Read digits side-by-side.",
+          "studentHint": "The digits are 4 and 2 side by side: 42!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_handspan_invariance_dilemma",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 128,
+      "domain": "MEASUREMENT_NONSTANDARD_UNITS_VARIANCE",
+      "context": "Leena (a Grade 3 child with smaller hands) and Adi (with larger hands) both measure the length of the exact same classroom table using their handspans.",
+      "prompt": "Will Leena and Adi get the same number of handspans?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "Yes, because the table length did not change",
+        "No, Leena will count more handspans because her hands are smaller",
+        "No, Adi will count more handspans because his hands are bigger"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "HANDSPAN_INVARIANCE_ASSUMPTION",
+          "explanation": "Assumed measurement count is independent of the size of the informal unit used.",
+          "teacherInquiry": "Try measuring the desk with your handspan, then have the teacher measure it. Do you both get the same count? Smaller hands take more steps!",
+          "activity": "NCERT p. 128 Handspan Activity: Two children of different heights measure the same table and record counts.",
+          "studentHint": "Smaller hands take MORE spans to cover the table! Leena's count will be higher!"
+        },
+        "3": {
+          "signature": "UNIT_SIZE_INVERSE_COUNT_CONFUSION",
+          "explanation": "Confused the inverse relationship between unit size and unit count (thought larger hands yield larger counts).",
+          "teacherInquiry": "If each step you take is bigger, do you take more steps or fewer steps to cross the room? Fewer steps!",
+          "activity": "Compare footsteps of teacher vs student.",
+          "studentHint": "Bigger hands cover more ground per span, so Adi takes FEWER handspans, not more!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_table_door_indirect_measurement",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 132,
+      "domain": "INDIRECT_SPATIAL_MEASUREMENT",
+      "context": "Shelly and Adi need to move a heavy table into the classroom. The table is 120 cm long and 70 cm broad. The classroom door is 85 cm wide.",
+      "prompt": "Can the table pass through the door without breaking it, and how?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "No, because the table's length (120 cm) is wider than the door (85 cm)",
+        "Yes, by turning the table sideways so its breadth (70 cm) enters first",
+        "No, the table cannot pass through any doorway narrower than its length"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "ORIENTATION_NEGLECT_2D",
+          "explanation": "Evaluated only the length and concluded the table cannot fit, ignoring spatial rotation and breadth.",
+          "teacherInquiry": "Look at the table from the end! How wide is its breadth? 70 cm. Since 70 cm is less than 85 cm, can it slide through sideways?",
+          "activity": "NCERT p. 132 Let us Play: Pass a rectangular cardboard box through a narrow book bridge by turning it sideways.",
+          "studentHint": "Turn the table sideways! Its breadth is only 70 cm, which easily fits through the 85 cm door!"
+        },
+        "3": {
+          "signature": "ORIENTATION_NEGLECT_2D",
+          "explanation": "Rigid 1D perspective that objects cannot be rotated in 3D space.",
+          "teacherInquiry": "Can you carry a ruler through a door vertically even if it is longer than the door width?",
+          "activity": "Demonstrate rotating objects through openings.",
+          "studentHint": "Tables can turn sideways! 70 cm < 85 cm, so it fits!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_four_equal_pieces_rope_cuts",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 138,
+      "domain": "FENCEPOST_PARTITION_LOGIC",
+      "context": "Question 3 on page 138: 'Cut a one-metre long rope into 4 equal pieces.'",
+      "prompt": "How many cuts must you make to cut a one-metre long rope into 4 equal pieces?",
+      "correctAnswer": 3,
+      "options": [3, 4, 2, 5],
+      "distractors": {
+        "4": {
+          "signature": "FENCEPOST_CUT_COUNT_ERROR",
+          "explanation": "Confused the number of resulting pieces (4) with the number of cuts needed (3).",
+          "teacherInquiry": "Take a ribbon and make 1 cut. How many pieces do you get? 2 pieces! So 1 cut gives 2 pieces, 2 cuts give 3 pieces. How many cuts for 4 pieces?",
+          "activity": "NCERT p. 138 Q3 Rope Cutting: Fold rope into 4 equal parts and count the 3 fold points to cut.",
+          "studentHint": "Making 1 cut gives 2 pieces! To get 4 pieces, you only need 3 cuts!"
+        },
+        "2": {
+          "signature": "HALVING_ONLY_CUTS",
+          "explanation": "Thought 2 cuts is enough (2 cuts produces only 3 pieces).",
+          "teacherInquiry": "If you make 2 cuts in a rope, you get 3 pieces. We need 4 pieces!",
+          "activity": "Count pieces = cuts + 1.",
+          "studentHint": "2 cuts makes 3 pieces. We need 3 cuts to make 4 pieces!"
+        },
+        "5": {
+          "signature": "OVERSHOOT_ERROR",
+          "explanation": "Added 1 to pieces instead of subtracting 1.",
+          "teacherInquiry": "Number of cuts is ALWAYS 1 less than the number of pieces.",
+          "activity": "Deduce formula: Pieces = Cuts + 1.",
+          "studentHint": "Cuts = Pieces minus 1: 4 - 1 = 3 cuts!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_metre_rope_folding_quarter",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 136,
+      "domain": "METRE_FRACTIONAL_SUBDIVISIONS",
+      "context": "Adi has a 1-metre long rope. He folds it in half once. Then he folds it in half a second time.",
+      "prompt": "How long is the folded rope after folding it in half twice?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Half metre long",
+        "Quarter metre long",
+        "Three-quarter metre long",
+        "Two metres long"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "QUARTER_HALF_METRE_CONFUSION",
+          "explanation": "Stopped after the first fold (folding once makes a half metre; folding twice makes a quarter metre).",
+          "teacherInquiry": "Folding once gives half metre. When you fold half in half again, what fraction do you get? A quarter metre!",
+          "activity": "NCERT p. 136 Rope Folding: Fold 1 m strip once (1/2 m), fold again (1/4 m = 25 cm).",
+          "studentHint": "Folding once gives a HALF metre! Folding it again gives a QUARTER metre!"
+        },
+        "3": {
+          "signature": "THREE_QUARTERS_DEFAULT",
+          "explanation": "Confused quarter metre with three-quarters.",
+          "teacherInquiry": "Folding in half twice divides by 4, creating 1 quarter.",
+          "activity": "Unfold and count the 4 equal segments.",
+          "studentHint": "Half of a half is a quarter metre!"
+        },
+        "4": {
+          "signature": "MULTIPLICATION_INSTEAD_OF_DIVISION",
+          "explanation": "Thought folding doubles the length instead of halving it.",
+          "teacherInquiry": "Does folding make the rope longer or shorter? Much shorter!",
+          "activity": "Observe folded rope size.",
+          "studentHint": "Folding makes it shorter: 1/4 of a metre!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_benchmark_classroom_door_height",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 135,
+      "domain": "MEASUREMENT_STANDARD_METRE_BENCHMARK",
+      "context": "Children hold a 1-metre rope against various classroom objects to benchmark their lengths.",
+      "prompt": "The height of the classroom door is:",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "More than 1 metre (about 2 metres)",
+        "Less than 1 metre",
+        "Exactly 1 metre"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Thought an entire door is shorter than 1 metre.",
+          "teacherInquiry": "Stand next to the 1-metre mark on the wall. Are you taller than 1 metre? Yes! Is the door taller than you? Yes, so it is more than 1 metre!",
+          "activity": "NCERT p. 135 Door Height: Stack 1-metre ropes vertically up the door frame.",
+          "studentHint": "Adults can walk through a door without bumping their heads! It is about 2 metres tall, MORE than 1 metre!"
+        },
+        "3": {
+          "signature": "DEFAULT_BENCHMARK_BIAS",
+          "explanation": "Assumed all large objects equal exactly 1 metre.",
+          "teacherInquiry": "1 metre reaches roughly up to a child's chest. Does the door stop at your chest?",
+          "activity": "Compare child chest height to door frame.",
+          "studentHint": "A door is much taller than 1 metre!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_benchmark_pencil_box_length",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 136,
+      "domain": "MEASUREMENT_STANDARD_METRE_BENCHMARK",
+      "context": "Children sort objects around the classroom: objects more than 1 metre, less than 1 metre, and equal to 1 metre.",
+      "prompt": "The length of your pencil geometry box is:",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "More than 1 metre",
+        "Less than 1 metre",
+        "Equal to 1 metre"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "BENCHMARK_SCALE_INVERSION",
+          "explanation": "Greatly overestimated the size of a pencil box.",
+          "teacherInquiry": "A metre rope stretches across a child's wide arms. Can your pencil box fit inside your backpack? Yes, it is only about 20 cm, much less than 1 metre!",
+          "activity": "NCERT p. 136 Sorting Objects: Place pencil box next to 1-metre rope.",
+          "studentHint": "A pencil box is small! It is much LESS than 1 metre long!"
+        },
+        "3": {
+          "signature": "DEFAULT_BENCHMARK_BIAS",
+          "explanation": "Defaulted to 1 metre.",
+          "teacherInquiry": "Compare pencil box to the 1-metre rope.",
+          "activity": "Hold pencil box against 1 m rod.",
+          "studentHint": "1 metre is long! A pencil box is less than 1 metre!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_arms_wide_open_height_invariant",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 133,
+      "domain": "MEASUREMENT_NONSTANDARD_UNITS_VARIANCE",
+      "context": "On page 133, children check human body proportion statements for costume making: 'Are these true for all?'",
+      "prompt": "Statement: 'Your height is approximately equal to the length of your arms stretched wide open.'",
+      "correctAnswer": 1,
+      "options": [1, 2],
+      "optionLabels": ["True", "False"],
+      "distractors": {
+        "2": {
+          "signature": "BODY_PROPORTION_MISUNDERSTANDING",
+          "explanation": "Did not realize the anatomical invariant that arm span roughly equals body height.",
+          "teacherInquiry": "Stretch your arms wide against the blackboard while a friend marks your fingertips. Then stand against the marks. Do they match?",
+          "activity": "NCERT p. 133 Arm Span vs Height: Measure child height and arm span with string.",
+          "studentHint": "It is TRUE! If you open your arms wide from fingertip to fingertip, that distance is almost exactly your height!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_longest_string_lights_uncoiling",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 131,
+      "domain": "INDIRECT_SPATIAL_MEASUREMENT",
+      "context": "Adi is choosing decorative string lights on page 131. One string is stretched straight with 7 bulbs. Another string hangs in deep curved loops with 14 bulbs.",
+      "prompt": "How can Adi find out which string light is the longest?",
+      "correctAnswer": 2,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "Pick the straight one because it looks like a straight line",
+        "Uncoil and pull both strings straight to compare their full lengths",
+        "Count only the distance between the two ends without uncoiling"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "APPARENT_SPAN_VISUAL_BIAS",
+          "explanation": "Judged length by end-to-end visual distance rather than actual uncoiled path length.",
+          "teacherInquiry": "If a string is curled up in a ball, does it become short? What happens when you stretch it out straight?",
+          "activity": "NCERT p. 131 Curved vs Straight String: Pull a coiled thread taut to see its true length.",
+          "studentHint": "Curved strings hide extra length in the loops! Pull them straight to compare!"
+        },
+        "3": {
+          "signature": "APPARENT_SPAN_VISUAL_BIAS",
+          "explanation": "Measured only Euclidean distance between endpoints, ignoring curves.",
+          "teacherInquiry": "All the wavy bends add length. Stretch it flat along a table.",
+          "activity": "Measure wavy thread with ruler.",
+          "studentHint": "Always uncoil and straighten strings before measuring!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_jumping_distance_comparison",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 137,
+      "domain": "METRE_FRACTIONAL_SUBDIVISIONS",
+      "context": "In the jumping activity on page 137, Kabir jumped past the half-metre line but did not reach the 1-metre line.",
+      "prompt": "Kabir's jump distance was:",
+      "correctAnswer": 3,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Less than a quarter metre",
+        "Less than a half metre",
+        "Between a half metre and one metre",
+        "More than one metre"
+      ],
+      "distractors": {
+        "1": {
+          "signature": "QUARTER_HALF_METRE_CONFUSION",
+          "explanation": "Confused quarter metre and half metre boundaries.",
+          "teacherInquiry": "Kabir jumped past half metre! Is half metre more or less than quarter metre?",
+          "activity": "NCERT p. 137 Jumping Floor Marks: Mark 0, 1/4 m, 1/2 m, 1 m on floor.",
+          "studentHint": "Kabir passed the half metre line! His jump is between half metre and 1 metre!"
+        },
+        "2": {
+          "signature": "QUARTER_HALF_METRE_CONFUSION",
+          "explanation": "Stated less than half metre when he jumped past it.",
+          "teacherInquiry": "Look where Kabir landed: beyond the 1/2 metre mark.",
+          "activity": "Check floor landing spot.",
+          "studentHint": "He landed beyond 1/2 metre, so it is MORE than half metre!"
+        },
+        "4": {
+          "signature": "OVERESTIMATION_OF_DISTANCE",
+          "explanation": "Claimed jump was more than 1 metre.",
+          "teacherInquiry": "Did Kabir reach the 1-metre line? No, he landed before it.",
+          "activity": "Check 1 metre line.",
+          "studentHint": "He didn't reach the 1-metre line yet, so it's between half metre and 1 metre!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch10_saree_curtain_unit_choice",
+      "chapter": "Chapter 10: Fun at Class Party!",
+      "page": 133,
+      "domain": "MEASUREMENT_STANDARD_METRE_BENCHMARK",
+      "context": "Adi wants to measure the length of a long saree (about 5 metres) to make curtains for the drama.",
+      "prompt": "Which tool is best to measure the length of the saree accurately and quickly?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3],
+      "optionLabels": [
+        "A 1-metre measuring rod or inch tape",
+        "A short pencil",
+        "An eraser"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "UNIT_INAPPROPRIATE_SCALE_BIAS",
+          "explanation": "Chose an inappropriately small informal unit (pencil) for a 5-metre fabric, causing high error and tediousness.",
+          "teacherInquiry": "On page 133, Shelly says: 'Measuring with a pencil takes a long time!' What do shopkeepers use to measure cloth quickly and accurately?",
+          "activity": "NCERT p. 134 Shopkeeper Metre Rod: Observe measuring cloth with a 1 m rod.",
+          "studentHint": "A pencil is way too small for a long saree! Use a 1-metre rod or tape, just like shopkeepers!"
+        },
+        "3": {
+          "signature": "UNIT_INAPPROPRIATE_SCALE_BIAS",
+          "explanation": "Selected an even smaller unit (eraser).",
+          "teacherInquiry": "You would need hundreds of erasers, and shifting it will make mistakes.",
+          "activity": "Demonstrate cumulative alignment error.",
+          "studentHint": "Use a 1-metre rod for large fabrics!"
+        }
+      }
+    }
+  ]
+}

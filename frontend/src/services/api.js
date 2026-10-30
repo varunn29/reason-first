@@ -15,6 +15,7 @@ export const api = {
           teacher: data.teacher || mockTeacher,
           stats: data.stats || mockStats,
           students: data.students || mockStudents,
+          activeAssignment: data.activeAssignment || null,
           isLive: true,
         };
       }
@@ -26,6 +27,7 @@ export const api = {
       teacher: mockTeacher,
       stats: mockStats,
       students: mockStudents,
+      activeAssignment: null,
       isLive: false,
     };
   },
@@ -62,8 +64,10 @@ export const api = {
         body: JSON.stringify({
           studentId: studentId || 'student_rahul',
           questionId: questionId || 'probe_01',
-          assignmentId: 'asgn_class3_subtraction',
+          questionText: extraData.questionText || '',
+          assignmentId: extraData.assignmentId || 'asgn_class3_subtraction',
           answer: selectedAnswer,
+          correctAnswer,
           explanation: extraData.explanation || '',
           responses: extraData.responses || null,
         }),
@@ -73,13 +77,17 @@ export const api = {
       if (res.ok) {
         const data = await res.json();
         const diag = data.diagnosis || {};
+        const isPass = selectedAnswer === correctAnswer;
         return {
           studentId,
           questionId,
+          questionText: extraData.questionText || '',
+          selectedAnswer,
+          correctAnswer,
           responseId: data.responseId,
-          status: diag.status || (selectedAnswer === correctAnswer ? 'Pass' : 'Fail'),
-          message: diag.observations || (selectedAnswer === correctAnswer ? 'No immediate gap detected.' : 'Misconception detected.'),
-          gap: diag.ruleId || (selectedAnswer === correctAnswer ? null : 'Borrowing'),
+          status: diag.status || (isPass ? 'Pass' : 'Fail'),
+          message: diag.observations || (isPass ? 'No immediate gap detected. Student demonstrated mastery of this subtraction concept.' : 'Misconception detected.'),
+          gap: diag.ruleId || (isPass ? 'CORRECT' : 'BORROWING'),
           confidence: diag.confidence || 'HIGH',
           followUpQuestion: diag.followUpQuestion || 'Can you explain how you subtracted the ones column?',
           suggestedActivity: diag.suggestedActivity || 'Practice tens-and-ones place value regrouping.',
@@ -97,20 +105,95 @@ export const api = {
     return {
       studentId,
       questionId,
+      questionText: extraData.questionText || '',
+      selectedAnswer,
+      correctAnswer,
+      responseId: 'offline_response',
       status: isCorrect ? 'Pass' : 'Fail',
       message: isCorrect
         ? 'No immediate gap detected. Student demonstrated mastery of this subtraction concept.'
-        : "Rahul needs help with 'Borrowing' concept in subtraction.",
-      gap: isCorrect ? null : 'Borrowing',
+        : "Student needs review with tens-to-ones regrouping concept.",
+      gap: isCorrect ? 'CORRECT' : 'BORROWING',
       confidence: 'MEDIUM',
-      followUpQuestion: 'Can you show your regrouping step?',
+      followUpQuestion: 'Can you show your regrouping step with base-10 blocks?',
       suggestedActivity: isCorrect
         ? 'Advance to 3-digit subtraction'
-        : 'Use 10 physical sticks to explain tens-to-ones regrouping',
+        : 'Use 10 physical counters to explain unbundling 1 ten into 10 ones',
       alternatives: ['Calculation slip'],
-      evidence: {},
+      evidence: { observed: selectedAnswer, expected: correctAnswer, is_correct: isCorrect },
       isLiveML: false,
     };
+  },
+
+  // Fetch report for a specific student
+  getStudentReport: async (studentId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/reports/student/${studentId}`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('Backend report API unreachable:', err.message);
+    }
+    return null;
+  },
+
+  // Submit teacher override and clinical notes
+  submitOverride: async (responseId, originalRuleId, teacherDecision, teacherNote) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/overrides`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          responseId,
+          originalRuleId,
+          teacherDecision,
+          teacherNote,
+        }),
+        signal: AbortSignal.timeout(4000),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('Could not submit teacher override:', err.message);
+    }
+    return { ok: true, override: { teacherDecision, teacherNote, overriddenAt: new Date().toISOString() } };
+  },
+
+  // Create new assignment on backend
+  createAssignment: async (assignmentData) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/assignments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(assignmentData),
+        signal: AbortSignal.timeout(4000),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('Backend assignment creation unreachable:', err.message);
+    }
+    return { ok: true, assignment: assignmentData };
+  },
+
+  // Get active assignments
+  getAssignments: async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/assignments`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('Could not fetch assignments:', err.message);
+    }
+    return { ok: true, assignments: [] };
   },
 };
 

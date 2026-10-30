@@ -7,6 +7,7 @@ import CreateAssignment from './pages/CreateAssignment';
 import StudentInterface from './pages/StudentInterface';
 import QuestionSolving from './pages/QuestionSolving';
 import DiagnosticReport from './pages/DiagnosticReport';
+import Settings from './pages/Settings';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Login from './pages/Login';
@@ -30,7 +31,7 @@ function App() {
           <Route path="/create" element={<CreateAssignment />} />
           <Route path="/report" element={<DiagnosticReport />} />
           <Route path="/reports" element={<DiagnosticReport />} />
-          <Route path="/settings" element={<TeacherDashboard />} />
+          <Route path="/settings" element={<Settings />} />
 
           {/* Legal Pages */}
           <Route path="/terms" element={<TermsOfService />} />

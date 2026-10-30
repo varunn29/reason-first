@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hash, ArrowRight } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
+import { AppContext } from '../context/AppContext';
 
 const StudentLogin = () => {
   const navigate = useNavigate();
+  const { setStudentByCode, resetStudentQuiz } = useContext(AppContext);
   const [code, setCode] = useState('');
 
   const handleJoin = (e) => {
     e.preventDefault();
-    // Mock validation: navigate directly to student dashboard
-    navigate('/student');
+    if (code.trim()) {
+      setStudentByCode(code);
+      resetStudentQuiz();
+      navigate('/student');
+    }
   };
 
   return (

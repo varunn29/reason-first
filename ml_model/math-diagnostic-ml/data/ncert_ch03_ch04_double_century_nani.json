@@ -1,0 +1,530 @@
+{
+  "curriculum": "NCERT Class 3 Mathematics",
+  "textbook": "Maths Mela (First Edition 2024 / Reprint 2026-27)",
+  "chapters": [
+    "Chapter 3: Double Century (pp. 16-28)",
+    "Chapter 4: Vacation with My Nani Maa (pp. 29-43)"
+  ],
+  "learning_outcomes": [
+    "M3.1a: Place value understanding up to 200, unitizing 10 tens into 1 hundred, composing numbers with matchstick bundles and loose sticks, zero-placeholder in tens and ones",
+    "M3.1b: Number sequence and number line navigation up to 200, decade crossing (109 -> 110), 1-more/1-less, skip-counting by 5s and 20s",
+    "M3.1c: 2-digit addition and subtraction using mental strategies: ginladi (bead string) bridging, 100-number grid two-axis navigation (+/-10 vertical, +/-1 horizontal)",
+    "M3.1d: Part-Whole situational modeling using box diagrams, estimation (> 100 vs < 100), and word problem reasoning"
+  ],
+  "probes": [
+    {
+      "id": "ncert_ch03_century_cricket_bindis",
+      "chapter": "Chapter 3: Double Century",
+      "page": 18,
+      "domain": "PLACE_VALUE_AND_HUNDREDS",
+      "context": "In a cricket match, a player scored a century (100 runs). A shopkeeper packs 10 packets of 10 bindis each. How many bindis are there in 10 packets of 10 bindis?",
+      "prompt": "10 packets of 10 bindis each = _____ bindis in all.",
+      "correctAnswer": 100,
+      "options": [100, 20, 10, 1000],
+      "distractors": {
+        "20": {
+          "signature": "ADDITION_INSTEAD_OF_MULTIPLICATION",
+          "explanation": "Added 10 + 10 = 20 instead of recognizing 10 groups of 10.",
+          "teacherInquiry": "Count each packet: 10, 20, 30... How many bindis when all 10 packets are opened?",
+          "activity": "NCERT p. 18 Ginladi / Bundles: Count ten 10-bundles of sticks by tens to reach 100.",
+          "studentHint": "Each packet has 10! Let's count by tens: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100!"
+        },
+        "10": {
+          "signature": "UNIT_CONFUSION_GROUP_AS_ITEM",
+          "explanation": "Counted only the number of packets or single group size.",
+          "teacherInquiry": "Does 10 packets mean only 10 bindis, or does each packet have 10 inside?",
+          "activity": "Open physical packets of 10 bindis or bead strings to count total items.",
+          "studentHint": "There are 10 packets, and EACH has 10 bindis! Count all the bindis: 100!"
+        },
+        "1000": {
+          "signature": "MAGNITUDE_OVERESTIMATION",
+          "explanation": "Confused a hundred with a thousand.",
+          "teacherInquiry": "A century is 100 runs. 10 tens makes 100, not 1000.",
+          "activity": "Place value chart: Units, Tens, Hundreds.",
+          "studentHint": "10 tens make 100 (one century), not 1000!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_making_100_bholu_65_35",
+      "chapter": "Chapter 3: Double Century",
+      "page": 19,
+      "domain": "NUMBER_LINE_AND_BENCHMARKING",
+      "context": "Bholu is jumping on the number line. He is at 65. He wants to reach 100. How many more jumps must Bholu make to reach 100?",
+      "prompt": "65 + _____ = 100",
+      "correctAnswer": 35,
+      "options": [35, 45, 25, 165],
+      "distractors": {
+        "45": {
+          "signature": "BRIDGING_TEN_OVERSHOOT_ERROR",
+          "explanation": "Added 10 to tens column without adjusting for the 5 ones ($65 + 45 = 110$).",
+          "teacherInquiry": "Test 65 + 45: 60 + 40 = 100, plus 5 + 5 = 10, so 110! How many jumps from 65 to 70 first?",
+          "activity": "NCERT p. 19 Number Line Jumps: Jump 5 from 65 to 70, then jump 30 from 70 to 100 (5 + 30 = 35).",
+          "studentHint": "First jump 5 steps to reach 70! From 70 to 100 is 30 steps! 30 + 5 = 35!"
+        },
+        "25": {
+          "signature": "CALCULATION_SLIP_TENS",
+          "explanation": "Computed 100 - 65 as 25 (borrowing slip in tens).",
+          "teacherInquiry": "If you take 25 steps from 65: 65 + 20 = 85, + 5 = 90. Did you reach 100?",
+          "activity": "Use 10-strips on a number line to check the landing point.",
+          "studentHint": "65 + 25 only gets to 90! We need 10 more to reach 100: 35!"
+        },
+        "165": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 100 + 65 = 165 instead of finding the missing jump to 100.",
+          "teacherInquiry": "Bholu is trying to reach 100. Can his jump be bigger than 100?",
+          "activity": "Draw the target at 100 on the floor number line and have the child walk the distance.",
+          "studentHint": "Bholu is already at 65 and wants to LAND on 100! Find the distance: 100 - 65 = 35!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_bundles_zero_tens_104",
+      "chapter": "Chapter 3: Double Century",
+      "page": 22,
+      "domain": "PLACE_VALUE_AND_BUNDLES",
+      "context": "Teji uses matchstick bundles to make numbers. She has 1 big bundle of 100 sticks, 0 bundles of 10 sticks, and 4 loose sticks. What number did she make?",
+      "prompt": "1 bundle of 100, 0 bundles of 10, 4 loose sticks = ?",
+      "correctAnswer": 104,
+      "options": [104, 140, 14, 1004],
+      "distractors": {
+        "140": {
+          "signature": "REVERSE_HTO_ALIGNMENT",
+          "explanation": "Swapped tens and ones: treated 4 loose sticks as 4 tens (40) and 0 tens as 0 ones.",
+          "teacherInquiry": "How many bundles of 10 were there? Are loose single sticks tens or ones?",
+          "activity": "NCERT p. 22 Bundles Table: Place 1 under '100', 0 under '10s', and 4 under '1s'.",
+          "studentHint": "The 4 sticks are loose single sticks (ones), not bundles of 10! The tens place is 0: 104!"
+        },
+        "14": {
+          "signature": "ZERO_PLACEHOLDER_OMISSION",
+          "explanation": "Omitted the 0 tens placeholder, collapsing the 3-digit number 104 into 2-digit 14.",
+          "teacherInquiry": "What happens if we forget to write the 0 in the tens place? Is 14 the same as 104?",
+          "activity": "Use 3 digit cards [1], [0], [4] side by side. Remove the [0] and see the mistake.",
+          "studentHint": "Don't forget the zero in the middle for 0 tens! 1 hundred and 4 ones is 104, not 14!"
+        },
+        "1004": {
+          "signature": "LITERAL_CONCATENATION_ERROR",
+          "explanation": "Wrote 100 followed by 4 literally ('100' + '4' = 1004).",
+          "teacherInquiry": "In 100, where does the 4 go? Does it replace the ones zero, or get stuck onto the end?",
+          "activity": "Place-value arrow cards: slip the [4] card over the last zero of the [100] card to make 104.",
+          "studentHint": "100 + 4 makes 104! We don't write the whole 100 and then 4!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_talking_pot_109",
+      "chapter": "Chapter 3: Double Century",
+      "page": 23,
+      "domain": "NUMBER_SEQUENCE_AND_SUCCESSORS",
+      "context": "The Talking Pot always says ONE MORE than whatever number you say. Bholu says '109'. What number will the Talking Pot say?",
+      "prompt": "What is 1 more than 109?",
+      "correctAnswer": 110,
+      "options": [110, 1010, 100, 120],
+      "distractors": {
+        "1010": {
+          "signature": "DECADE_CROSSING_STUMBLE",
+          "explanation": "Wrote '10' for the hundreds/tens and '10' for 9+1, producing '1010'.",
+          "teacherInquiry": "Count after 109: 107, 108, 109... what comes right after 9 in the tens family?",
+          "activity": "NCERT p. 23 Number Line: Take 1 hop forward from 109 on a bead string (ginladi).",
+          "studentHint": "When we add 1 to 9, it becomes 10! So 109 becomes 110!"
+        },
+        "100": {
+          "signature": "PREDECESSOR_CONFUSION",
+          "explanation": "Said 1 less decade or confused 109 with 99+1.",
+          "teacherInquiry": "Is 1 more than 109 bigger or smaller than 109?",
+          "activity": "Walk forward on a giant floor number line past 109.",
+          "studentHint": "The Talking Pot says ONE MORE, not less! After 109 comes 110!"
+        },
+        "120": {
+          "signature": "TEN_MORE_INSTEAD_OF_ONE",
+          "explanation": "Jumped 10 more instead of 1 more ($110 + 10 = 120$).",
+          "teacherInquiry": "Did Bholu ask for 10 more or 1 more?",
+          "activity": "Distinguish 1 single step from a big jump of 10 on the number line.",
+          "studentHint": "Just 1 more step, not 10! After 109 comes 110!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_number_line_jumps_20",
+      "chapter": "Chapter 3: Double Century",
+      "page": 26,
+      "domain": "NUMBER_LINE_AND_SKIP_COUNTING",
+      "context": "A frog is taking jumps of 20 on the number line starting from 100: 100, 120, ____, 160, 180, 200. What number comes after 120?",
+      "prompt": "100, 120, _____ (jumps of 20)",
+      "correctAnswer": 140,
+      "options": [140, 125, 130, 150],
+      "distractors": {
+        "125": {
+          "signature": "JUMP_5_CONFUSION",
+          "explanation": "Made a jump of 5 (from the previous problem on p. 26) instead of 20.",
+          "teacherInquiry": "Look at the pattern: 100 to 120 is a jump of 20. If you add 20 to 120, what do you get?",
+          "activity": "NCERT p. 26 Jumping Game: Compare jumps of 5 with jumps of 20 on two parallel number lines.",
+          "studentHint": "The jump size is 20! Add 20 to 120: 120 + 20 = 140!"
+        },
+        "130": {
+          "signature": "JUMP_10_CONFUSION",
+          "explanation": "Added 10 instead of 20.",
+          "teacherInquiry": "How much is 120 + 20? 12 tens + 2 tens = 14 tens (140).",
+          "activity": "Use two 10-bundles to show the jump of 20.",
+          "studentHint": "Add 2 tens (20), not 1 ten! 120 + 20 = 140!"
+        },
+        "150": {
+          "signature": "HALFWAY_BENCHMARK_LEAP",
+          "explanation": "Jumped prematurely to the halfway mark 150.",
+          "teacherInquiry": "Count carefully by twenties: 100, 120, 140, 160, 180, 200.",
+          "activity": "Step along the number line in equal 20-step increments.",
+          "studentHint": "Keep the steps equal: 100, 120, 140!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_one_less_one_more_160",
+      "chapter": "Chapter 3: Double Century",
+      "page": 26,
+      "domain": "PREDECESSOR_SUCCESSOR",
+      "context": "Look at the number 160 in the table. What number is 1 less than 160, and what number is 1 more than 160?",
+      "prompt": "1 less than 160 is _____ and 1 more than 160 is _____.",
+      "correctAnswer": 159,
+      "options": [159, 150, 169, 161],
+      "distractors": {
+        "150": {
+          "signature": "TEN_LESS_CONFUSION",
+          "explanation": "Subtracted 10 instead of 1 ($160 - 10 = 150$).",
+          "teacherInquiry": "The column header says '1 less', not '10 less'. What number comes right before 60?",
+          "activity": "NCERT p. 26 Table: Write the counting sequence 158, 159, 160, 161.",
+          "studentHint": "Just 1 step backward! What number comes right before 60? 59! So 159!"
+        },
+        "169": {
+          "signature": "NINE_SUBSTITUTION_ERROR",
+          "explanation": "Substituted 9 without decrementing the tens ($160 -> 169$).",
+          "teacherInquiry": "Is 169 less than 160 or more than 160?",
+          "activity": "Check place values on a number line.",
+          "studentHint": "169 is more than 160! We need 1 LESS: 159!"
+        },
+        "161": {
+          "signature": "SUCCESSOR_PREDECESSOR_SWAP",
+          "explanation": "Answered 1 more (161) instead of 1 less.",
+          "teacherInquiry": "Did the question ask for 1 less or 1 more?",
+          "activity": "Circle '1 less' in blue and '1 more' in green.",
+          "studentHint": "161 is 1 MORE! We are looking for 1 LESS: 159!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_clap_snap_pat_142",
+      "chapter": "Chapter 3: Double Century",
+      "page": 24,
+      "domain": "MULTIMODAL_PLACE_VALUE",
+      "context": "In the classroom game: 1 Clap = 100, 1 Snap = 10, 1 Pat = 1. A student does: 1 Clap, 4 Snaps, and 2 Pats. What number did they make?",
+      "prompt": "1 Clap (100) + 4 Snaps (10 each) + 2 Pats (1 each) = ?",
+      "correctAnswer": 142,
+      "options": [142, 124, 7, 140],
+      "distractors": {
+        "124": {
+          "signature": "REVERSE_TENS_ONES_MAPPING",
+          "explanation": "Swapped snaps and pats: 2 snaps (20) and 4 pats (4) -> 124.",
+          "teacherInquiry": "Snaps mean tens. How many snaps were there? 4 snaps = 40.",
+          "activity": "NCERT p. 24 Clap, Snap, Pat Game: Perform the actions physically while writing H, T, U.",
+          "studentHint": "4 snaps = 4 tens (40)! 2 pats = 2 ones! So 100 + 40 + 2 = 142!"
+        },
+        "7": {
+          "signature": "UNIT_VALUE_IGNORANCE_ADD_COUNTS",
+          "explanation": "Added the action counts directly: 1 + 4 + 2 = 7 without multiplying by place values.",
+          "teacherInquiry": "Does 1 clap mean 1 single stick or a whole bundle of 100 sticks?",
+          "activity": "Trade claps for ₹100 notes, snaps for ₹10 notes, and pats for ₹1 coins.",
+          "studentHint": "A clap is worth 100, not 1! A snap is worth 10! Total is 142!"
+        },
+        "140": {
+          "signature": "ONES_DROPOUT_ERROR",
+          "explanation": "Forgot to count the 2 pats.",
+          "teacherInquiry": "What happened to the 2 pats at the end?",
+          "activity": "Check all 3 actions: Claps (100), Snaps (40), Pats (2).",
+          "studentHint": "Don't forget the 2 pats at the end: 140 + 2 = 142!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_hidden_seeds_23_7",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 29,
+      "domain": "MISSING_ADDEND_SUBTRACTION",
+      "context": "Nani Maa plays her magic trick. There are 23 seeds in total. Chirag puts 7 seeds on the table and hides the rest under a handkerchief. How many seeds are hidden under the handkerchief?",
+      "prompt": "Total 23 seeds, 7 on table. How many seeds hidden? (23 - 7 = ?)",
+      "minuend": 23,
+      "subtrahend": 7,
+      "correctAnswer": 16,
+      "options": [16, 24, 14, 30],
+      "distractors": {
+        "24": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 7 - 3 = 4 in ones and kept 2 in tens (24), Smaller-From-Larger error.",
+          "teacherInquiry": "In 23 - 7, can you take 7 from 3? What happens when you unbundle 1 ten?",
+          "activity": "NCERT p. 29 Seeds Table: Place 23 real seeds on a plate. Remove 7 seeds and count the rest.",
+          "studentHint": "You cannot take 7 from 3! Unbundle 1 ten into 10 ones: 13 - 7 = 6, with 1 ten left = 16!"
+        },
+        "14": {
+          "signature": "CALCULATION_SLIP_ONES",
+          "explanation": "Fact recall slip (thought 13 - 7 = 4).",
+          "teacherInquiry": "Count backward from 23 by ones: 22, 21, 20, 19, 18, 17, 16.",
+          "activity": "Use a number line from 16 to 23 to count 7 steps.",
+          "studentHint": "Count backward 7 steps from 23: 23 - 3 = 20, 20 - 4 = 16!"
+        },
+        "30": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 23 + 7 = 30 instead of subtracting.",
+          "teacherInquiry": "23 seeds were the TOTAL. Can the hidden seeds be more than 23?",
+          "activity": "Part-Whole box model: Total (23) = On Table (7) + Hidden (?).",
+          "studentHint": "23 is the TOTAL number of seeds! The hidden ones must be fewer: 23 - 7 = 16!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_ginladi_stamp_15_7",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 32,
+      "domain": "GINLADI_MENTAL_ADDITION",
+      "context": "Nandini and Chirag have 15 stamps. Nani Maa gives them 7 more stamps. Chirag solves it on the ginladi by jumping to 20 first, then adding the rest. How does Chirag break up 7?",
+      "prompt": "15 + 7 = 15 + 5 + _____ = 22",
+      "correctAnswer": 2,
+      "options": [2, 5, 7, 3],
+      "distractors": {
+        "5": {
+          "signature": "PART_PART_EQUAL_ASSUMPTION",
+          "explanation": "Repeated the first hop of 5 ($5 + 5 = 10$).",
+          "teacherInquiry": "We need to add 7 in total. If we already hopped 5, how much of 7 is left? 7 - 5 = ?",
+          "activity": "NCERT p. 32 Ginladi: Slide 5 beads to reach the red/white 20-bead group, then slide 2 more beads.",
+          "studentHint": "7 is split into 5 and 2! 15 + 5 reaches the friendly 20, and 2 more makes 22!"
+        },
+        "7": {
+          "signature": "WHOLE_REPEATED_AFTER_SPLIT",
+          "explanation": "Hopped 5 and then added the whole 7 again ($15 + 5 + 7 = 27$).",
+          "teacherInquiry": "Did we need to add 7 more after already adding 5?",
+          "activity": "Use 7 counters to show splitting into 5 and 2.",
+          "studentHint": "Don't add 7 again! We broke 7 into 5 and 2! The missing part is 2!"
+        },
+        "3": {
+          "signature": "COMPLEMENT_TO_10_CONFUSION",
+          "explanation": "Confused the complement of 7 to 10 (3) with the remaining part of 7.",
+          "teacherInquiry": "7 minus 5 equals what?",
+          "activity": "Count remaining fingers: hold up 7 fingers, fold down 5.",
+          "studentHint": "7 take away 5 leaves 2! So 15 + 5 + 2 = 22!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_grid_navigation_chirag_89_63",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 36,
+      "domain": "NUMBER_GRID_TWO_AXIS",
+      "context": "Chirag is playing the 100-number grid game. His counter is at 89. He rolls 63 and moves backward. On what number will he land?",
+      "prompt": "89 - 63 = ?",
+      "minuend": 89,
+      "subtrahend": 63,
+      "correctAnswer": 26,
+      "options": [26, 36, 152, 23],
+      "distractors": {
+        "36": {
+          "signature": "TENS_DECADE_MISCOUNT_GRID",
+          "explanation": "Jumped up 5 rows instead of 6 rows ($89 - 50 = 39 - 3 = 36$).",
+          "teacherInquiry": "In 63, how many tens are there? Count the vertical rows: 89 -> 79 -> 69 -> 59 -> 49 -> 39 -> 29 (6 rows!).",
+          "activity": "NCERT p. 36 Number Grid: Move up 6 rows of 10, then step left 3 boxes.",
+          "studentHint": "Jump up 6 full rows of 10 to take away 60: 89 -> 29. Then step left 3: 26!"
+        },
+        "152": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 89 + 63 = 152 instead of moving backward (subtracting).",
+          "teacherInquiry": "Chirag moves BACKWARD. Does backward mean add or subtract?",
+          "activity": "Demonstrate that moving backward on the grid decreases the number.",
+          "studentHint": "He is moving BACKWARD on the grid! Subtract: 89 - 60 = 29, 29 - 3 = 26!"
+        },
+        "23": {
+          "signature": "CALCULATION_SLIP_ONES",
+          "explanation": "Subtracted 6 in ones instead of 3 ($29 - 6 = 23$).",
+          "teacherInquiry": "In 63, how many ones are being subtracted? 3 ones or 6 ones?",
+          "activity": "Check: 9 ones minus 3 ones = 6 ones. Tens: 8 tens minus 6 tens = 2 tens.",
+          "studentHint": "In the ones place: 9 - 3 = 6! So the answer is 26!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_vegetables_box_100_65",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 39,
+      "domain": "PART_WHOLE_WORD_PROBLEMS",
+      "context": "Nani Maa puts tomatoes and carrots in a box with '100' written on it. She put in 65 tomatoes. How many carrots are in the box?",
+      "prompt": "100 - 65 = ?",
+      "minuend": 100,
+      "subtrahend": 65,
+      "correctAnswer": 35,
+      "options": [35, 45, 165, 30],
+      "distractors": {
+        "45": {
+          "signature": "ZERO_ACROSS_BORROW_ERROR",
+          "explanation": "Forgot to reduce the tens column after unbundling from hundreds ($10 - 6 = 4$).",
+          "teacherInquiry": "When 1 hundred is traded for 10 tens, and 1 ten is traded for 10 ones, how many tens are left? 9 tens! 9 - 6 = 3 tens.",
+          "activity": "NCERT p. 39 Matchstick Bundles: Trade 1 bundle of 100 for 9 bundles of 10 and 10 loose sticks. Remove 65.",
+          "studentHint": "Remember: 100 has 9 tens left after giving 1 ten to ones! 9 tens - 6 tens = 3 tens: 35!"
+        },
+        "165": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 100 + 65 = 165 instead of finding the missing carrots.",
+          "teacherInquiry": "The box can only hold 100 vegetables in total. Can there be 165 carrots?",
+          "activity": "Draw the 100 box: 65 tomatoes + ? carrots = 100.",
+          "studentHint": "The WHOLE box is 100! Carrots must be less than 100: 100 - 65 = 35!"
+        },
+        "30": {
+          "signature": "ONES_DROPOUT_ERROR",
+          "explanation": "Subtracted 100 - 70 = 30 or dropped the 5 ones.",
+          "teacherInquiry": "What is 35 + 65? Does 30 + 65 equal 100?",
+          "activity": "Add carrots and tomatoes back together to check: 35 + 65 = 100.",
+          "studentHint": "Check: 30 + 65 is only 95! We need 5 more: 35 carrots!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_apples_total_85_67",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 40,
+      "domain": "TWO_DIGIT_ADDITION_REGROUPING",
+      "context": "Nandini collected 85 apples and Chirag plucked 67 apples. How many apples did they collect in all?",
+      "prompt": "85 + 67 = ?",
+      "minuend": 85,
+      "subtrahend": 67,
+      "correctAnswer": 152,
+      "options": [152, 142, 18, 1412],
+      "distractors": {
+        "142": {
+          "signature": "CARRY_OVER_OMISSION",
+          "explanation": "Added 5 + 7 = 12 (wrote 2), but forgot to carry the 1 ten to tens (8 + 6 = 14 -> 142).",
+          "teacherInquiry": "In 5 + 7 = 12, what happens to the 1 ten? Where does it get added?",
+          "activity": "NCERT p. 40 Matchstick Bundles: Tie 10 loose sticks into 1 new bundle of 10 and add to the tens.",
+          "studentHint": "5 + 7 = 12! Write 2 in ones, and carry 1 ten to tens! 8 + 6 + 1 = 15 tens: 152!"
+        },
+        "18": {
+          "signature": "SUBTRACTION_INSTEAD_OF_ADDITION",
+          "explanation": "Subtracted 85 - 67 = 18 instead of adding to find 'in all'.",
+          "teacherInquiry": "The question asks 'How many apples in all?'. Does that mean combine them or find the difference?",
+          "activity": "Part-Whole diagram: Nandini (85) + Chirag (67) = Total in all (152).",
+          "studentHint": "'In all' means put them TOGETHER! 85 + 67 = 152 apples!"
+        },
+        "1412": {
+          "signature": "CONCATENATION_WITHOUT_REGROUPING",
+          "explanation": "Wrote 8 + 6 = 14 and 5 + 7 = 12 side by side ('14' + '12' = 1412).",
+          "teacherInquiry": "Can two 2-digit numbers add up to more than one thousand?",
+          "activity": "Estimate first as shown on p. 40: 80 + 20 = 100, answer is between 100 and 200.",
+          "studentHint": "85 and 67 together is around 150, not 1412! Regroup 10 ones into 1 ten: 152!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_apples_difference_85_67",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 41,
+      "domain": "TWO_DIGIT_SUBTRACTION_REGROUPING",
+      "context": "Nandini collected 85 apples and Chirag plucked 67 apples. Who collected more, and how much more?",
+      "prompt": "85 - 67 = ?",
+      "minuend": 85,
+      "subtrahend": 67,
+      "correctAnswer": 18,
+      "options": [18, 22, 28, 152],
+      "distractors": {
+        "22": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 7 - 5 = 2 in ones and 8 - 6 = 2 in tens without regrouping (22).",
+          "teacherInquiry": "Look at the ones place: 5 minus 7. Can you take 7 apples away from 5 apples?",
+          "activity": "NCERT p. 41 Box Diagram: Draw 85, unbundle 1 ten into 10 ones (15 ones), then take away 7.",
+          "studentHint": "You can't take 7 from 5! Borrow 1 ten: 15 - 7 = 8. And 7 tens - 6 tens = 1 ten: 18!"
+        },
+        "28": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Borrowed to make 15 - 7 = 8, but forgot to reduce 8 tens to 7 tens (8 - 6 = 2 -> 28).",
+          "teacherInquiry": "After you borrowed 1 ten from 8 tens, how many tens were left? 7 tens! 7 - 6 = 1 ten.",
+          "activity": "Cross out the 8 and write 7 immediately above it.",
+          "studentHint": "Remember to reduce 8 tens to 7 tens after borrowing! 7 - 6 = 1 ten: 18!"
+        },
+        "152": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 85 + 67 = 152 instead of finding how much more Nandini collected.",
+          "teacherInquiry": "'How much MORE' asks for the difference between Nandini and Chirag, not the sum.",
+          "activity": "Compare the two piles of apples side by side to see the extra 18 apples.",
+          "studentHint": "'How much more' means find the difference! Subtract: 85 - 67 = 18!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_gehu_plants_56_29",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 42,
+      "domain": "TWO_DIGIT_SUBTRACTION_REGROUPING",
+      "context": "Gehu brings 56 plants for her terrace garden. Some plants dried up. She is left with 29 plants. How many plants dried up?",
+      "prompt": "56 - 29 = ?",
+      "minuend": 56,
+      "subtrahend": 29,
+      "correctAnswer": 27,
+      "options": [27, 33, 37, 85],
+      "distractors": {
+        "33": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 9 - 6 = 3 in ones and 5 - 2 = 3 in tens (33), Smaller-From-Larger error.",
+          "teacherInquiry": "Can you take 9 plants from 6 plants? Did you subtract top-down or bottom-up?",
+          "activity": "NCERT p. 42 Box Diagram: Whole (56) = Left (29) + Dried Up (?). Unbundle 1 ten to make 16 ones.",
+          "studentHint": "You can't subtract 9 from 6! Trade 1 ten for 10 ones: 16 - 9 = 7, and 4 - 2 = 2: 27!"
+        },
+        "37": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Made 16 - 9 = 7, but did not decrement 5 tens to 4 tens (5 - 2 = 3 -> 37).",
+          "teacherInquiry": "When you traded 1 ten, how many tens were left in 56? 4 tens! 4 - 2 = 2 tens.",
+          "activity": "Use 5 bundles of 10 sticks; untie 1 bundle. Count the remaining tied bundles (4).",
+          "studentHint": "Cross out the 5 tens and write 4! 4 - 2 = 2 tens, so 27!"
+        },
+        "85": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 56 + 29 = 85 instead of finding the dried up plants.",
+          "teacherInquiry": "Gehu started with 56 plants in total. Could 85 plants have dried up?",
+          "activity": "Draw the terrace garden before and after plants dried up.",
+          "studentHint": "She only had 56 plants total! Dried up plants must be less than 56: 56 - 29 = 27!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_estimation_more_or_less_150_49",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 43,
+      "domain": "BENCHMARK_ESTIMATION",
+      "context": "Nani Maa asks: 'Is 150 - 49 more than 100 or less than 100?'",
+      "prompt": "Is 150 - 49 more than 100 or less than 100?",
+      "correctAnswer": 1,
+      "options": [1, 2],
+      "optionLabels": ["More than 100", "Less than 100"],
+      "distractors": {
+        "2": {
+          "signature": "SUBTRACTION_MAGNITUDE_OVERESTIMATION",
+          "explanation": "Thought subtracting 49 from 150 pulls it below 100, confusing 150 - 50 = 100.",
+          "teacherInquiry": "What is 150 - 50? Exactly 100. Since 49 is LESS than 50, you subtract LESS, so the answer is MORE than 100!",
+          "activity": "NCERT p. 43 Number Line Estimation: 150 - 50 = 100. Step back 1 less to land at 101.",
+          "studentHint": "150 - 50 is exactly 100! Since 49 is less than 50, we take away less, so 150 - 49 is 101 (MORE than 100)!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_estimation_more_or_less_134_56",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 43,
+      "domain": "BENCHMARK_ESTIMATION",
+      "context": "Look at 134 - 56. Is the answer more than 100 or less than 100?",
+      "prompt": "Is 134 - 56 more than 100 or less than 100?",
+      "correctAnswer": 2,
+      "options": [1, 2],
+      "optionLabels": ["More than 100", "Less than 100"],
+      "distractors": {
+        "1": {
+          "signature": "MINUEND_HUNDRED_ANCHORING_BIAS",
+          "explanation": "Saw 134 has '1 hundred' and assumed the difference remains over 100, ignoring that 56 > 34.",
+          "teacherInquiry": "In 134, how much is beyond 100? Only 34. But we must subtract 56! Since 56 is bigger than 34, does it go below 100?",
+          "activity": "NCERT p. 43 Number line: 134 - 34 = 100, then subtract remaining 22 to reach 78.",
+          "studentHint": "134 is only 34 above 100. We are subtracting 56, which is more than 34, so it drops below 100 (it's 78: LESS than 100)!"
+        }
+      }
+    }
+  ]
+}

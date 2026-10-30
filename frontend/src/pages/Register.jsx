@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, ArrowRight } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, GraduationCap } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
+import { AppContext } from '../context/AppContext';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { setActiveTeacher } = useContext(AppContext);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleRegister = (e) => {
     e.preventDefault();
-    // Mock register: directly navigate to teacher dashboard
+    if (name.trim()) {
+      setActiveTeacher({
+        name: name.trim(),
+        greeting: 'Good Morning',
+        email: email.trim() || 'teacher@demo.com',
+        avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name.trim().split(' ')[0])}`,
+      });
+    }
     navigate('/dashboard');
   };
 
@@ -29,7 +38,7 @@ const Register = () => {
             <User className="text-gray-400" size={20} />
             <input 
               type="text" 
-              placeholder="Full Name" 
+              placeholder="Full Name (e.g. Ms. Sharma or Mr. Patel)" 
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="flex-1 bg-transparent outline-none text-sm font-medium text-darkText"
@@ -69,6 +78,12 @@ const Register = () => {
         <p className="text-center text-sm text-gray-500 mt-6 font-medium">
           Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in</Link>
         </p>
+
+        <div className="mt-8 text-center border-t border-gray-100 pt-5">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-primary font-semibold transition">
+            <GraduationCap size={16} /> Switch to Student Mode
+          </Link>
+        </div>
       </div>
     </MobileWrapper>
   );

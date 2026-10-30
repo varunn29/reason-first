@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, GraduationCap } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
+import { AppContext } from '../context/AppContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setActiveTeacher } = useContext(AppContext);
   const [email, setEmail] = useState('teacher@demo.com');
   const [password, setPassword] = useState('password123');
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Mock login: directly navigate to teacher dashboard
+    setActiveTeacher((prev) => ({
+      ...prev,
+      email,
+      name: email.includes('vikram') ? 'Mr. Vikram Patel' : (prev?.name || 'Ms. Sharma'),
+    }));
     navigate('/dashboard');
   };
 
@@ -59,6 +65,12 @@ const Login = () => {
         <p className="text-center text-sm text-gray-500 mt-6 font-medium">
           Don't have an account? <Link to="/register" className="text-primary font-bold hover:underline">Sign up</Link>
         </p>
+
+        <div className="mt-8 text-center border-t border-gray-100 pt-5">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-primary font-semibold transition">
+            <GraduationCap size={16} /> Switch to Student Mode
+          </Link>
+        </div>
       </div>
     </MobileWrapper>
   );

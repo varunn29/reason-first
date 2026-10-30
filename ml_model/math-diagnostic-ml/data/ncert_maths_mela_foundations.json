@@ -1,0 +1,436 @@
+{
+  "curriculum": "NCERT Class 3 Mathematics",
+  "textbook": "Maths Mela (First Edition 2024 / Reprint 2026-27)",
+  "chapters_included": [
+    "Chapter 1: What's in a Name? (pp. 1-8)",
+    "Chapter 2: Toy Joy (pp. 9-15)",
+    "Chapter 3: Double Century (pp. 16-28)",
+    "Chapter 4: Vacation with My Nani Maa (pp. 29-43)",
+    "Chapter 5: Fun with Shapes (pp. 44-63)",
+    "Chapter 12: Give and Take (pp. 150-164)"
+  ],
+  "learning_outcomes": [
+    "M3.1: Numbers & Operations - Counts, groups in tens and hundreds, reads and writes 3-digit numbers up to 200, adds and subtracts 2-digit numbers using mental strategies, number lines, grids, and manipulatives",
+    "M3.2: Spatial Reasoning & 3D Shapes - Identifies, classifies, and describes 3D shapes (cube, cuboid, cylinder, cone, sphere) by flat/curved faces, edges, and corners; analyzes nets and compositions",
+    "M3.3: 2D Shapes & Angles - Describes 2D shapes (rectangle, square, triangle, circle) by sides and corners; identifies square corners (right angles) using corner testers; discovers symmetry and centers through paper folding",
+    "M3.4: Data Handling & Foundations - Uses tally marks for one-to-one correspondence, sorts and categorizes objects by physical and functional attributes, compares word and name lengths"
+  ],
+  "probes": [
+    {
+      "id": "ncert_ch01_cows_43_2",
+      "chapter": "Chapter 1: What's in a Name?",
+      "page": 2,
+      "domain": "DATA_AND_COUNTING",
+      "context": "Deba and Deep had 43 cows marked on their wall in bundles of 5 and loose marks. The next day they struck out 1 mark for each cow that returned. 2 marks were still left on the wall. How many cows returned home safely?",
+      "prompt": "43 marks total, 2 marks left. How many cows returned?",
+      "minuend": 43,
+      "subtrahend": 2,
+      "correctAnswer": 41,
+      "options": [41, 45, 23, 2],
+      "distractors": {
+        "45": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 43 + 2 = 45 instead of subtracting the 2 missing cows.",
+          "teacherInquiry": "If 2 marks are still left on the wall, did more cows return than left, or fewer?",
+          "activity": "NCERT p. 2 Tally Wall: Draw 43 tally marks and physically cross out all except 2 marks to count the returning cows.",
+          "studentHint": "2 cows did not come home yet! We need to subtract the 2 missing cows from the 43!"
+        },
+        "23": {
+          "signature": "TALLY_GROUP_MISCOUNT",
+          "explanation": "Confused the number of tallies with Hemant's sheep mentioned on the same page.",
+          "teacherInquiry": "Look at the numbers in the question carefully: how many marks did Deba have on the rock?",
+          "activity": "Highlight the numbers belonging to Deba's cows versus Hemant's animals in different colors.",
+          "studentHint": "Carefully read Deba's wall: he had 43 cow marks, not 23!"
+        },
+        "2": {
+          "signature": "QUESTION_TARGET_CONFUSION",
+          "explanation": "Answered the number of missing cows (2) instead of the number of cows that returned.",
+          "teacherInquiry": "Did the question ask how many cows were lost, or how many reached home?",
+          "activity": "Part-Whole circle diagram: Whole (43), Returned (41), Missing (2).",
+          "studentHint": "2 is how many are still outside! How many reached home?"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch01_captains_elephant_ox",
+      "chapter": "Chapter 1: What's in a Name?",
+      "page": 3,
+      "domain": "DATA_AND_COUNTING",
+      "context": "The animals play a game in 2 teams. Team 1 captain is the animal with the longest name (most letters). Team 2 captain is the animal with the shortest name (fewest letters). Animals: tiger, elephant, deer, rat, monkey, ox, dog, snake, goat, lion. Who is the captain of Team 1 and what is their letter count?",
+      "prompt": "Which animal has the most letters and how many letters does it have?",
+      "correctAnswer": 8,
+      "options": [8, 5, 2, 6],
+      "distractors": {
+        "5": {
+          "signature": "PHYSICAL_SIZE_BIAS",
+          "explanation": "Chose 'tiger' (5 letters) or 'lion' based on perceived fierceness rather than letter count.",
+          "teacherInquiry": "Count the letters in E-L-E-P-H-A-N-T. Does it have more letters than T-I-G-E-R?",
+          "activity": "NCERT p. 3 Letter Counting Grid: write each animal name letter-by-letter in square graph boxes.",
+          "studentHint": "Count the letters in each word: E-L-E-P-H-A-N-T has 8 letters!"
+        },
+        "2": {
+          "signature": "MINIMUM_MAXIMUM_CONFUSION",
+          "explanation": "Gave the letter count of the shortest name (ox = 2) instead of the longest name.",
+          "teacherInquiry": "Team 1 wanted the animal with the MOST letters. Is 2 the most or the fewest?",
+          "activity": "Order all 10 animal cards from fewest letters to most letters on a washing line with pegs.",
+          "studentHint": "2 is the shortest name (ox)! Team 1 needs the LONGEST name with the MOST letters!"
+        },
+        "6": {
+          "signature": "SUBOPTIMAL_COUNT",
+          "explanation": "Chose 'monkey' (6 letters), missing that 'elephant' has 8 letters.",
+          "teacherInquiry": "Monkey has 6 letters. Can you find another animal with even more letters?",
+          "activity": "Letter-strip comparison: place the letter strip for 'monkey' under 'elephant'.",
+          "studentHint": "Monkey has 6 letters, but look at elephant! Count: E-L-E-P-H-A-N-T!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch01_number_name_riddle",
+      "chapter": "Chapter 1: What's in a Name?",
+      "page": 6,
+      "domain": "DATA_AND_COUNTING",
+      "context": "Riddle: 'My number name has two words. The first word has 6 letters. The second word has 5 letters. I am very near to 100. Who am I?'",
+      "prompt": "Identify the number near 100 with 6 letters in first word and 5 letters in second word.",
+      "correctAnswer": 98,
+      "options": [98, 92, 90, 88],
+      "distractors": {
+        "92": {
+          "signature": "SECOND_WORD_LETTER_MISCOUNT",
+          "explanation": "Chose 92 ('ninety-two'), where 'two' has only 3 letters instead of 5.",
+          "teacherInquiry": "Spell the second word 'two': T-W-O. How many letters does it have?",
+          "activity": "NCERT p. 5 Number Cards: use letter cards to build 'ninety-two' and count the letters in each word.",
+          "studentHint": "'Ninety' has 6 letters, but 'two' only has 3 letters! We need a second word with 5 letters!"
+        },
+        "90": {
+          "signature": "SINGLE_WORD_MISINTERPRETATION",
+          "explanation": "Chose 90 ('ninety'), which is only 1 word, missing the two-word requirement.",
+          "teacherInquiry": "The riddle says the number name has TWO words. Does 90 have two words?",
+          "activity": "Compare one-word decade names (ninety) with compound two-word names (ninety-eight).",
+          "studentHint": "The riddle says the name has TWO words! 'Ninety' is just one word!"
+        },
+        "88": {
+          "signature": "FIRST_WORD_LETTER_MISCOUNT",
+          "explanation": "Chose 88 ('eighty-eight'), where 'eighty' has 6 letters and 'eight' has 5, but 98 is nearer to 100.",
+          "teacherInquiry": "Compare 88 and 98 on the number line. Which one is closer to 100?",
+          "activity": "Place 88 and 98 on an open number line ending at 100 to compare distances.",
+          "studentHint": "88 has the right letters, but 98 is much closer to 100!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch02_dice_opposite_faces",
+      "chapter": "Chapter 2: Toy Joy",
+      "page": 14,
+      "domain": "3D_SHAPES_AND_SOLIDS",
+      "context": "On a standard die with 1 to 6 dots, the faces opposite to each other follow a special rule: opposite to 1 is 6, opposite to 2 is 5. What number is on the face opposite number 3, and what pattern do all opposite faces follow?",
+      "prompt": "What number is on the face opposite number 3 on a die?",
+      "correctAnswer": 4,
+      "options": [4, 5, 2, 6],
+      "distractors": {
+        "5": {
+          "signature": "DICE_SEQUENTIAL_OPPOSITE",
+          "explanation": "Guessed 5, which is opposite 2 (2 + 5 = 7), not opposite 3.",
+          "teacherInquiry": "Check the rule: 1 + 6 = 7, and 2 + 5 = 7. What number added to 3 makes 7?",
+          "activity": "NCERT p. 14 Die Observation: Hold a real die between two fingers and check opposite faces.",
+          "studentHint": "Remember the magic pattern: Opposite sides of a die always add up to 7! 3 + ? = 7!"
+        },
+        "2": {
+          "signature": "COMPLEMENT_CONFUSION",
+          "explanation": "Confused the opposite pair for 5 (2 + 5 = 7) with 3.",
+          "teacherInquiry": "If 2 is opposite 5, can 2 also be opposite 3?",
+          "activity": "Make a cube net from paper with dots 1 to 6 and fold it to verify opposites.",
+          "studentHint": "2 is opposite to 5! What number adds with 3 to make 7?"
+        },
+        "6": {
+          "signature": "MAXIMUM_VALUE_DEFAULT",
+          "explanation": "Assumed the largest number 6 is opposite all numbers.",
+          "teacherInquiry": "1 is opposite 6. A die has 6 different faces, so each number has only ONE opposite partner.",
+          "activity": "Pair matching game: 1 with 6, 2 with 5, 3 with 4.",
+          "studentHint": "6 is already opposite to 1! 3 needs a partner that makes 7!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch02_shape_properties_faces",
+      "chapter": "Chapter 2: Toy Joy",
+      "page": 12,
+      "domain": "3D_SHAPES_AND_SOLIDS",
+      "context": "Devika and Jaya classify 3D shapes by their faces and edges. Which of the following shapes has BOTH flat faces and a curved surface?",
+      "prompt": "Which shape has both flat faces and a curved surface?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": ["Cylinder", "Cube", "Sphere", "Cuboid"],
+      "distractors": {
+        "2": {
+          "signature": "FLAT_FACES_ONLY_ERROR",
+          "explanation": "Chose Cube, which has only 6 flat faces and no curved surface.",
+          "teacherInquiry": "Rub your hand over a cube. Does it roll smoothly anywhere, or is every face flat?",
+          "activity": "NCERT p. 12 Rolling vs Sliding: Test which objects roll (cylinder, sphere) and which only slide (cube).",
+          "studentHint": "A cube only has flat square faces! We need a shape that has flat faces AND rolls!"
+        },
+        "3": {
+          "signature": "CURVED_FACES_ONLY_ERROR",
+          "explanation": "Chose Sphere, which has only 1 curved surface and NO flat faces.",
+          "teacherInquiry": "Can you stand a sphere on a table without it rolling away? Does it have any flat circular base?",
+          "activity": "Place a ball and a water bottle on a desk. Notice the cylinder stands flat on its base.",
+          "studentHint": "A sphere only has a curved surface! A cylinder has 2 flat circular ends and rolls in the middle!"
+        },
+        "4": {
+          "signature": "FLAT_FACES_ONLY_ERROR",
+          "explanation": "Chose Cuboid, which has only flat rectangular faces.",
+          "teacherInquiry": "A matchbox is a cuboid. Does it have any curved part?",
+          "activity": "Classify classroom solids into 3 baskets: Only Flat, Only Curved, Both Flat and Curved.",
+          "studentHint": "A cuboid only has flat faces! Think of a water bottle or tin can: it's a cylinder!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_bundles_zero_tens_104",
+      "chapter": "Chapter 3: Double Century",
+      "page": 22,
+      "domain": "PLACE_VALUE_AND_NUMBERS",
+      "context": "Teji uses matchstick bundles to make numbers. She has 1 big bundle of 100 sticks, 0 bundles of 10 sticks, and 4 loose sticks. What number did she make?",
+      "prompt": "1 bundle of 100, 0 bundles of 10, 4 loose sticks = ?",
+      "correctAnswer": 104,
+      "options": [104, 140, 14, 1004],
+      "distractors": {
+        "140": {
+          "signature": "REVERSE_HTO_ALIGNMENT",
+          "explanation": "Swapped tens and ones: treated 4 loose sticks as 4 tens (40) and 0 tens as 0 ones.",
+          "teacherInquiry": "How many bundles of 10 were there? Are loose single sticks tens or ones?",
+          "activity": "NCERT p. 22 Bundles Table: Place 1 under '100', 0 under '10s', and 4 under '1s'.",
+          "studentHint": "The 4 sticks are loose single sticks (ones), not bundles of 10! The tens place is 0: 104!"
+        },
+        "14": {
+          "signature": "ZERO_PLACEHOLDER_OMISSION",
+          "explanation": "Omitted the 0 tens placeholder, collapsing the 3-digit number 104 into 2-digit 14.",
+          "teacherInquiry": "What happens if we forget to write the 0 in the tens place? Is 14 the same as 104?",
+          "activity": "Use 3 digit cards [1], [0], [4] side by side. Remove the [0] and see the mistake.",
+          "studentHint": "Don't forget the zero in the middle for 0 tens! 1 hundred and 4 ones is 104, not 14!"
+        },
+        "1004": {
+          "signature": "LITERAL_CONCATENATION_ERROR",
+          "explanation": "Wrote 100 followed by 4 literally ('100' + '4' = 1004).",
+          "teacherInquiry": "In 100, where does the 4 go? Does it replace the ones zero, or get stuck onto the end?",
+          "activity": "Place-value arrow cards: slip the [4] card over the last zero of the [100] card to make 104.",
+          "studentHint": "100 + 4 makes 104! We don't write the whole 100 and then 4!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch03_talking_pot_109",
+      "chapter": "Chapter 3: Double Century",
+      "page": 23,
+      "domain": "PLACE_VALUE_AND_NUMBERS",
+      "context": "The Talking Pot always says ONE MORE than whatever number you say. Bholu says '109'. What number will the Talking Pot say?",
+      "prompt": "What is 1 more than 109?",
+      "correctAnswer": 110,
+      "options": [110, 1010, 100, 120],
+      "distractors": {
+        "1010": {
+          "signature": "DECADE_CROSSING_STUMBLE",
+          "explanation": "Wrote '10' for the hundreds/tens and '10' for 9+1, producing '1010'.",
+          "teacherInquiry": "Count after 109: 107, 108, 109, ... what comes right after 9 in the tens family?",
+          "activity": "NCERT p. 23 Number Line: Take 1 hop forward from 109 on a bead string (ginladi).",
+          "studentHint": "When we add 1 to 9, it becomes 10! So 109 becomes 110!"
+        },
+        "100": {
+          "signature": "PREDECESSOR_CONFUSION",
+          "explanation": "Said 1 less decade or confused 109 with 99+1.",
+          "teacherInquiry": "Is 1 more than 109 bigger or smaller than 109?",
+          "activity": "Walk forward on a giant floor number line past 109.",
+          "studentHint": "The Talking Pot says ONE MORE, not less! After 109 comes 110!"
+        },
+        "120": {
+          "signature": "TEN_MORE_INSTEAD_OF_ONE",
+          "explanation": "Jumped 10 more instead of 1 more ($110 + 10 = 120$).",
+          "teacherInquiry": "Did Bholu ask for 10 more or 1 more?",
+          "activity": "Distinguish 1 single step from a big jump of 10 on the number line.",
+          "studentHint": "Just 1 more step, not 10! After 109 comes 110!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_stamps_52_37",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 33,
+      "domain": "OPERATIONS_AND_CALCULATIONS",
+      "context": "Nandini and Chirag have 52 stamps in all. They count and find that 37 stamps have faces of famous persons, and the remaining stamps have pictures of monuments. How many stamps have pictures of monuments?",
+      "prompt": "52 - 37 = ?",
+      "minuend": 52,
+      "subtrahend": 37,
+      "correctAnswer": 15,
+      "options": [15, 25, 19, 89],
+      "distractors": {
+        "25": {
+          "signature": "SMALLER_FROM_LARGER",
+          "explanation": "Subtracted 7 - 2 = 5 in ones and 5 - 3 = 2 in tens without regrouping (Smaller-From-Larger error).",
+          "teacherInquiry": "Look at the ones place in 52 - 37. Can you take 7 stamps away from 2 stamps without unbundling a ten?",
+          "activity": "NCERT p. 33 Ginladi Jump: Start at 52, jump back 2 to 50, jump back 10 to 40, jump back 3 to 37 (total jumped = 15).",
+          "studentHint": "You can't take 7 from 2! Unbundle 1 ten into 10 ones: 12 - 7 = 5, and 4 tens - 3 tens = 1 ten (15)!"
+        },
+        "19": {
+          "signature": "BORROW_WITHOUT_DECREMENT",
+          "explanation": "Added 10 to ones (12 - 7 = 5) but miscalculated tens or forgot decrement.",
+          "teacherInquiry": "When you opened a bundle of 10 to make 12 ones, how many bundles of 10 were left in 52?",
+          "activity": "Use 5 bundles of 10 matchsticks and 2 loose sticks. Untie 1 bundle and take away 37.",
+          "studentHint": "Remember to reduce the 5 tens to 4 tens after unbundling! 4 - 3 = 1 ten!"
+        },
+        "89": {
+          "signature": "OPERATION_CONFUSION_ADD",
+          "explanation": "Added 52 + 37 = 89 instead of subtracting to find the remaining stamps.",
+          "teacherInquiry": "They had 52 stamps in TOTAL. Can the monument stamps be more than 52?",
+          "activity": "Draw a Part-Whole box: Total (52) = Famous (37) + Monuments (?).",
+          "studentHint": "52 is the TOTAL! The monument stamps must be less than 52! Subtract: 52 - 37!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch04_grid_jump_45_34",
+      "chapter": "Chapter 4: Vacation with My Nani Maa",
+      "page": 36,
+      "domain": "OPERATIONS_AND_CALCULATIONS",
+      "context": "Nandini is playing the 100-number grid game. Her counter is at 45. She rolls the dice and gets 34. What number will she land on?",
+      "prompt": "45 + 34 = ?",
+      "minuend": 45,
+      "subtrahend": 34,
+      "correctAnswer": 79,
+      "options": [79, 71, 89, 11],
+      "distractors": {
+        "71": {
+          "signature": "GRID_DIRECTION_INVERSION",
+          "explanation": "Added 3 tens (45 -> 75) but subtracted 4 ones (75 - 4 = 71) instead of adding.",
+          "teacherInquiry": "On the number grid, moving right adds numbers. Which way did you move for the 4 ones?",
+          "activity": "NCERT p. 36 Number Grid: Place a counter on 45, move down 3 rows (+30 to 75), then move right 4 boxes (+4 to 79).",
+          "studentHint": "Move down 3 boxes to add 30 (75), then move right 4 boxes to add 4: 79!"
+        },
+        "89": {
+          "signature": "TENS_COUNT_OVERSHOOT",
+          "explanation": "Jumped 4 tens instead of 3 tens ($45 + 40 = 85 + 4 = 89$).",
+          "teacherInquiry": "In 34, how many tens are there? 3 tens or 4 tens?",
+          "activity": "Break 34 into 10 + 10 + 10 + 4 on the grid.",
+          "studentHint": "In 34, there are 3 tens and 4 ones! Jump down 3 tens, not 4!"
+        },
+        "11": {
+          "signature": "INVERSE_OPERATION_CONFUSION",
+          "explanation": "Subtracted 45 - 34 = 11 instead of adding.",
+          "teacherInquiry": "Nandini moves forward when she gets 34 on the dice. Does forward mean add or subtract?",
+          "activity": "Check the game rule on p. 35: moving forward means adding to your current score.",
+          "studentHint": "She rolled 34 and moves FORWARD! Add: 45 + 34 = 79!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_square_vs_rectangle",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 51,
+      "domain": "2D_SHAPES_AND_GEOMETRY",
+      "context": "Teji and Jojo examine a square tile and a rectangular book cover. They compare their sides and corners. Which of the following statements is true about ALL squares and rectangles?",
+      "prompt": "What is true about both a square and a rectangle?",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Both have 4 sides and 4 square corners (right angles)",
+        "Both must have all 4 sides equal in length",
+        "A square is not a rectangle",
+        "Both have 3 corners and 3 straight sides"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "SQUARE_ATTRIBUTE_OVERGENERALIZATION",
+          "explanation": "Claimed that all rectangles must have all 4 sides equal, which is only true for squares.",
+          "teacherInquiry": "Look at your math book. Are all 4 sides the same length, or are opposite sides equal?",
+          "activity": "NCERT p. 51 Side Measurement: Measure a book cover with a ruler or thread to see two long sides and two short sides.",
+          "studentHint": "A rectangle can have long sides and short sides! Only squares must have all 4 sides equal!"
+        },
+        "3": {
+          "signature": "SQUARE_RECTANGLE_DISJUNCTION",
+          "explanation": "Believed that a square cannot be a rectangle.",
+          "teacherInquiry": "What is a rectangle? A 4-sided shape with 4 square corners and opposite sides equal. Does a square have that?",
+          "activity": "Fold a square paper in half to make a rectangle, then unfold and verify definitions.",
+          "studentHint": "A square is a special rectangle where all sides happen to be the exact same length!"
+        },
+        "4": {
+          "signature": "TRIANGLE_DIMENSION_CONFUSION",
+          "explanation": "Confused quadrilateral properties (4 sides) with triangle properties (3 sides).",
+          "teacherInquiry": "Count the corners of a square: 1, 2, 3, 4. How many does a triangle have?",
+          "activity": "Count vertices using matchsticks formed into a square versus a triangle.",
+          "studentHint": "Squares and rectangles have 4 sides and 4 corners! 3 sides is a triangle!"
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_square_corners_angles",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 55,
+      "domain": "2D_SHAPES_AND_GEOMETRY",
+      "context": "Children make an 'L-shaped' corner tester using two paper strips. How many square corners (exact right angles) does a standard rectangle have?",
+      "prompt": "How many square corners does a rectangle have?",
+      "correctAnswer": 4,
+      "options": [4, 2, 0, 8],
+      "distractors": {
+        "2": {
+          "signature": "OPPOSITE_CORNER_PAIRING_ERROR",
+          "explanation": "Counted opposite pairs of corners as 2 instead of counting all 4 individual corners.",
+          "teacherInquiry": "Take the paper L-tester and fit it into each corner of the rectangle one by one. How many times did it fit?",
+          "activity": "NCERT p. 55 L-strip Corner Tester: Place the paper strip tester into all 4 corners of a sheet of paper.",
+          "studentHint": "Test every corner: top-left, top-right, bottom-left, bottom-right. That's 4 square corners!"
+        },
+        "0": {
+          "signature": "SQUARE_CORNER_TERMINOLOGY_CONFUSION",
+          "explanation": "Thought only a square has square corners, and rectangles have no square corners.",
+          "teacherInquiry": "Does the L-tester fit into the corner of your textbook? Yes! Both squares and rectangles have square corners.",
+          "activity": "Place a square tile on top of the corner of a book to show the corners match exactly.",
+          "studentHint": "A 'square corner' means an exact L-corner! Rectangles have 4 of them!"
+        },
+        "8": {
+          "signature": "CUBE_CORNER_3D_CONFUSION",
+          "explanation": "Confused the 8 corners of a 3D cuboid/cube with the 4 corners of a 2D rectangle.",
+          "teacherInquiry": "Are we looking at a 3D box with 8 corners, or a flat 2D rectangle drawn on paper?",
+          "activity": "Hold a flat piece of paper and point to each of its 4 corners.",
+          "studentHint": "A flat rectangle has 4 corners! (A 3D box has 8 corners)."
+        }
+      }
+    },
+    {
+      "id": "ncert_ch05_circle_center_folding",
+      "chapter": "Chapter 5: Fun with Shapes",
+      "page": 59,
+      "domain": "2D_SHAPES_AND_GEOMETRY",
+      "context": "Children fold a circular paper plate in half to make a straight crease line through the circle. Then they fold it in half again across the first fold. What special point is formed where the two fold lines meet?",
+      "prompt": "Where the two fold lines meet on the circular paper plate is the _____ of the circle.",
+      "correctAnswer": 1,
+      "options": [1, 2, 3, 4],
+      "optionLabels": [
+        "Center",
+        "Corner",
+        "Edge",
+        "Side"
+      ],
+      "distractors": {
+        "2": {
+          "signature": "CORNER_IN_CIRCLE_CONFUSION",
+          "explanation": "Called the intersection a 'corner', misunderstanding that circles have no corners.",
+          "teacherInquiry": "Does a round circle have sharp corners on its outside? Where is this point located?",
+          "activity": "NCERT p. 59 Paper Plate Folding: Fold a circular paper cutout twice and unfold to color the center dot.",
+          "studentHint": "A circle has no corners! The dot in the exact middle where the folds meet is the CENTER!"
+        },
+        "3": {
+          "signature": "BOUNDARY_INTERSECTION_CONFUSION",
+          "explanation": "Confused the outer boundary (edge/circumference) with the internal center point.",
+          "teacherInquiry": "Is this point on the outside boundary of the circle or right in the exact middle?",
+          "activity": "Tie a string to a pencil and pin to rotate a circle from the center point.",
+          "studentHint": "The edge is the round boundary on the outside. The middle point is the CENTER!"
+        },
+        "4": {
+          "signature": "POLYGON_VOCABULARY_DEFAULT",
+          "explanation": "Used 'side' for a geometric point.",
+          "teacherInquiry": "A side is a line segment. The fold lines cross at a single point. What do we call the middle point?",
+          "activity": "Trace fold lines with red crayon and label the intersection 'Center'.",
+          "studentHint": "A side is a line! The point in the middle is called the CENTER!"
+        }
+      }
+    }
+  ]
+}
+
