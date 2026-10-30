@@ -14,6 +14,7 @@ async function diagnose(response) {
         questionId: response.questionId,
         answer: response.answer,
         explanation: response.explanation,
+        responses: response.responses,
       }),
     });
 

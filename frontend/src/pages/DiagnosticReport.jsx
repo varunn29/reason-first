@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ArrowLeft, ChevronRight, Bookmark } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Bookmark, Sparkles, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import AlertBox from '../components/AlertBox';
@@ -12,29 +12,48 @@ const DiagnosticReport = () => {
   const { diagnosticResult } = useContext(AppContext);
 
   const isPass = diagnosticResult?.status === 'Pass';
+  const isLiveML = diagnosticResult?.isLiveML ?? false;
+  const ruleId = diagnosticResult?.gap || 'BORROWING';
+
+  // Map ML Rule IDs to user-friendly titles
+  const ruleTitles = {
+    'SMALLER_FROM_LARGER': 'Smaller-From-Larger (Zero-Borrowing)',
+    'BORROW_WITHOUT_DECREMENT': 'Borrow-Without-Decrement',
+    'CORRECT': 'Standard Place Value Subtraction',
+    'GENERAL_SUBTRACTION_ERROR': 'Calculation Slip in Regrouping',
+  };
+
+  const detectedRuleTitle = ruleTitles[ruleId] || ruleId;
 
   const conceptData = [
     { label: 'Addition', percentage: 92, color: 'bg-secondary' },
     { label: 'Subtraction', percentage: isPass ? 94 : 68, color: 'bg-secondary' },
     { label: 'Multiplication', percentage: 75, color: 'bg-accent' },
     { label: 'Division', percentage: 54, color: 'bg-danger' },
-    { label: 'Borrowing', percentage: isPass ? 88 : 32, color: isPass ? 'bg-secondary' : 'bg-danger' },
+    { label: 'Borrowing / Regrouping', percentage: isPass ? 92 : 28, color: isPass ? 'bg-secondary' : 'bg-danger' },
   ];
 
   return (
     <MobileWrapper>
       <div className="min-h-screen bg-bgMain pb-28">
         {/* Header */}
-        <div className="px-5 pt-8 pb-4 flex items-center gap-4 bg-bgMain sticky top-0 z-20">
-          <button 
-            type="button"
-            aria-label="Back to Dashboard"
-            onClick={() => navigate('/dashboard')} 
-            className="p-2 bg-white rounded-full shadow-sm text-gray-600 hover:text-primary transition active:scale-95"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-lg font-bold text-darkText">AI Diagnostic Report</h1>
+        <div className="px-5 pt-8 pb-4 flex items-center justify-between bg-bgMain sticky top-0 z-20">
+          <div className="flex items-center gap-4">
+            <button 
+              type="button"
+              aria-label="Back to Dashboard"
+              onClick={() => navigate('/dashboard')} 
+              className="p-2 bg-white rounded-full shadow-sm text-gray-600 hover:text-primary transition active:scale-95"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-lg font-bold text-darkText">AI Diagnostic Report</h1>
+          </div>
+          {isLiveML && (
+            <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 bg-green-100 text-green-700 rounded-full border border-green-200 shadow-xs">
+              <Sparkles size={12} /> ML Active
+            </span>
+          )}
         </div>
 
         <div className="px-5">
@@ -49,7 +68,12 @@ const DiagnosticReport = () => {
                 <p className="text-xs text-gray-500">Grade 3 - Section A</p>
               </div>
             </div>
-            <span className="text-xs font-medium text-gray-400">Oct 26, 2026</span>
+            <div className="text-right">
+              <span className="text-[10px] font-semibold text-primary block">
+                {detectedRuleTitle}
+              </span>
+              <span className="text-[10px] text-gray-400">Class 3 Subtraction</span>
+            </div>
           </div>
 
           {/* Dynamic Alert Box */}
@@ -106,47 +130,36 @@ const DiagnosticReport = () => {
             ))}
           </div>
 
-          {/* Next Step Actions */}
+          {/* Next Step Actions - Populated by ML Engine Recommendations */}
           <div className="bg-blue-50/60 rounded-3xl p-5 shadow-sm border border-blue-100 mb-6">
             <div className="flex items-center gap-2 mb-3.5">
               <Bookmark size={18} className="text-primary" />
-              <h2 className="text-sm font-bold text-darkText">Next-Step Actions</h2>
+              <h2 className="text-sm font-bold text-darkText">ML Pedagogical Guidance</h2>
             </div>
-            <ul className="space-y-2.5">
-              {isPass ? (
-                <>
-                  <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                    <span className="text-primary font-bold">1.</span>
-                    <span>Advance Rahul to 3-digit subtraction and word problems.</span>
-                  </li>
-                  <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                    <span className="text-primary font-bold">2.</span>
-                    <span>Encourage peer-tutoring with classmates on borrowing techniques.</span>
-                  </li>
-                  <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                    <span className="text-primary font-bold">3.</span>
-                    <span>Assign the next Math Adventure quest.</span>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                    <span className="text-primary font-bold">1.</span>
-                    <span>Use 10 physical sticks to demonstrate tens-to-ones regrouping.</span>
-                  </li>
-                  <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                    <span className="text-primary font-bold">2.</span>
-                    <span>Practice borrowing with visual base-ten counting blocks.</span>
-                  </li>
-                  <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                    <span className="text-primary font-bold">3.</span>
-                    <span>Assign 5 targeted subtraction MCQs on borrowing.</span>
-                  </li>
-                  <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                    <span className="text-primary font-bold">4.</span>
-                    <span>Schedule a 3-day diagnostic re-test.</span>
-                  </li>
-                </>
+            <ul className="space-y-3">
+              {diagnosticResult?.followUpQuestion && (
+                <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
+                  <span className="text-primary font-bold">1. Verbal Probe:</span>
+                  <span>{diagnosticResult.followUpQuestion}</span>
+                </li>
+              )}
+              {diagnosticResult?.suggestedActivity && (
+                <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
+                  <span className="text-primary font-bold">2. Hands-on Activity:</span>
+                  <span>{diagnosticResult.suggestedActivity}</span>
+                </li>
+              )}
+              {diagnosticResult?.alternatives && diagnosticResult.alternatives.length > 0 && (
+                <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
+                  <span className="text-primary font-bold">3. Alternative Hypotheses:</span>
+                  <span>{diagnosticResult.alternatives.join(', ')}</span>
+                </li>
+              )}
+              {(!diagnosticResult?.suggestedActivity && isPass) && (
+                <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
+                  <span className="text-primary font-bold">1. Next Level:</span>
+                  <span>Advance Rahul to 3-digit subtraction and two-step arithmetic word problems.</span>
+                </li>
               )}
             </ul>
           </div>

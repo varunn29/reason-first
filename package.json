@@ -1,0 +1,20 @@
+{
+  "name": "reason-first",
+  "version": "1.0.0",
+  "description": "A teacher diagnostic prototype for Class 3 subtraction reasoning with ML Engine, Express Backend, and React Frontend",
+  "scripts": {
+    "ml": "python ml_model/math-diagnostic-ml/server.py",
+    "backend": "npm --prefix backend run dev",
+    "frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build"
+  },
+  "keywords": [
+    "education",
+    "math-diagnostic",
+    "ai",
+    "react",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT"
+}

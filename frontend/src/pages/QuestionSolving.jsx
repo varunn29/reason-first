@@ -1,19 +1,21 @@
-import React, { useContext } from 'react';
-import { ArrowLeft, Volume2, Bot } from 'lucide-react';
+import React, { useContext, useState } from 'react';
+import { ArrowLeft, Volume2, Bot, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
 import { AppContext } from '../context/AppContext';
+import { api } from '../services/api';
 
 const QuestionSolving = () => {
   const navigate = useNavigate();
   const { currentAssignment, studentAnswer, setStudentAnswer, setDiagnosticResult } = useContext(AppContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const question = currentAssignment?.questions?.[0] || {
-    id: 1,
-    text: '42 - 15 = ?',
-    options: [25, 27, 26, 28],
-    correctAnswer: 27
+    id: 'probe_01',
+    text: '61 - 24 = ?',
+    options: [37, 43, 47, 35],
+    correctAnswer: 37
   };
   const options = question.options;
   const correctAnswer = question.correctAnswer;
@@ -22,19 +24,35 @@ const QuestionSolving = () => {
     setStudentAnswer(option);
   };
 
-  const handleNext = () => {
-    if (studentAnswer === correctAnswer) {
-      setDiagnosticResult({ 
-        status: 'Pass', 
-        message: 'No immediate gap detected. Student demonstrated mastery of this subtraction concept.' 
+  const handleNext = async () => {
+    if (studentAnswer === null) return;
+
+    setIsSubmitting(true);
+    try {
+      // Call backend API which triggers the ML Diagnostic Engine
+      const diag = await api.submitAnswer(
+        'student_rahul',
+        question.id,
+        studentAnswer,
+        correctAnswer
+      );
+      setDiagnosticResult(diag);
+    } catch (err) {
+      console.warn('Submission fallback:', err);
+      // Fallback evaluation
+      const isPass = studentAnswer === correctAnswer;
+      setDiagnosticResult({
+        status: isPass ? 'Pass' : 'Fail',
+        message: isPass
+          ? 'No immediate gap detected. Student demonstrated mastery of this subtraction concept.'
+          : "Rahul needs help with 'Borrowing' concept in subtraction.",
+        gap: isPass ? null : 'Borrowing',
+        isLiveML: false,
       });
-    } else {
-      setDiagnosticResult({ 
-        status: 'Fail', 
-        message: "Rahul needs help with 'Borrowing' concept in subtraction." 
-      });
+    } finally {
+      setIsSubmitting(false);
+      navigate('/report');
     }
-    navigate('/report');
   };
 
   const handleReadAloud = () => {
@@ -78,7 +96,7 @@ const QuestionSolving = () => {
           {/* Question Area */}
           <div className="flex flex-col items-center justify-center px-5 pt-12 pb-8">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-              {currentAssignment.topic}
+              {currentAssignment.topic || 'Class 3 Subtraction Diagnostic'}
             </p>
             <h1 className="text-5xl font-extrabold text-darkText tracking-wider mb-10 text-center">
               {question.text.split('=')[0]} = <span className="text-primary">?</span>
@@ -120,21 +138,25 @@ const QuestionSolving = () => {
               </div>
               <div>
                 <p className={`text-sm font-bold ${studentAnswer === correctAnswer ? 'text-secondary' : 'text-danger'}`}>
-                  {studentAnswer === correctAnswer ? 'Great job! You got it right!' : 'Oops, borrowing error!'}
+                  {studentAnswer === correctAnswer ? 'Great job! You got it right!' : 'Oops, regrouping error!'}
                 </p>
                 <p className="text-[11px] text-gray-500">
                   {studentAnswer === correctAnswer 
                     ? 'Keep up the amazing momentum!' 
-                    : 'Remember to borrow 1 ten from 40 to make 12 before subtracting.'}
+                    : studentAnswer === 43 
+                      ? 'Did you subtract 4 - 1 in the ones place? Remember to regroup from the tens!'
+                      : 'Remember to borrow 1 ten before subtracting the ones column.'}
                 </p>
               </div>
             </div>
           )}
           
           <CustomButton 
-            text="Next" 
+            text={isSubmitting ? "Diagnosing with ML..." : "Next"} 
             onClick={handleNext} 
+            disabled={isSubmitting || studentAnswer === null}
             variant={studentAnswer !== null ? 'primary' : 'outline'}
+            icon={isSubmitting ? <Loader2 size={18} className="animate-spin" /> : null}
           />
         </div>
       </div>
