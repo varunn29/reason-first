@@ -42,6 +42,8 @@ export const AppProvider = ({ children }) => {
 
   const [studentAnswer, setStudentAnswer] = useState(null);
   const [diagnosticResult, setDiagnosticResult] = useState(null);
+  const [latestResponseId, setLatestResponseId] = useState(null);
+  const [chatSummary, setChatSummary] = useState(null);
 
   return (
     <AppContext.Provider
@@ -52,6 +54,10 @@ export const AppProvider = ({ children }) => {
         setStudentAnswer,
         diagnosticResult,
         setDiagnosticResult,
+        latestResponseId,
+        setLatestResponseId,
+        chatSummary,
+        setChatSummary,
       }}
     >
       {children}

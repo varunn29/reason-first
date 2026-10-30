@@ -1,4 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+// Guarantee loading of backend/.env with override: true so empty parent/shell envs don't override it
+require('dotenv').config({ path: path.resolve(__dirname, '.env'), override: true });
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env'), override: true });
 const express = require('express');
 const cors = require('cors');
 const { randomUUID } = require('crypto');
@@ -224,6 +227,26 @@ app.get('/api/reports/:responseId', async (req, res) => {
 
 // 5. Get Teacher Dashboard Summary
 app.get('/api/dashboard', async (req, res) => {
+  let teacherName = 'Ms. Sharma';
+  let schoolName = 'Kendriya Vidyalaya';
+  let classCode = '3A';
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const authService = require('./services/authService');
+      const token = authHeader.split(' ')[1];
+      const payload = authService.verifyToken(token);
+      if (payload && payload.role === 'teacher') {
+        const teacher = await authService.getTeacherById(payload.id);
+        if (teacher) {
+          teacherName = teacher.name;
+          schoolName = teacher.schoolName || schoolName;
+        }
+      }
+    } catch (e) {}
+  }
+
   let students = memoryStore.students;
 
   if (process.env.DATABASE_URL && StudentModel) {
@@ -246,16 +269,84 @@ app.get('/api/dashboard', async (req, res) => {
   res.json({
     ok: true,
     teacher: {
-      name: 'Ms. Sharma',
+      name: teacherName,
       greeting: 'Good Morning',
-      avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sharma',
+      schoolName,
+      classCode,
+      avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${teacherName.split(' ')[0]}`,
     },
     stats: memoryStore.stats,
     students,
   });
 });
 
+// 6. Teacher Bot Chat Routes (Feature Flag Protected)
+try {
+  const chatRoutes = require('./chat/chatRoutes');
+  app.use('/chat', chatRoutes);
+} catch (err) {
+  console.warn('Chat routes not loaded:', err.message);
+}
+
+// 7. Authentication Routes (Teachers & Students)
+try {
+  const authRoutes = require('./routes/authRoutes');
+  app.use('/api/auth', authRoutes);
+} catch (err) {
+  console.warn('Auth routes not loaded:', err.message);
+}
+
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Backend Server running on http://localhost:${PORT}`);
+app.listen(PORT, async () => {
+  console.log(`\n========================================================`);
+  console.log(`🚀 Reason-First Backend running on http://localhost:${PORT}`);
+  console.log(`========================================================`);
+
+  // 1. LLM API Key Status Check
+  const geminiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '';
+  const openaiKey = process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.trim() : '';
+
+  if (geminiKey && geminiKey.length > 0) {
+    const masked = geminiKey.length > 10
+      ? geminiKey.slice(0, 6) + '...' + geminiKey.slice(-4)
+      : '***';
+    const model = process.env.CHAT_LLM_MODEL || 'gemini-3.8-flash';
+    console.log(`\x1b[32m[LLM STATUS] Real API key detected (Google Gemini: ${masked}). Using live LLM (Model: ${model}).\x1b[0m`);
+  } else if (openaiKey && openaiKey.length > 0) {
+    const masked = openaiKey.length > 10
+      ? openaiKey.slice(0, 6) + '...' + openaiKey.slice(-4)
+      : '***';
+    const model = process.env.CHAT_LLM_MODEL || 'gpt-4o-mini';
+    console.log(`\x1b[32m[LLM STATUS] Real API key detected (OpenAI/Compatible: ${masked}). Using live LLM (Model: ${model}).\x1b[0m`);
+  } else {
+    console.log(`\x1b[33m[LLM STATUS] No API key found. Using deterministic simulator.\x1b[0m`);
+  }
+
+  // 2. Database Status Check
+  if (process.env.DATABASE_URL) {
+    try {
+      const res = await pool.query('SELECT NOW()');
+      console.log(`\x1b[32m[DB STATUS] Connected to Neon Postgres (Server time: ${res.rows[0].now.toISOString()}).\x1b[0m`);
+    } catch (dbErr) {
+      console.warn(`\x1b[33m[DB STATUS] Neon Postgres unreachable (${dbErr.message}). Using in-memory fallback.\x1b[0m`);
+    }
+  } else {
+    console.log(`\x1b[33m[DB STATUS] DATABASE_URL not set. Running in development in-memory mode.\x1b[0m`);
+  }
+
+  // 3. ML Diagnostic Server Check
+  const ML_API_URL = process.env.ML_API_URL || 'http://localhost:8000';
+  try {
+    const mlRes = await fetch(`${ML_API_URL}/health`, { signal: AbortSignal.timeout(2000) });
+    if (mlRes.ok) {
+      const mlData = await mlRes.json();
+      console.log(`\x1b[32m[ML SERVER STATUS] Connected to ML Diagnostic Engine at ${ML_API_URL} (v${mlData.engine_version || '0.1.0'}).\x1b[0m`);
+    } else {
+      console.log(`\x1b[33m[ML SERVER STATUS] ML Diagnostic Server returned HTTP ${mlRes.status}. Server will use local fallback.\x1b[0m`);
+    }
+  } catch (mlErr) {
+    console.log(`\x1b[33m[ML SERVER STATUS] ML Diagnostic Engine not running at ${ML_API_URL} (${mlErr.message}). Server will use local fallback.\x1b[0m`);
+  }
+
+  console.log(`========================================================\n`);
 });

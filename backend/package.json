@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "migrate:chat": "node chat/runMigration.js",
+    "test:chat": "node chat/test-chat.js",
+    "test:edge-cases": "node chat/test-edge-cases.js"
   },
   "keywords": [],
   "author": "",

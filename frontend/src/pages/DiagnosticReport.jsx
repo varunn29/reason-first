@@ -1,15 +1,23 @@
 import React, { useContext } from 'react';
 import { ArrowLeft, ChevronRight, Bookmark, Sparkles, CheckCircle2, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import AlertBox from '../components/AlertBox';
 import ConceptBar from '../components/ConceptBar';
 import CustomButton from '../components/CustomButton';
+import TeacherChatSummaryCard from '../components/TeacherChatSummaryCard';
 import { AppContext } from '../context/AppContext';
 
 const DiagnosticReport = () => {
   const navigate = useNavigate();
-  const { diagnosticResult } = useContext(AppContext);
+  const location = useLocation();
+  const { diagnosticResult, chatSummary, latestResponseId } = useContext(AppContext);
+
+  const searchParams = new URLSearchParams(location.search);
+  const activeStudentName = location.state?.studentName || searchParams.get('studentName') || 'Rahul Kumar';
+  const activeSessionId = location.state?.sessionId || searchParams.get('sessionId') || chatSummary?.sessionId;
+  const activeResponseId = location.state?.responseId || searchParams.get('responseId') || latestResponseId || diagnosticResult?.responseId;
+  const activeSummary = location.state?.summary || chatSummary;
 
   const isPass = diagnosticResult?.status === 'Pass';
   const isLiveML = diagnosticResult?.isLiveML ?? false;
@@ -19,6 +27,7 @@ const DiagnosticReport = () => {
   const ruleTitles = {
     'SMALLER_FROM_LARGER': 'Smaller-From-Larger (Zero-Borrowing)',
     'BORROW_WITHOUT_DECREMENT': 'Borrow-Without-Decrement',
+    'DENOMINATOR_ADDITION': 'Denominator Addition Bug (1+1 / 2+4)',
     'CORRECT': 'Standard Place Value Subtraction',
     'GENERAL_SUBTRACTION_ERROR': 'Calculation Slip in Regrouping',
   };
@@ -61,10 +70,10 @@ const DiagnosticReport = () => {
           <div className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm mb-5 border border-gray-50">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-blue-50 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Rahul" alt="Student" className="w-10 h-10" />
+                <img src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${activeStudentName.split(' ')[0]}`} alt="Student" className="w-10 h-10" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-darkText">Rahul Kumar</h3>
+                <h3 className="text-sm font-bold text-darkText">{activeStudentName}</h3>
                 <p className="text-xs text-gray-500">Grade 3 - Section A</p>
               </div>
             </div>
@@ -80,15 +89,22 @@ const DiagnosticReport = () => {
           <AlertBox 
             title={isPass ? "Performance Good" : "Learning Gap Detected"} 
             description={
-              diagnosticResult?.message || "Rahul needs help with 'Borrowing' concept in subtraction."
+              diagnosticResult?.message || `${activeStudentName.split(' ')[0]} needs help with 'Borrowing' concept in subtraction.`
             } 
+          />
+
+          {/* Teacher Bot Dialogue Summary Card */}
+          <TeacherChatSummaryCard 
+            sessionId={activeSessionId}
+            responseId={activeResponseId}
+            initialSummary={activeSummary}
+            mlDiagnosis={diagnosticResult}
           />
 
           {/* Performance Overview (Donut Chart) */}
           <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-50 mb-5">
             <h2 className="text-sm font-bold text-darkText mb-4">Performance Overview</h2>
             <div className="flex items-center gap-6">
-              {/* CSS Donut Chart */}
               <div className="w-20 h-20 rounded-full border-[8px] border-secondary flex items-center justify-center relative shrink-0 shadow-sm">
                 <div className="text-center">
                   <span className="block text-xl font-extrabold text-darkText leading-none">

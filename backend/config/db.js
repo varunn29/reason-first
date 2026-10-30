@@ -1,4 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+// Always load backend/.env reliably regardless of where node was executed from
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
+require('dotenv').config(); // fallback to current working directory
+
 const { Pool } = require('pg');
 
 let pool = null;

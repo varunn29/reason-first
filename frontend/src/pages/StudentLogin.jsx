@@ -1,55 +1,141 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Hash, ArrowRight } from 'lucide-react';
+import { Hash, ArrowRight, User, AlertCircle, Sparkles } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
+import { useAuth } from '../context/AuthContext';
 
 const StudentLogin = () => {
   const navigate = useNavigate();
-  const [code, setCode] = useState('');
+  const { loginStudent, isLoading, error: authError, clearError } = useAuth();
+  const [code, setCode] = useState('3A');
+  const [name, setName] = useState('Rahul');
+  const [formError, setFormError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleJoin = (e) => {
+  const handleJoin = async (e) => {
     e.preventDefault();
-    // Mock validation: navigate directly to student dashboard
-    navigate('/student');
+    setFormError(null);
+    clearError();
+
+    const cleanCode = code.trim().toUpperCase();
+    if (!cleanCode) {
+      setFormError('Please enter your class code (e.g. 3A).');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await loginStudent(cleanCode, name.trim() || 'Rahul');
+      navigate('/student');
+    } catch (err) {
+      setFormError(err.message || 'Could not find that class code. Please check with your teacher.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const useDemoCode = () => {
+    setCode('3A');
+    setName('Rahul');
+    setFormError(null);
+    clearError();
+  };
+
+  const activeError = formError || authError;
 
   return (
     <MobileWrapper>
-      <div className="min-h-screen bg-[#F0F4FF] flex flex-col justify-center px-6 pb-20">
-        <div className="text-center mb-10">
-          <div className="w-24 h-24 bg-white rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-blue-100">
+      <div className="min-h-screen bg-[#F0F4FF] flex flex-col justify-center px-6 pb-20 pt-8">
+        <div className="text-center mb-8">
+          <div className="w-24 h-24 bg-white rounded-full mx-auto flex items-center justify-center mb-3 shadow-lg border-4 border-blue-100">
             <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Felix" alt="Mascot" className="w-16 h-16" />
           </div>
-          <h1 className="text-3xl font-extrabold text-darkText mb-2">Hi there!</h1>
+          <h1 className="text-3xl font-extrabold text-darkText mb-1.5">Hi there! 👋</h1>
           <p className="text-sm text-gray-600 font-medium">Enter the code from your teacher to start.</p>
         </div>
 
+        {/* Quick Demo Pill */}
+        <div className="mb-4 text-center">
+          <button
+            type="button"
+            onClick={useDemoCode}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-blue-200 text-xs font-semibold text-primary hover:bg-blue-50 transition active:scale-95 shadow-sm"
+          >
+            <Sparkles size={13} />
+            Quick Demo: Class Code 3A
+          </button>
+        </div>
+
+        {/* Error Alert */}
+        {activeError && (
+          <div className="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-2.5 text-xs text-red-700 animate-fadeIn">
+            <AlertCircle size={18} className="shrink-0 text-red-500 mt-0.5" />
+            <div className="flex-1 font-medium leading-relaxed">{activeError}</div>
+          </div>
+        )}
+
         <form onSubmit={handleJoin} className="space-y-4">
-          <div className="bg-white rounded-3xl p-5 shadow-sm border-2 border-blue-100 flex items-center gap-4">
-            <Hash className="text-primary shrink-0" size={28} />
-            <input 
-              type="text" 
-              placeholder="Enter Class Code (e.g. 3A)" 
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              className="flex-1 bg-transparent outline-none text-xl font-bold tracking-widest text-darkText placeholder:font-medium placeholder:text-base placeholder:tracking-normal"
-              required
-            />
+          {/* Class Code Input */}
+          <div className="bg-white rounded-3xl p-4 shadow-sm border-2 border-blue-100 flex items-center gap-3.5 focus-within:border-primary transition">
+            <Hash className="text-primary shrink-0" size={26} />
+            <div className="flex-1">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
+                Class Code
+              </label>
+              <input 
+                type="text" 
+                placeholder="e.g. 3A" 
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value.toUpperCase());
+                  if (activeError) setFormError(null);
+                }}
+                className="w-full bg-transparent outline-none text-xl font-extrabold tracking-widest text-darkText placeholder:font-medium placeholder:text-base placeholder:tracking-normal"
+                required
+                maxLength={8}
+              />
+            </div>
           </div>
 
-          <div className="pt-4">
-            <CustomButton type="submit" text="Let's Go!" icon={<ArrowRight size={20} />} />
+          {/* Student Name Input */}
+          <div className="bg-white rounded-3xl p-4 shadow-sm border-2 border-blue-100 flex items-center gap-3.5 focus-within:border-primary transition">
+            <User className="text-primary shrink-0" size={24} />
+            <div className="flex-1">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
+                Your First Name / Roll No.
+              </label>
+              <input 
+                type="text" 
+                placeholder="e.g. Rahul" 
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (activeError) setFormError(null);
+                }}
+                className="w-full bg-transparent outline-none text-base font-bold text-darkText placeholder:font-normal placeholder:text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <CustomButton 
+              type="submit" 
+              text={isSubmitting || isLoading ? 'Joining...' : "Let's Go!"} 
+              icon={<ArrowRight size={20} />} 
+              disabled={isSubmitting || isLoading}
+            />
           </div>
         </form>
 
-        {/* Small teacher link at the bottom */}
+        {/* Teacher login link at the bottom */}
         <button 
           type="button"
           onClick={() => navigate('/login')} 
-          className="mt-8 text-center text-xs text-gray-400 font-semibold hover:text-primary transition active:scale-95"
+          className="mt-8 text-center text-xs text-gray-500 font-semibold hover:text-primary transition active:scale-95 py-2"
         >
-          I am a Teacher
+          Are you a Teacher? <span className="text-primary font-bold underline">Log in here</span>
         </button>
       </div>
     </MobileWrapper>

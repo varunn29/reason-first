@@ -4,12 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
 import { AppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
 const QuestionSolving = () => {
   const navigate = useNavigate();
-  const { currentAssignment, studentAnswer, setStudentAnswer, setDiagnosticResult } = useContext(AppContext);
+  const { currentUser } = useAuth();
+  const { 
+    currentAssignment, 
+    studentAnswer, 
+    setStudentAnswer, 
+    setDiagnosticResult, 
+    setLatestResponseId 
+  } = useContext(AppContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const studentId = currentUser?.id || 'student_rahul';
+  const studentName = currentUser?.name || 'Rahul';
 
   const question = currentAssignment?.questions?.[0] || {
     id: 'probe_01',
@@ -28,30 +39,52 @@ const QuestionSolving = () => {
     if (studentAnswer === null) return;
 
     setIsSubmitting(true);
+    let submittedDiag = null;
     try {
       // Call backend API which triggers the ML Diagnostic Engine
       const diag = await api.submitAnswer(
-        'student_rahul',
+        studentId,
         question.id,
         studentAnswer,
         correctAnswer
       );
+      submittedDiag = diag;
       setDiagnosticResult(diag);
+      if (diag?.responseId && setLatestResponseId) {
+        setLatestResponseId(diag.responseId);
+      }
     } catch (err) {
       console.warn('Submission fallback:', err);
       // Fallback evaluation
       const isPass = studentAnswer === correctAnswer;
-      setDiagnosticResult({
+      submittedDiag = {
         status: isPass ? 'Pass' : 'Fail',
         message: isPass
           ? 'No immediate gap detected. Student demonstrated mastery of this subtraction concept.'
-          : "Rahul needs help with 'Borrowing' concept in subtraction.",
+          : `${studentName} needs help with 'Borrowing' concept in subtraction.`,
         gap: isPass ? null : 'Borrowing',
         isLiveML: false,
-      });
+      };
+      setDiagnosticResult(submittedDiag);
     } finally {
       setIsSubmitting(false);
-      navigate('/report');
+
+      // Feature Flag: If CHAT_FEATURE_ENABLED is true, go to /chat, otherwise straight to /report
+      const isChatEnabled = import.meta.env.VITE_CHAT_FEATURE_ENABLED !== 'false';
+      if (isChatEnabled) {
+        navigate('/chat', {
+          state: {
+            studentAnswer,
+            responseId: submittedDiag?.responseId || null,
+            questionId: question.id,
+            questionText: question.text,
+            studentId,
+            studentName,
+          },
+        });
+      } else {
+        navigate('/report');
+      }
     }
   };
 
@@ -152,7 +185,7 @@ const QuestionSolving = () => {
           )}
           
           <CustomButton 
-            text={isSubmitting ? "Diagnosing with ML..." : "Next"} 
+            text={isSubmitting ? "Submitting..." : "Next: Talk with Teacher 💬"} 
             onClick={handleNext} 
             disabled={isSubmitting || studentAnswer === null}
             variant={studentAnswer !== null ? 'primary' : 'outline'}

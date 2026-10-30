@@ -1,0 +1,38 @@
+{
+  "phrase_opener_01": {
+    "text": "शाबाश! आपने जो उत्तर दिया, वह कैसे सोचा? मुझे समझाओगे?",
+    "hinglish": "Shabash! Aapne jo answer diya, woh kaise socha? Mujhe samjhaoge?",
+    "audioFile": "/audio/phrases/phrase_opener_01.mp3"
+  },
+  "phrase_probe_numerator": {
+    "text": "अच्छा प्रयास! 2/6 उत्तर मिला, ऊपर वाले नंबरों के साथ क्या किया?",
+    "hinglish": "Achha prayaas! 2/6 answer mila, upar wale numbers ke saath kya kiya?",
+    "audioFile": "/audio/phrases/phrase_probe_numerator.mp3"
+  },
+  "phrase_probe_denominator": {
+    "text": "बहुत अच्छे! समझ गया। और नीचे वाले 2 और 4 के साथ क्या किया?",
+    "hinglish": "Bahut achhe! Samajh gaya. Aur neeche wale 2 aur 4 ke saath kya kiya?",
+    "audioFile": "/audio/phrases/phrase_probe_denominator.mp3"
+  },
+  "phrase_probe_rule": {
+    "text": "शाबाश! क्या भिन्न में नीचे वाले नंबर भी हमेशा जुड़ते हैं?",
+    "hinglish": "Shabash! Kya fractions mein neeche wale numbers bhi hamesha judte hain?",
+    "audioFile": "/audio/phrases/phrase_probe_rule.mp3"
+  },
+  "phrase_closing_01": {
+    "text": "बहुत बढ़िया समझाया राहुल! चलो अब मिलकर इसका सही तरीका सीखते हैं।",
+    "hinglish": "Bahut badhiya samjhaya Rahul! Chalo ab milkar iska sahi tareeka seekhte hain.",
+    "audioFile": "/audio/phrases/phrase_closing_01.mp3"
+  },
+  "phrase_encouragement_01": {
+    "text": "बहुत अच्छा प्रयास! चलो मिलकर समझते हैं।",
+    "hinglish": "Bahut achha prayaas! Chalo milkar samajhte hain.",
+    "audioFile": "/audio/phrases/phrase_encouragement_01.mp3"
+  },
+  "phrase_fallback_subtraction": {
+    "text": "शाबाश! क्या आपने इकाई में घटाने के लिए दहाई से उधार लिया था?",
+    "hinglish": "Shabash! Kya aapne ones mein ghatane ke liye tens se borrow kiya tha?",
+    "audioFile": "/audio/phrases/phrase_fallback_subtraction.mp3"
+  }
+}
+

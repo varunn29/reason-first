@@ -1,10 +1,16 @@
 import React from 'react';
-import { Star, Coins, Gamepad2, BookOpen, Calculator, Puzzle, ChevronRight, Home, ListTodo, Award } from 'lucide-react';
+import { Star, Coins, Gamepad2, BookOpen, Calculator, Puzzle, ChevronRight, Home, ListTodo, Award, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
+import { useAuth } from '../context/AuthContext';
 
 const StudentInterface = () => {
   const navigate = useNavigate();
+  const { currentUser, classroom, logout } = useAuth();
+
+  const studentName = currentUser?.name || 'Rahul Kumar';
+  const firstName = studentName.split(' ')[0] || 'Rahul';
+  const gradeLabel = classroom?.grade || currentUser?.grade || 'Grade 3 - Section A';
 
   const tasks = [
     { id: 1, title: 'Math Adventure', desc: 'Solve, earn stars, level up!', icon: Calculator, bg: 'bg-primary', text: 'text-white', route: '/solve' },
@@ -13,6 +19,11 @@ const StudentInterface = () => {
     { id: 4, title: 'Reading Quest', desc: 'Explore new worlds!', icon: BookOpen, bg: 'bg-purple-500', text: 'text-white', route: '/solve' },
   ];
 
+  const handleExit = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <MobileWrapper>
       <div className="min-h-screen bg-[#F0F4FF] pb-24">
@@ -20,20 +31,29 @@ const StudentInterface = () => {
         <div className="px-5 pt-8 pb-4 flex justify-between items-center bg-transparent">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm overflow-hidden">
-              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Rahul" alt="Student" />
+              <img src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${firstName}`} alt="Student" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-darkText">Rahul Kumar</h2>
-              <p className="text-[10px] text-gray-500 font-medium">Grade 3 - Section A</p>
+              <h2 className="text-sm font-bold text-darkText">{studentName}</h2>
+              <p className="text-[10px] text-gray-500 font-medium">{gradeLabel}</p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <div className="flex items-center gap-1 bg-white px-3 py-1 rounded-full shadow-sm text-accent font-bold text-xs">
-              <Star size={14} className="fill-accent" /> 12
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-full shadow-sm text-accent font-bold text-xs">
+              <Star size={13} className="fill-accent" /> 12
             </div>
-            <div className="flex items-center gap-1 bg-white px-3 py-1 rounded-full shadow-sm text-accent font-bold text-xs">
-              <Coins size={14} className="fill-accent" /> 350
+            <div className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-full shadow-sm text-accent font-bold text-xs">
+              <Coins size={13} className="fill-accent" /> 350
             </div>
+            <button
+              type="button"
+              onClick={handleExit}
+              title="Change student / exit"
+              aria-label="Exit"
+              className="p-1.5 bg-white rounded-full shadow-sm text-gray-400 hover:text-danger transition active:scale-95"
+            >
+              <LogOut size={15} />
+            </button>
           </div>
         </div>
 
@@ -46,7 +66,7 @@ const StudentInterface = () => {
              </div>
              <div className="ml-4 z-10">
                 <div className="bg-white px-4 py-2.5 rounded-2xl rounded-bl-none shadow-sm mb-1">
-                   <p className="text-sm font-bold text-primary">Hey Rahul!</p>
+                   <p className="text-sm font-bold text-primary">Hey {firstName}!</p>
                    <p className="text-xs text-gray-600">Ready for a new challenge?</p>
                 </div>
              </div>

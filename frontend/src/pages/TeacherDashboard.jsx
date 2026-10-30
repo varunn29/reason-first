@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, LogOut, Plus, Users, Clock, BookOpen } from 'lucide-react';
+import { Bell, LogOut, Plus, Users, Clock, BookOpen, KeyRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import BottomNav from '../components/BottomNav';
 import StudentCard from '../components/StudentCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import CustomButton from '../components/CustomButton';
+import TeacherConsentModal from '../components/TeacherConsentModal';
 import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const TeacherDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const navigate = useNavigate();
+  const { currentUser, classroom, logout } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -33,40 +36,71 @@ const TeacherDashboard = () => {
   const stats = dashboardData?.stats || [];
   const students = dashboardData?.students || [];
 
+  const displayName = currentUser?.name || teacher?.name || 'Ms. Sharma';
+  const schoolName = currentUser?.schoolName || teacher?.schoolName || 'Kendriya Vidyalaya';
+  const classCode = currentUser?.classCode || classroom?.classCode || teacher?.classCode || '3A';
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <MobileWrapper>
+      {/* Teacher AI Consent Modal (shown once on first visit) */}
+      <TeacherConsentModal />
+
       <div className="pb-28">
         {/* Header */}
-        <div className="px-5 pt-8 pb-4 flex justify-between items-center bg-bgMain">
+        <div className="px-5 pt-8 pb-3 flex justify-between items-center bg-bgMain">
           <div>
-            <p className="text-sm text-gray-500 font-medium">
-              {teacher ? `${teacher.greeting},` : 'Good Morning,'}
+            <p className="text-xs text-gray-500 font-medium">
+              {teacher?.greeting || 'Good Morning'}, {schoolName}
             </p>
             <h1 className="text-2xl font-bold text-darkText">
-              {teacher?.name || 'Ms. Sharma'}
+              {displayName}
             </h1>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <button 
               type="button"
               aria-label="Notifications"
               className="p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-primary transition active:scale-95"
             >
-              <Bell size={20} />
+              <Bell size={18} />
             </button>
             <button 
               type="button"
               aria-label="Logout"
-              onClick={() => navigate('/login')} 
+              onClick={handleLogout} 
+              title="Log out"
               className="p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-danger transition active:scale-95"
             >
-              <LogOut size={20} />
+              <LogOut size={18} />
             </button>
             <img 
-              src={teacher?.avatar || 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sharma'} 
+              src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${displayName.split(' ')[0]}`} 
               alt="Profile" 
               className="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-blue-50 ml-1" 
             />
+          </div>
+        </div>
+
+        {/* Active Class Code Banner */}
+        <div className="px-5 mb-4">
+          <div className="bg-white rounded-2xl p-3 border border-blue-100 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <KeyRound size={16} />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Student Join Code</p>
+                <p className="text-xs font-semibold text-darkText">Tell students to enter this code:</p>
+              </div>
+            </div>
+            <span className="px-3 py-1 rounded-xl bg-primary text-white text-sm font-extrabold tracking-wider shadow-sm">
+              {classCode}
+            </span>
           </div>
         </div>
 
@@ -112,7 +146,7 @@ const TeacherDashboard = () => {
                 <StudentCard 
                   key={student.id} 
                   student={student} 
-                  onClick={() => navigate('/report')}
+                  onClick={() => navigate('/report', { state: { studentId: student.id, studentName: student.name } })}
                 />
               ))}
             </div>
