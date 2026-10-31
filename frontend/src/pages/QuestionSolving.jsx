@@ -24,7 +24,7 @@ const QuestionSolving = () => {
     setCompletedQuizResults,
   } = useContext(AppContext);
 
-  const studentId = currentUser?.id || activeStudent?.id || 'student_guest';
+  const studentId = currentUser?.id || activeStudent?.id || '';
   const studentName = currentUser?.name || activeStudent?.displayName || 'Student';
 
   const [isSubmitting, setIsSubmitting] = useState(false);

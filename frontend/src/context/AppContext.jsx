@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+﻿import React, { createContext, useState } from 'react';
 
 export const AppContext = createContext();
 
@@ -66,22 +66,8 @@ export const AppProvider = ({ children }) => {
     ],
   });
 
-  const [activeStudent, setActiveStudent] = useState({
-    id: 'student_guest',
-    displayName: 'Student',
-    classLabel: 'Grade 3 - Section 3A',
-    classCode: '3A',
-    stars: 0,
-    coins: 50,
-    avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Student',
-  });
-
-  const [activeTeacher, setActiveTeacher] = useState({
-    name: 'Ms. Sharma',
-    greeting: 'Good Morning',
-    email: 'teacher@demo.com',
-    avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sharma',
-  });
+  const [activeStudent, setActiveStudent] = useState(null);
+  const [activeTeacher, setActiveTeacher] = useState(null);
 
   const [studentAnswer, setStudentAnswer] = useState(null);
   const [diagnosticResult, setDiagnosticResult] = useState(null);

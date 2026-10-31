@@ -39,7 +39,7 @@ async function getById(id) {
   };
 }
 
-async function create({ id, name, email, passwordHash, schoolName = 'Kendriya Vidyalaya' }) {
+async function create({ id, name, email, passwordHash, schoolName = 'Primary School' }) {
   if (!process.env.DATABASE_URL) return null;
   await pool.query(
     'INSERT INTO teachers (id, name, email, password_hash, school_name) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (email) DO NOTHING',

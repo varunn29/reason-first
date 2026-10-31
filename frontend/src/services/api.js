@@ -1,5 +1,3 @@
-import { mockTeacher, mockStats, mockStudents } from '../data/mockData';
-
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 function getAuthHeaders() {
@@ -10,49 +8,55 @@ function getAuthHeaders() {
   };
 }
 
+const DEFAULT_STATS = [
+  { id: 1, label: 'Total Students', value: 0, icon: 'Users', bgColor: 'bg-blue-50', iconColor: 'text-blue-500' },
+  { id: 2, label: 'Pending Reviews', value: 0, icon: 'Clock', bgColor: 'bg-orange-50', iconColor: 'text-orange-500' },
+  { id: 3, label: 'Total Assignments', value: 0, icon: 'BookOpen', bgColor: 'bg-purple-50', iconColor: 'text-purple-500' },
+];
+
 export const api = {
-  // Fetch dashboard summary data from backend, with local fallback
+  // Fetch dashboard summary data from backend
   getDashboardData: async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/dashboard`, {
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(4000),
       });
       if (res.ok) {
         const data = await res.json();
         return {
-          teacher: data.teacher || mockTeacher,
-          stats: data.stats || mockStats,
+          teacher: data.teacher || null,
+          stats: Array.isArray(data.stats) && data.stats.length > 0 ? data.stats : DEFAULT_STATS,
           students: Array.isArray(data.students) ? data.students : [],
           activeAssignment: data.activeAssignment || null,
           isLive: true,
         };
       }
     } catch (err) {
-      console.warn('Backend dashboard API unreachable, using local fallback:', err.message);
+      console.warn('Backend dashboard API unreachable:', err.message);
     }
 
     return {
-      teacher: mockTeacher,
-      stats: mockStats,
+      teacher: null,
+      stats: DEFAULT_STATS,
       students: [],
       activeAssignment: null,
       isLive: false,
     };
   },
 
-  // Fetch diagnostic probes from backend / ML
+  // Fetch diagnostic probes from backend
   getProbes: async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/probes`, {
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(4000),
       });
       if (res.ok) {
         const data = await res.json();
         return data.probes || [];
       }
     } catch (err) {
-      console.warn('Backend probes API unreachable, using local fallback:', err.message);
+      console.warn('Backend probes API unreachable:', err.message);
     }
 
     return [
@@ -64,15 +68,15 @@ export const api = {
     ];
   },
 
-  // Submit student answer to backend, which triggers ML diagnostic engine
+  // Submit student answer to backend
   submitAnswer: async (studentId, questionId, selectedAnswer, correctAnswer, extraData = {}) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/responses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studentId: studentId || 'student_guest',
-          questionId: questionId || 'probe_01',
+          studentId,
+          questionId,
           questionText: extraData.questionText || '',
           assignmentId: extraData.assignmentId || 'asgn_class3_subtraction',
           answer: selectedAnswer,
@@ -88,7 +92,7 @@ export const api = {
         const data = await res.json();
         const diag = data.diagnosis || {};
         const isPass = selectedAnswer === correctAnswer;
-        const isLive = diag.status !== 'pending' && diag.ruleId !== 'PENDING';
+        const isLive = diag.status !== 'pending' && diag.ruleId !== 'PENDING_EVALUATION';
         return {
           studentId,
           questionId,
@@ -97,18 +101,18 @@ export const api = {
           correctAnswer,
           responseId: data.responseId,
           status: diag.status && diag.status !== 'pending' ? diag.status : (isPass ? 'Pass' : 'Fail'),
-          message: diag.observations && diag.observations !== 'ML diagnosis is pending evaluation.' ? diag.observations : (isPass ? 'No immediate gap detected. Student demonstrated mastery of this subtraction concept.' : 'Misconception detected in subtraction.'),
-          gap: diag.ruleId && diag.ruleId !== 'PENDING' ? diag.ruleId : (isPass ? 'CORRECT' : 'BORROWING'),
-          confidence: diag.confidence || 'HIGH',
-          followUpQuestion: diag.followUpQuestion || 'Can you explain how you subtracted the ones column?',
-          suggestedActivity: diag.suggestedActivity || 'Practice tens-and-ones place value regrouping.',
+          message: diag.observations || (isPass ? 'Answer is correct. Place value calculation verified.' : 'Evaluation pending connection to ML diagnostic engine.'),
+          gap: diag.ruleId || (isPass ? 'CORRECT' : 'PENDING_EVALUATION'),
+          confidence: diag.confidence || 'LOW',
+          followUpQuestion: diag.followUpQuestion || 'Can you explain the steps you used to solve this problem?',
+          suggestedActivity: diag.suggestedActivity || 'Review with your teacher.',
           alternatives: diag.alternatives || [],
           evidence: diag.evidence || {},
           isLiveML: isLive,
         };
       }
     } catch (err) {
-      console.warn('Backend API unreachable, using local diagnostic simulation:', err.message);
+      console.warn('Backend API unreachable:', err.message);
     }
 
     const isCorrect = selectedAnswer === correctAnswer;
@@ -118,18 +122,18 @@ export const api = {
       questionText: extraData.questionText || '',
       selectedAnswer,
       correctAnswer,
-      responseId: 'offline_resp_' + Date.now(),
+      responseId: 'resp_' + Date.now(),
       status: isCorrect ? 'Pass' : 'Fail',
       message: isCorrect
-        ? 'No immediate gap detected. Student demonstrated mastery of this subtraction concept.'
-        : "Student needs review with tens-to-ones regrouping concept.",
-      gap: isCorrect ? 'CORRECT' : 'BORROWING',
-      confidence: 'MEDIUM',
-      followUpQuestion: 'Can you show your regrouping step with base-10 blocks?',
+        ? 'Answer is correct. Place value calculation verified.'
+        : 'Evaluation pending connection to ML diagnostic engine.',
+      gap: isCorrect ? 'CORRECT' : 'PENDING_EVALUATION',
+      confidence: 'LOW',
+      followUpQuestion: 'Can you explain the steps you used to solve this problem?',
       suggestedActivity: isCorrect
-        ? 'Advance to 3-digit subtraction'
-        : 'Use 10 physical counters to explain unbundling 1 ten into 10 ones',
-      alternatives: ['Calculation slip'],
+        ? 'Proceed to the next question.'
+        : 'Review with your teacher.',
+      alternatives: [],
       evidence: { observed: selectedAnswer, expected: correctAnswer, is_correct: isCorrect },
       isLiveML: false,
     };
@@ -138,9 +142,9 @@ export const api = {
   // Fetch report for a specific student
   getStudentReport: async (studentId) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/reports/student/${studentId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/reports/student/${encodeURIComponent(studentId)}`, {
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(4000),
       });
       if (res.ok) {
         return await res.json();
@@ -197,7 +201,7 @@ export const api = {
     try {
       const res = await fetch(`${API_BASE_URL}/api/assignments`, {
         headers: getAuthHeaders(),
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(4000),
       });
       if (res.ok) {
         return await res.json();
@@ -212,13 +216,13 @@ export const api = {
 
   // 1. Start dialogue session with Teacher Bot
   startChat: async ({
-    studentId = 'student_guest',
+    studentId,
     questionId = 'probe_01',
     responseId = null,
     language = 'hi',
-    studentName = 'Student',
+    studentName,
     question = '61 - 24 = ?',
-    studentAnswer = '43',
+    studentAnswer = '',
     studentExplanation = '',
   }) => {
     const res = await fetch(`${API_BASE_URL}/chat/start`, {
@@ -343,7 +347,7 @@ export const api = {
       if (!res.ok) throw new Error(`Feedback failed with HTTP ${res.status}`);
       return res.json();
     } catch (err) {
-      console.warn('Failed to send teacher feedback to backend, local recording:', err.message);
+      console.warn('Failed to send teacher feedback to backend:', err.message);
       return { ok: true, fallback: true };
     }
   },

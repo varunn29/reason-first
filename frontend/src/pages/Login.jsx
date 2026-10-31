@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, AlertCircle, Sparkles, GraduationCap } from 'lucide-react';
+import { Mail, Lock, ArrowRight, AlertCircle, GraduationCap } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
 import { useAuth } from '../context/AuthContext';
@@ -10,8 +10,8 @@ const Login = () => {
   const navigate = useNavigate();
   const { login, isLoading, error: authError, clearError } = useAuth();
   const { setActiveTeacher } = useContext(AppContext);
-  const [email, setEmail] = useState('teacher@demo.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [formError, setFormError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,14 +28,15 @@ const Login = () => {
     try {
       setIsSubmitting(true);
       if (login) {
-        await login(email, password);
-      }
-      if (setActiveTeacher) {
-        setActiveTeacher((prev) => ({
-          ...prev,
-          email,
-          name: email.includes('vikram') ? 'Mr. Vikram Patel' : (prev?.name || 'Ms. Sharma'),
-        }));
+        const data = await login(email.trim(), password);
+        if (setActiveTeacher && data?.user) {
+          setActiveTeacher({
+            name: data.user.name,
+            email: data.user.email,
+            greeting: 'Good Morning',
+            avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(data.user.name.split(' ')[0])}`,
+          });
+        }
       }
       navigate('/dashboard');
     } catch (err) {
@@ -43,13 +44,6 @@ const Login = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const fillDemo = () => {
-    setEmail('teacher@demo.com');
-    setPassword('password123');
-    setFormError(null);
-    if (clearError) clearError();
   };
 
   const activeError = formError || authError;
@@ -63,18 +57,6 @@ const Login = () => {
           </div>
           <h1 className="text-3xl font-extrabold text-darkText mb-2">Welcome Back</h1>
           <p className="text-sm text-gray-500 font-medium">Log in to your Teacher Co-Pilot account.</p>
-        </div>
-
-        {/* Demo Credentials Quick-Fill Pill */}
-        <div className="mb-4 text-center">
-          <button
-            type="button"
-            onClick={fillDemo}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-xs font-semibold text-primary hover:bg-blue-100 transition active:scale-95"
-          >
-            <Sparkles size={13} />
-            Use Demo: teacher@demo.com
-          </button>
         </div>
 
         {/* Error Alert */}

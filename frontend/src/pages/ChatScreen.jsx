@@ -26,7 +26,8 @@ const ChatScreen = () => {
   const location = useLocation();
   const { currentUser } = useAuth();
   const { 
-    currentAssignment, 
+    currentAssignment,
+    activeStudent,
     studentAnswer, 
     diagnosticResult, 
     latestResponseId, 
@@ -148,8 +149,8 @@ const ChatScreen = () => {
 
     async function initChat() {
       setIsLoading(true);
-      const activeStudentId = location.state?.studentId || currentUser?.id || 'student_rahul';
-      const activeStudentName = location.state?.studentName || currentUser?.name || 'Rahul';
+      const activeStudentId = location.state?.studentId || currentUser?.id || activeStudent?.id || '';
+      const activeStudentName = location.state?.studentName || currentUser?.name || activeStudent?.displayName || 'Student';
       const activeQuestionId = location.state?.questionId || question.id;
       const activeQuestionText = location.state?.questionText || question.text;
 
@@ -395,7 +396,7 @@ const ChatScreen = () => {
           text,
           selectedQuickReply: quickReplyTag,
           studentContext: {
-            studentName: 'Rahul',
+            studentName: location.state?.studentName || currentUser?.name || activeStudent?.displayName || 'Student',
             question: question.text,
             studentAnswer: currentAnswer,
           },
@@ -424,7 +425,7 @@ const ChatScreen = () => {
       } else {
         // Offline simulation response
         setTimeout(() => {
-          const closingText = 'बहुत अच्छा राहुल! आपने बहुत अच्छे से समझाया। चलो अब आगे बढ़ते हैं!';
+          const closingText = 'बहुत अच्छा! आपने बहुत अच्छे से समझाया। चलो अब आगे बढ़ते हैं!';
           setMessages((prev) => [
             ...prev,
             {
@@ -465,7 +466,7 @@ const ChatScreen = () => {
     if (currentAudioRef.current) currentAudioRef.current.pause();
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
-    const activeStudentName = location.state?.studentName || currentUser?.name || 'Rahul';
+    const activeStudentName = location.state?.studentName || currentUser?.name || activeStudent?.displayName || 'Student';
     const activeQuestionText = location.state?.questionText || question.text;
     let generatedSummary = null;
 

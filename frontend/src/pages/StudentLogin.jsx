@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Hash, ArrowRight, User, AlertCircle, Sparkles } from 'lucide-react';
+import { Hash, ArrowRight, User, AlertCircle } from 'lucide-react';
 import MobileWrapper from '../components/MobileWrapper';
 import CustomButton from '../components/CustomButton';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +10,7 @@ const StudentLogin = () => {
   const navigate = useNavigate();
   const { loginStudent, isLoading, error: authError, clearError } = useAuth();
   const { setStudentByCode, resetStudentQuiz } = useContext(AppContext);
-  const [code, setCode] = useState('3A');
+  const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [formError, setFormError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,26 +21,28 @@ const StudentLogin = () => {
     if (clearError) clearError();
 
     const cleanCode = code.trim().toUpperCase();
+    const cleanName = name.trim();
+
     if (!cleanCode) {
-      setFormError('Please enter your class code (e.g. 3A).');
+      setFormError('Please enter your class code.');
+      return;
+    }
+
+    if (!cleanName) {
+      setFormError('Please enter your first name or roll number.');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const studentDisplayName = name.trim() || 'Student';
       if (setStudentByCode) {
-        setStudentByCode(cleanCode, studentDisplayName);
+        setStudentByCode(cleanCode, cleanName);
       }
       if (resetStudentQuiz) {
         resetStudentQuiz();
       }
       if (loginStudent) {
-        try {
-          await loginStudent(cleanCode, studentDisplayName);
-        } catch (authErr) {
-          console.warn('Backend student auth skipped, using local session:', authErr.message);
-        }
+        await loginStudent(cleanCode, cleanName);
       }
       navigate('/student');
     } catch (err) {
@@ -48,13 +50,6 @@ const StudentLogin = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const useDemoCode = () => {
-    setCode('3A');
-    setName('Student 1');
-    setFormError(null);
-    if (clearError) clearError();
   };
 
   const activeError = formError || authError;
@@ -68,18 +63,6 @@ const StudentLogin = () => {
           </div>
           <h1 className="text-3xl font-extrabold text-darkText mb-1.5">Hi there! 👋</h1>
           <p className="text-sm text-gray-600 font-medium">Enter the code from your teacher to start.</p>
-        </div>
-
-        {/* Quick Demo Pill */}
-        <div className="mb-4 text-center">
-          <button
-            type="button"
-            onClick={useDemoCode}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-blue-200 text-xs font-semibold text-primary hover:bg-blue-50 transition active:scale-95 shadow-sm"
-          >
-            <Sparkles size={13} />
-            Quick Demo: Class Code 3A
-          </button>
         </div>
 
         {/* Error Alert */}
@@ -100,7 +83,7 @@ const StudentLogin = () => {
               </label>
               <input 
                 type="text" 
-                placeholder="e.g. 3A" 
+                placeholder="Enter Class Code" 
                 value={code}
                 onChange={(e) => {
                   setCode(e.target.value.toUpperCase());
@@ -108,7 +91,7 @@ const StudentLogin = () => {
                 }}
                 className="w-full bg-transparent outline-none text-xl font-extrabold tracking-widest text-darkText placeholder:font-medium placeholder:text-base placeholder:tracking-normal"
                 required
-                maxLength={8}
+                maxLength={10}
               />
             </div>
           </div>
@@ -122,7 +105,7 @@ const StudentLogin = () => {
               </label>
               <input 
                 type="text" 
-                placeholder="e.g. Rahul, Priya, Vikram..." 
+                placeholder="Enter your name" 
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);

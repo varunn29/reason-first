@@ -228,7 +228,7 @@ async function generateTeacherSummary(chatHistory = [], studentContext = {}, exi
   const isCorrect = studentContext.studentAnswer === '3/4' || studentContext.studentAnswer === '37' || existingDiagnosis?.status === 'Pass';
 
   const prompt = `You are an expert elementary math pedagogical evaluator.
-Analyze this chat transcript between a Class 4 teacher bot and a student (${studentContext.studentName || 'Rahul'}).
+Analyze this chat transcript between a Class 4 teacher bot and a student (${studentContext.studentName || 'Student'}).
 
 STUDENT CONTEXT:
 - Problem: "${studentContext.question || '1/2 + 1/4'}"

@@ -32,13 +32,13 @@ router.use((req, res, next) => {
 router.post('/start', async (req, res) => {
   try {
     const {
-      studentId = 'student_01',
-      questionId = 'probe_01',
+      studentId,
+      questionId,
       responseId = null,
       language = config.defaultLanguage,
       studentName = 'Student',
-      question = '61 - 24 = ?',
-      studentAnswer = '43',
+      question = '',
+      studentAnswer = '',
       studentExplanation = '',
     } = req.body;
 

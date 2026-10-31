@@ -71,8 +71,8 @@ const TeacherDashboard = () => {
     }
   };
 
-  const displayName = currentUser?.name || teacher?.name || 'Ms. Sharma';
-  const schoolName = currentUser?.schoolName || teacher?.schoolName || 'Kendriya Vidyalaya';
+  const displayName = currentUser?.name || teacher?.name || 'Educator';
+  const schoolName = currentUser?.schoolName || teacher?.schoolName || 'Primary School';
   const classCode = currentUser?.classCode || classroom?.classCode || teacher?.classCode || '3A';
 
   const handleLogout = () => {

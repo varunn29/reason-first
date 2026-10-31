@@ -122,32 +122,8 @@ function verifyToken(token) {
 }
 
 // ---------------------------------------------------------------------------
-// Pre-seed Demo Accounts (runs synchronously in memory & checks DB)
+// DB Migration on boot if DB is configured
 // ---------------------------------------------------------------------------
-const DEMO_TEACHER = {
-  id: 'teacher_demo_01',
-  name: 'Ms. Sharma',
-  email: 'teacher@demo.com',
-  passwordHash: hashPassword('password123'),
-  schoolName: 'Kendriya Vidyalaya',
-  createdAt: new Date().toISOString(),
-};
-
-const DEMO_CLASSROOM = {
-  id: 'class_demo_01',
-  teacherId: 'teacher_demo_01',
-  name: 'Class 3 - Section A',
-  classCode: '3A',
-  grade: 'Grade 3 - Section A',
-  teacherName: 'Ms. Sharma',
-  schoolName: 'Kendriya Vidyalaya',
-  createdAt: new Date().toISOString(),
-};
-
-inMemory.teachers.set(DEMO_TEACHER.email.toLowerCase(), DEMO_TEACHER);
-inMemory.classrooms.set(DEMO_CLASSROOM.classCode.toUpperCase(), DEMO_CLASSROOM);
-
-// Try running DB migration on boot if DB is configured
 async function initDatabase() {
   if (!process.env.DATABASE_URL) return;
   try {
@@ -155,20 +131,6 @@ async function initDatabase() {
     if (fs.existsSync(migrationPath)) {
       const sql = fs.readFileSync(migrationPath, 'utf8');
       await pool.query(sql);
-      // Ensure demo teacher exists in DB
-      await pool.query(
-        `INSERT INTO teachers (id, name, email, password_hash, school_name)
-         VALUES ($1, $2, $3, $4, $5)
-         ON CONFLICT (email) DO NOTHING`,
-        [DEMO_TEACHER.id, DEMO_TEACHER.name, DEMO_TEACHER.email, DEMO_TEACHER.passwordHash, DEMO_TEACHER.schoolName]
-      );
-      // Ensure demo classroom exists in DB
-      await pool.query(
-        `INSERT INTO classrooms (id, teacher_id, name, class_code, grade)
-         VALUES ($1, $2, $3, $4, $5)
-         ON CONFLICT (class_code) DO NOTHING`,
-        [DEMO_CLASSROOM.id, DEMO_CLASSROOM.teacherId, DEMO_CLASSROOM.name, DEMO_CLASSROOM.classCode, DEMO_CLASSROOM.grade]
-      );
     }
   } catch (err) {
     console.warn('DB auth tables initialization skipped or failed:', err.message);
@@ -181,7 +143,7 @@ initDatabase().catch(() => {});
 // ---------------------------------------------------------------------------
 // Teacher Auth Methods
 // ---------------------------------------------------------------------------
-async function registerTeacher({ name, email, password, schoolName = 'Kendriya Vidyalaya' }) {
+async function registerTeacher({ name, email, password, schoolName = 'Primary School' }) {
   if (!email || !password || !name) {
     throw new Error('Name, email, and password are required.');
   }
@@ -214,7 +176,7 @@ async function registerTeacher({ name, email, password, schoolName = 'Kendriya V
     name: name.trim(),
     email: cleanEmail,
     passwordHash,
-    schoolName: schoolName.trim() || 'Kendriya Vidyalaya',
+    schoolName: schoolName.trim() || 'Primary School',
     createdAt: new Date().toISOString(),
   };
 
@@ -331,7 +293,7 @@ async function loginTeacher(email, password) {
     }
   }
 
-  const classCode = classroom ? classroom.classCode : '3A';
+  const classCode = classroom ? classroom.classCode : null;
 
   const token = generateToken({
     id: teacher.id,
@@ -346,11 +308,11 @@ async function loginTeacher(email, password) {
       id: teacher.id,
       name: teacher.name,
       email: teacher.email,
-      schoolName: teacher.schoolName || 'Kendriya Vidyalaya',
+      schoolName: teacher.schoolName || '',
       role: 'teacher',
       classCode,
     },
-    classroom: classroom || DEMO_CLASSROOM,
+    classroom: classroom || null,
   };
 }
 
@@ -397,11 +359,6 @@ async function getClassroom(classCode) {
     return inMemory.classrooms.get(cleanCode);
   }
 
-  // Special match for default code "3A" or "GRADE3A"
-  if (cleanCode === '3A' || cleanCode === 'GRADE3A') {
-    return DEMO_CLASSROOM;
-  }
-
   return null;
 }
 
@@ -418,7 +375,7 @@ async function loginStudent({ classCode, studentName = 'Student' }) {
   const cleanName = (studentName || 'Student').trim();
   const baseSlug = cleanName.toLowerCase().replace(/[^a-z0-9]/g, '_');
   const studentId = 'student_' + (baseSlug || 'user');
-  const classLabel = classroom.name || `Grade ${classroom.grade || 3} - Section ${classroom.classCode || '3A'}`;
+  const classLabel = classroom.name || `Grade ${classroom.grade || 3} - Section ${classroom.classCode || ''}`;
 
   // Persist to Postgres students table if connected
   if (process.env.DATABASE_URL) {
@@ -450,7 +407,7 @@ async function loginStudent({ classCode, studentName = 'Student' }) {
       classCode: classroom.classCode,
       className: classroom.name,
       grade: classroom.grade,
-      teacherName: classroom.teacherName || 'Ms. Sharma',
+      teacherName: classroom.teacherName || 'Teacher',
       role: 'student',
     },
     classroom,
@@ -467,6 +424,4 @@ module.exports = {
   getTeacherById,
   getClassroom,
   loginStudent,
-  DEMO_TEACHER,
-  DEMO_CLASSROOM,
 };

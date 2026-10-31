@@ -4,11 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import BottomNav from '../components/BottomNav';
 import { AppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { currentUser, classroom, logout } = useAuth();
   const { activeTeacher } = useContext(AppContext);
   const [mlStatus, setMlStatus] = useState('Checking...');
+
+  const teacherName = currentUser?.name || activeTeacher?.name || 'Educator';
+  const teacherEmail = currentUser?.email || activeTeacher?.email || 'educator@school.edu';
+  const teacherAvatar = activeTeacher?.avatar || (currentUser?.name ? `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(teacherName.split(' ')[0])}` : 'https://api.dicebear.com/7.x/adventurer/svg?seed=Teacher');
+  const classCode = classroom?.code || '3A';
+  const classGrade = classroom?.grade ? `${classroom.grade} - Section ${classroom.section || classroom.code}` : 'Grade 3 - Section A';
 
   useEffect(() => {
     fetch('http://localhost:4000/health')
@@ -21,6 +29,11 @@ const Settings = () => {
       });
   }, []);
 
+  const handleLogout = () => {
+    if (logout) logout();
+    navigate('/login');
+  };
+
   return (
     <MobileWrapper>
       <div className="pb-28 min-h-screen bg-bgMain">
@@ -29,9 +42,8 @@ const Settings = () => {
           <div className="flex items-center gap-4">
             <button 
               type="button"
-              aria-label="Back to Dashboard"
-              onClick={() => navigate('/dashboard')} 
-              className="p-2 bg-white rounded-full shadow-sm text-gray-600 hover:text-primary transition active:scale-95"
+              onClick={() => navigate(-1)}
+              className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-darkText shadow-sm hover:bg-gray-50 active:scale-95 transition"
             >
               <ArrowLeft size={20} />
             </button>
@@ -43,13 +55,13 @@ const Settings = () => {
           {/* Teacher Profile Card */}
           <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-50 flex items-center gap-4">
             <img 
-              src={activeTeacher?.avatar || 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sharma'} 
+              src={teacherAvatar} 
               alt="Teacher" 
               className="w-14 h-14 rounded-full border-2 border-white shadow-sm bg-blue-50"
             />
             <div>
-              <h2 className="text-base font-bold text-darkText">{activeTeacher?.name || 'Ms. Sharma'}</h2>
-              <p className="text-xs text-gray-500 font-medium">{activeTeacher?.email || 'teacher@demo.com'}</p>
+              <h2 className="text-base font-bold text-darkText">{teacherName}</h2>
+              <p className="text-xs text-gray-500 font-medium">{teacherEmail}</p>
               <span className="inline-block mt-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                 Primary Math Educator
               </span>
@@ -64,21 +76,11 @@ const Settings = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-2xl">
                 <div>
-                  <span className="text-xs font-bold text-darkText block">Grade 3 - Section A</span>
+                  <span className="text-xs font-bold text-darkText block">{classGrade}</span>
                   <span className="text-[10px] text-gray-500 font-medium">Classroom Tablets</span>
                 </div>
                 <code className="text-xs font-extrabold text-primary bg-white px-2.5 py-1 rounded-lg border border-gray-200">
-                  3A
-                </code>
-              </div>
-
-              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-2xl">
-                <div>
-                  <span className="text-xs font-bold text-darkText block">Grade 3 - Section B</span>
-                  <span className="text-[10px] text-gray-500 font-medium">Classroom Tablets</span>
-                </div>
-                <code className="text-xs font-extrabold text-primary bg-white px-2.5 py-1 rounded-lg border border-gray-200">
-                  3B
+                  {classCode}
                 </code>
               </div>
             </div>
@@ -124,7 +126,7 @@ const Settings = () => {
           {/* Logout Button */}
           <button
             type="button"
-            onClick={() => navigate('/login')}
+            onClick={handleLogout}
             className="w-full py-3.5 bg-red-50 text-danger hover:bg-red-100 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition active:scale-95 border border-red-100"
           >
             <LogOut size={16} /> Log Out of Teacher Portal
@@ -138,4 +140,3 @@ const Settings = () => {
 };
 
 export default Settings;
-

@@ -29,7 +29,7 @@ const DiagnosticReport = () => {
 
   const studentIdParam = searchParams.get('studentId');
   const studentNameParam = searchParams.get('name') || searchParams.get('studentName');
-  const activeStudentName = location.state?.studentName || studentNameParam || activeStudent?.displayName || 'Rahul Kumar';
+  const activeStudentName = location.state?.studentName || studentNameParam || activeStudent?.displayName || 'Student';
   const activeSessionId = location.state?.sessionId || searchParams.get('sessionId') || chatSummary?.sessionId;
   const activeResponseId = location.state?.responseId || searchParams.get('responseId') || latestResponseId || diagnosticResult?.responseId;
   const activeSummary = location.state?.summary || chatSummary;
@@ -43,7 +43,8 @@ const DiagnosticReport = () => {
   // Fetch student report by ID if query param provided, otherwise use current result
   useEffect(() => {
     let isMounted = true;
-    const targetStudentId = studentIdParam || activeStudent?.id || 'student_rahul';
+    const targetStudentId = studentIdParam || activeStudent?.id;
+    if (!targetStudentId) return;
 
     setIsLoading(true);
     api.getStudentReport(targetStudentId).then((data) => {
@@ -68,7 +69,7 @@ const DiagnosticReport = () => {
   // Merge loaded report or context result
   const activeReport = reportData?.report || diagnosticResult;
   const studentInfo = reportData?.student || {
-    id: studentIdParam || activeStudent?.id || 'student_rahul',
+    id: studentIdParam || activeStudent?.id || '',
     displayName: activeStudentName,
     classLabel: activeStudent?.classLabel || 'Grade 3 - Section A',
   };
@@ -80,7 +81,7 @@ const DiagnosticReport = () => {
 
   const isPass = activeReport?.status === 'Pass' || activeReport?.ruleId === 'CORRECT';
   const isLiveML = activeReport?.isLiveML ?? true;
-  const ruleId = isPass ? 'CORRECT' : (activeReport?.gap || activeReport?.ruleId || 'BORROW_WITHOUT_DECREMENT');
+  const ruleId = isPass ? 'CORRECT' : (activeReport?.gap || activeReport?.ruleId || 'PENDING_EVALUATION');
 
   const ruleTitles = {
     'SMALLER_FROM_LARGER': 'Smaller-From-Larger (Zero-Borrowing Error)',
@@ -102,7 +103,8 @@ const DiagnosticReport = () => {
 
   // Save teacher human-in-the-loop override
   const handleSaveOverride = async () => {
-    const responseId = reportData?.response?.id || activeResponseId || 'resp_demo_01';
+    const responseId = reportData?.response?.id || activeResponseId;
+    if (!responseId) return;
     await api.submitOverride(responseId, ruleId, overrideDecision, teacherNote);
     setOverrideSaved(true);
     setTimeout(() => setOverrideSaved(false), 4000);
@@ -161,7 +163,7 @@ const DiagnosticReport = () => {
                 />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-darkText">{studentInfo?.displayName || 'Rahul Kumar'}</h3>
+                <h3 className="text-sm font-bold text-darkText">{studentInfo?.displayName || 'Student'}</h3>
                 <p className="text-xs text-gray-500">{studentInfo?.classLabel || 'Grade 3 - Section A'}</p>
               </div>
             </div>

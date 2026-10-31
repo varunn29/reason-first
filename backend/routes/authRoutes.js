@@ -71,7 +71,7 @@ router.get('/me', async (req, res) => {
           id: payload.id,
           name: teacher ? teacher.name : payload.name,
           email: teacher ? teacher.email : payload.email,
-          schoolName: teacher ? teacher.schoolName : 'Kendriya Vidyalaya',
+          schoolName: teacher ? (teacher.schoolName || '') : '',
           role: 'teacher',
         },
       });

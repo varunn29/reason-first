@@ -42,14 +42,14 @@ const Register = () => {
           name: name.trim(),
           email: email.trim(),
           password,
-          schoolName: schoolName.trim() || 'Kendriya Vidyalaya',
+          schoolName: schoolName.trim() || 'Primary School',
         });
       }
       if (setActiveTeacher) {
         setActiveTeacher({
           name: name.trim(),
           greeting: 'Good Morning',
-          email: email.trim() || 'teacher@demo.com',
+          email: email.trim(),
           avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name.trim().split(' ')[0])}`,
         });
       }
@@ -87,7 +87,7 @@ const Register = () => {
             <User className="text-gray-400 shrink-0" size={20} />
             <input 
               type="text" 
-              placeholder="Full Name (e.g. Ms. Anita Sharma)" 
+              placeholder="Full Name (e.g. Jane Smith)" 
               value={name}
               onChange={(e) => {
                 setName(e.target.value);

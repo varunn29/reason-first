@@ -11,8 +11,8 @@ const StudentInterface = () => {
   const { activeStudent, resetStudentQuiz } = useContext(AppContext);
   const [showRewardsModal, setShowRewardsModal] = useState(false);
 
-  const studentName = currentUser?.name || activeStudent?.displayName || 'Rahul Kumar';
-  const firstName = studentName.split(' ')[0] || 'Rahul';
+  const studentName = currentUser?.name || activeStudent?.displayName || 'Student';
+  const firstName = studentName.split(' ')[0] || 'Student';
   const gradeLabel = classroom?.grade || currentUser?.grade || activeStudent?.classLabel || 'Grade 3 - Section A';
   const avatarUrl = activeStudent?.avatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(firstName)}`;
 

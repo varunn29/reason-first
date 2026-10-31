@@ -194,6 +194,9 @@ app.post('/api/responses', async (req, res) => {
     });
 
     const isPass = correctAnswer !== null ? Number(answer) === Number(correctAnswer) : false;
+    if (mlResult.status !== 'ok') {
+      console.warn("[ML Engine Offline] ML server offline or unavailable. Using fallback diagnosis: status=" + (isPass ? "Pass" : "Fail") + ", ruleId=" + (isPass ? "CORRECT" : "PENDING_EVALUATION"));
+    }
 
     const diagnosisData = mlResult.status === 'ok' ? mlResult.diagnosis : {
       status: isPass ? 'Pass' : 'Fail',
@@ -202,12 +205,13 @@ app.post('/api/responses', async (req, res) => {
         : `Student response ${answer} indicates a need for place value review.`,
       evidence: { observed: answer, expected: correctAnswer, is_correct: isPass },
       alternatives: ['Calculation slip'],
-      confidence: 'MEDIUM',
+
       followUpQuestion: 'Can you explain the strategy you used to solve this problem?',
       suggestedActivity: isPass
         ? 'Advance to 3-digit subtraction problems.'
         : 'Practice regrouping with base-10 manipulatives.',
-      ruleId: isPass ? 'CORRECT' : 'BORROW_WITHOUT_DECREMENT',
+      confidence: 'LOW',
+      ruleId: isPass ? 'CORRECT' : 'PENDING_EVALUATION',
     };
 
     // 4. Store in Memory Cache
@@ -333,10 +337,11 @@ app.get('/api/reports/student/:studentId', async (req, res) => {
       } : null;
 
       const respRes = await pool.query(
-        `SELECT r.*, d.observations, d.possible_misconception, d.evidence, d.alternatives, d.confidence,
+        `SELECT r.*, q.prompt as question_prompt, d.observations, d.possible_misconception, d.evidence, d.alternatives, d.confidence,
                 d.follow_up_question, d.suggested_activity, d.rule_id, d.created_at as diag_created_at,
                 o.teacher_decision, o.teacher_note, o.overridden_at
          FROM responses r
+         LEFT JOIN questions q ON r.question_id = q.id
          LEFT JOIN diagnoses d ON r.id = d.response_id
          LEFT JOIN overrides o ON r.id = o.response_id
          WHERE r.student_id = $1
@@ -358,9 +363,10 @@ app.get('/api/reports/student/:studentId', async (req, res) => {
           response: {
             id: row.id,
             questionId: row.question_id,
-            questionText: '61 - 24 = ?',
+            questionText: row.question_prompt || (memoryStore.responses.get(row.id)?.questionText) || 'Class 3 Math Diagnostic',
+            correctAnswer: (row.evidence && row.evidence.expected !== undefined) ? row.evidence.expected : (memoryStore.responses.get(row.id)?.correctAnswer ?? 37),
             answer: row.answer,
-            correctAnswer: 37,
+
             submittedAt: row.submitted_at,
           },
           report: {
@@ -514,8 +520,8 @@ app.post('/api/assignments', async (req, res) => {
 
 // 9. Get Teacher Dashboard Summary (Fully Dynamic)
 app.get('/api/dashboard', async (req, res) => {
-  let teacherName = 'Ms. Sharma';
-  let schoolName = 'Kendriya Vidyalaya';
+  let teacherName = 'Educator';
+  let schoolName = 'Primary School';
   let classCode = '3A';
 
   const authHeader = req.headers.authorization;
@@ -529,6 +535,14 @@ app.get('/api/dashboard', async (req, res) => {
         if (teacher) {
           teacherName = teacher.name;
           schoolName = teacher.schoolName || schoolName;
+        }
+        let ClassroomModel = null;
+        try { ClassroomModel = require('./models/Classroom'); } catch (err) {}
+        if (ClassroomModel) {
+          const classes = await ClassroomModel.getByTeacherId(payload.id);
+          if (classes && classes.length > 0) {
+            classCode = classes[0].classCode;
+          }
         }
       }
     } catch (e) {}
