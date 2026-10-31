@@ -317,6 +317,19 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
                 expl = data.get("explanation", "")
                 turns = data.get("chat_turns", [])
                 reconciled = reconcile_reasoning(init_diag, expl, turns)
+                # Map standard diagnostic fields for callers
+                rule_id = reconciled.get("candidate_misconception") or reconciled.get("ruleId")
+                reconciled["ruleId"] = rule_id
+                reconciled["misconception_id"] = rule_id
+                reconciled["possibleMisconception"] = rule_id
+                if reconciled.get("recommended_intervention"):
+                    interv = reconciled["recommended_intervention"]
+                    guide = interv.get("teacher_guidance") or interv.get("student_activity") or interv.get("title")
+                    reconciled["suggestedActivity"] = guide
+                    reconciled["suggested_next_step"] = guide
+                if reconciled.get("teacher_facing_explanation"):
+                    reconciled["observations"] = reconciled["teacher_facing_explanation"]
+                    reconciled["what_child_understands"] = reconciled["teacher_facing_explanation"]
                 self._set_headers(200)
                 self.wfile.write(json.dumps(reconciled).encode("utf-8"))
                 return
@@ -369,6 +382,40 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
                         ans = 0
 
                     response_payload = evaluate_single_answer(qid, ans)
+
+                # Cognitive Reconciliation when chat turns, explanation, or transcript are provided
+                chat_turns = data.get("chat_turns") or data.get("chatTurns") or data.get("messages")
+                explanation = data.get("explanation") or data.get("studentExplanation") or ""
+                transcript_str = data.get("transcript") or ""
+                if transcript_str and not explanation:
+                    explanation = transcript_str
+
+                if chat_turns or explanation:
+                    turns_list = chat_turns if isinstance(chat_turns, list) else None
+                    reconciled = reconcile_reasoning(response_payload, explanation, turns_list)
+
+                    rule_id = reconciled.get("candidate_misconception") or response_payload.get("ruleId")
+                    confidence = reconciled.get("confidence", response_payload.get("confidence", "HIGH"))
+
+                    response_payload["ruleId"] = rule_id
+                    response_payload["misconception_id"] = rule_id
+                    response_payload["possibleMisconception"] = rule_id
+                    response_payload["confidence"] = confidence
+                    response_payload["diagnostic_status"] = reconciled.get("diagnostic_status")
+                    response_payload["reasoning_alignment"] = reconciled.get("reasoning_alignment")
+
+                    if reconciled.get("teacher_facing_explanation"):
+                        response_payload["observations"] = reconciled["teacher_facing_explanation"]
+                        response_payload["what_child_understands"] = reconciled["teacher_facing_explanation"]
+                    if reconciled.get("supporting_evidence"):
+                        response_payload["evidence"] = reconciled["supporting_evidence"]
+                    if reconciled.get("recommended_intervention"):
+                        interv = reconciled["recommended_intervention"]
+                        guide = interv.get("teacher_guidance") or interv.get("student_activity") or interv.get("title")
+                        response_payload["suggestedActivity"] = guide
+                        response_payload["suggested_next_step"] = guide
+                    response_payload["is_reconciled"] = True
+                    response_payload["engine"] = "python_calibrated_ml"
 
                 self._set_headers(200)
                 self.wfile.write(json.dumps(response_payload).encode("utf-8"))

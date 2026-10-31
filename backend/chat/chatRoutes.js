@@ -205,6 +205,8 @@ router.post('/message', async (req, res) => {
 /**
  * 3. POST /chat/finish
  * Concludes the conversation and generates the Teacher Summary.
+ * The trained Python ML model (Port 8000) is the authoritative diagnostic engine.
+ * LLM is strictly used for conversational summarization and quotes, with graceful fallback if ML is offline.
  */
 router.post('/finish', async (req, res) => {
   try {
@@ -226,34 +228,64 @@ router.post('/finish', async (req, res) => {
 
     const messages = await chatModel.getMessages(sessionId);
 
+    // 1. Prepare student context & dialogue data
+    const questionId = session.questionId || studentContext.questionId || 'probe_01';
+    const rawAnswer = studentContext.studentAnswer ?? existingDiagnosis?.answer ?? existingDiagnosis?.selectedAnswer ?? 43;
+    const studentAnswer = Number.isNaN(Number(rawAnswer)) ? rawAnswer : Number(rawAnswer);
+    const studentSpokenText = messages.filter(m => m.sender === 'student').map(m => m.text).join(' ');
+    const fullTranscript = messages.map(m => `${m.sender === 'student' ? 'Student' : 'Teacher'}: ${m.text}`).join('\n');
+    const chatTurns = messages.map(m => ({ sender: m.sender, text: m.text }));
+
     const context = {
       studentName: studentContext.studentName || 'Student',
-      question: studentContext.question || '1/2 + 1/4 = ?',
-      studentAnswer: studentContext.studentAnswer || '2/6',
+      question: studentContext.question || '61 - 24 = ?',
+      studentAnswer: String(studentAnswer),
+      studentExplanation: studentContext.studentExplanation || studentSpokenText,
       language: session.language || 'hi',
     };
 
+    // 2. Use LLM strictly for conversational synthesis and dialogue nuances (NOT final misconception ID)
     const summaryData = await generateTeacherSummary(messages, context, existingDiagnosis);
 
-    // Reconcile student verbal reasoning with quantitative diagnostic hypothesis
-    let reconciledDiagnosis = null;
-    try {
-      const mlService = require('../services/mlService');
-      const studentExpl = messages.filter(m => m.sender === 'student').map(m => m.text).join(' ');
-      const baseDiag = existingDiagnosis || {
-        ruleId: summaryData.misconception_id,
-        candidate_misconception: summaryData.misconception_id,
-        status: existingDiagnosis?.status || 'Fail',
-        diagnostic_status: 'CANDIDATE_MISCONCEPTION',
-        confidence: 'LOW',
-        evidence_strength: 'WEAK',
-      };
-      const rec = await mlService.reconcileReasoning(baseDiag, studentExpl, messages);
-      if (rec.status === 'ok') {
-        reconciledDiagnosis = rec.diagnosis;
+    // 3. Authoritative Diagnosis via trained Python ML Model (Port 8000 /predict)
+    const mlService = require('../services/mlService');
+    const mlRes = await mlService.predictChatDiagnosis({
+      questionId,
+      answer: studentAnswer,
+      explanation: studentSpokenText || studentContext.studentExplanation || '',
+      chatTurns,
+      transcript: fullTranscript,
+    });
+
+    let authoritativeDiagnosis = null;
+    let finalMisconceptionId = summaryData.misconception_id;
+    let finalConfidence = summaryData.confidence || 'MEDIUM';
+    let finalSuggestedNextStep = summaryData.suggested_next_step;
+    let finalEvidence = summaryData.evidence;
+    let finalWhatChildUnderstands = summaryData.what_child_understands;
+    let diagnosticEngine = 'llm_fallback';
+
+    if (mlRes.status === 'ok' && mlRes.diagnosis) {
+      authoritativeDiagnosis = mlRes.diagnosis;
+      diagnosticEngine = 'trained_python_ml_model';
+
+      // Python ML model is the authority for final misconception, confidence, and next steps
+      finalMisconceptionId = authoritativeDiagnosis.misconception_id || authoritativeDiagnosis.ruleId || authoritativeDiagnosis.possibleMisconception || summaryData.misconception_id;
+      finalConfidence = authoritativeDiagnosis.confidence || 'HIGH';
+      finalSuggestedNextStep = authoritativeDiagnosis.suggested_next_step || authoritativeDiagnosis.suggestedActivity || summaryData.suggested_next_step;
+
+      if (authoritativeDiagnosis.evidence) {
+        if (Array.isArray(authoritativeDiagnosis.evidence) && authoritativeDiagnosis.evidence.length > 0) {
+          finalEvidence = authoritativeDiagnosis.evidence;
+        } else if (typeof authoritativeDiagnosis.evidence === 'object') {
+          finalEvidence = Object.entries(authoritativeDiagnosis.evidence).map(([k, v]) => `${k}: ${v}`);
+        }
       }
-    } catch (recErr) {
-      console.warn('[ChatRoutes] Reasoning reconciliation error:', recErr.message);
+      if (authoritativeDiagnosis.what_child_understands || authoritativeDiagnosis.observations) {
+        finalWhatChildUnderstands = authoritativeDiagnosis.what_child_understands || authoritativeDiagnosis.observations;
+      }
+    } else {
+      console.warn('[WARNING] Using LLM fallback instead of trained ML model');
     }
 
     const summaryId = randomUUID();
@@ -262,15 +294,43 @@ router.post('/finish', async (req, res) => {
       sessionId,
       responseId: session.responseId,
       studentId: session.studentId,
-      misconceptionId: summaryData.misconception_id,
-      evidence: summaryData.evidence,
-      whatChildUnderstands: summaryData.what_child_understands,
-      confidence: summaryData.confidence,
-      suggestedNextStep: summaryData.suggested_next_step,
+      misconceptionId: finalMisconceptionId,
+      evidence: finalEvidence,
+      whatChildUnderstands: finalWhatChildUnderstands,
+      confidence: finalConfidence,
+      suggestedNextStep: finalSuggestedNextStep,
       agreesWithExistingDiagnosis: summaryData.agrees_with_existing_diagnosis,
       needsTeacherReview: summaryData.needs_teacher_review,
-      rawSummaryJson: summaryData,
+      rawSummaryJson: {
+        ...summaryData,
+        misconception_id: finalMisconceptionId,
+        confidence: finalConfidence,
+        suggested_next_step: finalSuggestedNextStep,
+        diagnostic_engine: diagnosticEngine,
+        python_ml_diagnosis: authoritativeDiagnosis,
+      },
     });
+
+    // 4. Update Postgres Diagnoses record if responseId is linked
+    if (session.responseId && process.env.DATABASE_URL) {
+      try {
+        const DiagnosisModel = require('../models/Diagnosis');
+        await DiagnosisModel.create({
+          responseId: session.responseId,
+          observations: finalWhatChildUnderstands,
+          possibleMisconception: finalMisconceptionId,
+          evidence: Array.isArray(finalEvidence) ? finalEvidence : [finalEvidence],
+          alternatives: authoritativeDiagnosis?.alternatives || ['Calculation slip', 'Guessing'],
+          confidence: finalConfidence,
+          followUpQuestion: authoritativeDiagnosis?.followUpQuestion || summaryData.suggested_next_step,
+          suggestedActivity: finalSuggestedNextStep,
+          ruleId: finalMisconceptionId,
+        });
+        console.log(`[ChatRoutes] Synced authoritative Python ML diagnosis to DB for responseId: ${session.responseId}`);
+      } catch (dbDiagErr) {
+        console.warn('[ChatRoutes] Could not update DiagnosisModel for responseId:', dbDiagErr.message);
+      }
+    }
 
     await chatModel.updateSession(sessionId, {
       status: 'completed',
@@ -282,7 +342,8 @@ router.post('/finish', async (req, res) => {
       sessionId,
       dbPersisted: Boolean(saved?.persistedToDb),
       summary: saved,
-      reconciledDiagnosis,
+      reconciledDiagnosis: authoritativeDiagnosis,
+      diagnosticEngine,
     });
   } catch (err) {
     console.error('Error finishing chat session:', err);
@@ -407,4 +468,3 @@ router.post('/feedback', async (req, res) => {
 });
 
 module.exports = router;
-

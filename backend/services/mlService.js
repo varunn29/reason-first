@@ -40,6 +40,39 @@ async function diagnose(response) {
 }
 
 /**
+ * 1b. Predict diagnosis combining answer and full chat transcript / reasoning turns.
+ * Authoritative diagnostic endpoint calling the trained Python ML model at POST /predict.
+ * Falls back to LLM analysis with explicit warning if the ML model is offline or returns an error.
+ */
+async function predictChatDiagnosis({ questionId, answer, explanation = '', chatTurns = [], transcript = '' }) {
+  try {
+    const res = await fetch(`${ML_API_URL}/predict`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        questionId,
+        answer,
+        explanation,
+        chat_turns: chatTurns,
+        transcript,
+      }),
+      signal: AbortSignal.timeout(4000),
+    });
+
+    if (!res.ok) {
+      console.warn(`[WARNING] Using LLM fallback instead of trained ML model (HTTP ${res.status} from ${ML_API_URL})`);
+      return { status: 'fallback', error: `HTTP ${res.status}` };
+    }
+
+    const data = await res.json();
+    return { status: 'ok', diagnosis: data };
+  } catch (err) {
+    console.warn(`[WARNING] Using LLM fallback instead of trained ML model: ${err.message}`);
+    return { status: 'fallback', error: err.message };
+  }
+}
+
+/**
  * 2. Diagnose complete assessment session (Multi-probe evidence synthesis).
  */
 async function diagnoseSession(sessionData) {
@@ -234,6 +267,7 @@ async function getInterventions() {
 
 module.exports = {
   diagnose,
+  predictChatDiagnosis,
   diagnoseSession,
   reconcileReasoning,
   compareReassessment,
