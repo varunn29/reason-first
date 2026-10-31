@@ -118,7 +118,7 @@ const StudentInterface = () => {
           <div className="flex justify-between items-center px-1">
             <h3 className="text-base font-bold text-darkText flex items-center gap-2">
               <Calculator size={18} className="text-primary" />
-              <span>Today's Math Mission</span>
+              <span>Assigned by Teacher</span>
             </h3>
             <span className="text-[10px] font-bold text-primary bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
               1 Active
@@ -137,7 +137,7 @@ const StudentInterface = () => {
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-3">
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-xs">
-                  <Sparkles size={11} className="text-amber-300" /> Active Math Mission
+                  <Sparkles size={11} className="text-amber-300" /> Teacher Assigned
                 </span>
                 <span className="text-xs font-semibold text-white/80">Class 3 NCERT</span>
               </div>
@@ -148,6 +148,9 @@ const StudentInterface = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-extrabold text-white leading-snug">Math Adventure</h4>
+                  <p className="text-[11px] text-white/80 font-medium">
+                    Assigned by your teacher • Class 3 NCERT
+                  </p>
                   <p className="text-xs text-white/90 font-medium mt-0.5">
                     2-Digit Subtraction with Column Regrouping
                   </p>
@@ -173,7 +176,7 @@ const StudentInterface = () => {
 
               {/* Call to action button */}
               <div className="w-full py-3 bg-white text-primary rounded-2xl text-xs font-bold shadow-sm flex items-center justify-center gap-2 group-hover:bg-blue-50 transition active:scale-95">
-                <span>Start Math Adventure</span>
+                <span>Start Assigned Test</span>
                 <ArrowRight size={15} />
               </div>
             </div>
@@ -210,7 +213,7 @@ const StudentInterface = () => {
             className="flex flex-col items-center gap-1 text-gray-500 hover:text-primary cursor-pointer transition active:scale-95"
           >
             <Calculator size={22} className="stroke-2" />
-            <span className="text-[11px] font-medium">Solve Math</span>
+            <span className="text-[11px] font-medium">Assigned Test</span>
           </button>
         </nav>
       </div>
