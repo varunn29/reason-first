@@ -224,6 +224,7 @@ export const api = {
     question = '61 - 24 = ?',
     studentAnswer = '',
     studentExplanation = '',
+    quizResults = [],
   }) => {
     const res = await fetch(`${API_BASE_URL}/chat/start`, {
       method: 'POST',
@@ -237,6 +238,7 @@ export const api = {
         question,
         studentAnswer: String(studentAnswer),
         studentExplanation,
+        quizResults,
       }),
     });
     if (!res.ok) throw new Error(`Chat start failed with HTTP ${res.status}`);

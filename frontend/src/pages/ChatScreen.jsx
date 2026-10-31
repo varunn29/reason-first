@@ -26,7 +26,7 @@ const ChatScreen = () => {
   const location = useLocation();
   const { currentUser } = useAuth();
   const { 
-    currentAssignment,
+    currentAssignment, 
     activeStudent,
     studentAnswer, 
     diagnosticResult, 
@@ -46,6 +46,11 @@ const ChatScreen = () => {
   const [isFinishing, setIsFinishing] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [currentTurn, setCurrentTurn] = useState(1);
+
+  // Smart Focus Anchor States
+  const [anchorTopic, setAnchorTopic] = useState('Subtraction');
+  const [anchorQuestion, setAnchorQuestion] = useState(location.state?.questionText || '61 - 24 = ?');
+  const [anchorStudentAnswer, setAnchorStudentAnswer] = useState(location.state?.studentAnswer ?? studentAnswer ?? '43');
 
   // Audio & Voice States
   const [isListening, setIsListening] = useState(false);
@@ -87,7 +92,6 @@ const ChatScreen = () => {
 
   // 1. Play teacher voice: Checks pre-recorded audio in /audio/phrases/ or falls back to TTS
   const playTeacherVoice = (phraseKey, textFallback) => {
-    // Stop any currently playing audio
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
       currentAudioRef.current = null;
@@ -111,7 +115,6 @@ const ChatScreen = () => {
           currentAudioRef.current = null;
         };
       }).catch((err) => {
-        // Autoplay policy blocked or file not found in public folder -> fallback to Web Speech TTS
         console.warn('Pre-recorded audio playback skipped, falling back to Web Speech synthesis:', err.message);
         fallbackSpeechSynthesis(textFallback || phraseData.text);
       });
@@ -132,7 +135,7 @@ const ChatScreen = () => {
     }
   };
 
-  // 2. Initialize dialogue session on mount
+  // 2. Initialize dialogue session on mount with Smart Focus parameters
   useEffect(() => {
     if (!isChatEnabled) {
       navigate('/report', { replace: true });
@@ -153,6 +156,7 @@ const ChatScreen = () => {
       const activeStudentName = location.state?.studentName || currentUser?.name || activeStudent?.displayName || 'Student';
       const activeQuestionId = location.state?.questionId || question.id;
       const activeQuestionText = location.state?.questionText || question.text;
+      const quizResults = location.state?.quizResults || [];
 
       try {
         const data = await api.startChat({
@@ -164,11 +168,16 @@ const ChatScreen = () => {
           question: activeQuestionText,
           studentAnswer: currentAnswer,
           studentExplanation: '',
+          quizResults,
         });
 
         if (isMounted && data.ok) {
           setSessionId(data.sessionId);
           setCurrentTurn(data.turn || 1);
+          if (data.anchorQuestion) setAnchorQuestion(data.anchorQuestion);
+          if (data.anchorTopic) setAnchorTopic(data.anchorTopic);
+          if (data.anchorStudentAnswer) setAnchorStudentAnswer(data.anchorStudentAnswer);
+
           setMessages([
             {
               id: data.bot.id || 'bot_1',
@@ -187,7 +196,11 @@ const ChatScreen = () => {
         console.warn('Chat API offline, starting with standard probe opener:', err.message);
         if (isMounted) {
           setSessionId('offline_session_' + Date.now());
-          const fallbackText = `शाबाश राहुल! आपने उत्तर ${currentAnswer} चुना। मुझे समझाओगे कि आपने यह कैसे सोचा?`;
+          const isMixed = (location.state?.quizResults || []).length > 1;
+          const fallbackText = isMixed
+            ? `I see you worked on a few topics today. Let's look at the subtraction problem: ${activeQuestionText}. You answered ${currentAnswer}. How did you solve the ones column?`
+            : `शाबाश ${activeStudentName}! आपने उत्तर ${currentAnswer} चुना। मुझे समझाओगे कि आपने यह कैसे सोचा?`;
+
           setMessages([
             {
               id: 'offline_1',
@@ -239,11 +252,9 @@ const ChatScreen = () => {
       return;
     }
 
-    // Stop bot voice if currently speaking
     if (currentAudioRef.current) currentAudioRef.current.pause();
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
-    // Clear any pending restart timer
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
       restartTimeoutRef.current = null;
@@ -262,9 +273,9 @@ const ChatScreen = () => {
 
       const recognition = new SpeechRecognition();
       recognitionRef.current = recognition;
-      recognition.lang = 'hi-IN'; // Hindi (India)
-      recognition.continuous = true; // Set continuous listening
-      recognition.interimResults = true; // 5. Ensure interimResults is true for real-time speech streaming
+      recognition.lang = 'hi-IN';
+      recognition.continuous = true;
+      recognition.interimResults = true;
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -288,12 +299,10 @@ const ChatScreen = () => {
         if (currentCaptured) {
           latestSpokenTextRef.current = currentCaptured;
           setInterimSpokenText(currentCaptured);
-          setInputText(currentCaptured); // 2. Populate input box in real time
+          setInputText(currentCaptured);
         }
 
         if (finalText.trim()) {
-          // 4. Auto-detect end of speech (isFinal):
-          // Stop mic and keep text in input box, DO NOT auto-send. Let child review and press Send.
           stopListening(false);
         }
       };
@@ -307,19 +316,15 @@ const ChatScreen = () => {
           setInterimSpokenText('');
           latestSpokenTextRef.current = '';
         }
-        // 'no-speech' is Chrome's default timeout event before firing onend;
-        // we deliberately let onend handle the keep-alive restart.
       };
 
       recognition.onend = () => {
-        // Automatically restart if user hasn't stopped and message wasn't finalized
         if (isListeningRef.current) {
           restartTimeoutRef.current = setTimeout(() => {
             if (isListeningRef.current && recognitionRef.current) {
               try {
                 recognitionRef.current.start();
               } catch (startErr) {
-                // If already running or in transition, safely ignore or re-instantiate
                 if (startErr.name !== 'InvalidStateError') {
                   startListening();
                 }
@@ -342,15 +347,14 @@ const ChatScreen = () => {
   };
 
   const stopListening = (shouldSend = false) => {
-    // 1. Capture text before stopping recognition
     const textToSend = (latestSpokenTextRef.current || interimSpokenText || inputText || '').trim();
 
-    // 2. Set flag to false immediately to prevent onend from triggering auto-restart
     isListeningRef.current = false;
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
       restartTimeoutRef.current = null;
     }
+
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
@@ -358,24 +362,24 @@ const ChatScreen = () => {
     }
 
     setIsListening(false);
-
-    // 3. Keep text inside the input box so child can read it and send manually
-    if (textToSend) {
-      setInputText(textToSend);
-    }
     setInterimSpokenText('');
     latestSpokenTextRef.current = '';
 
-    // 4. Only send if shouldSend is true (default is false)
     if (shouldSend && textToSend) {
       handleSendMessage(textToSend);
+    } else if (textToSend) {
+      setInputText(textToSend);
     }
   };
 
-  // 4. Send Message (Text, Voice, or Quick Reply)
-  const handleSendMessage = async (textToSend, quickReplyTag = null) => {
-    const text = (textToSend || inputText).trim();
-    if (!text || isSending || isDone) return;
+  // 4. Send Message (Voice transcription or Text or Quick Reply)
+  const handleSendMessage = async (customText = null, quickReplyTag = null) => {
+    const text = (customText || inputText).trim();
+    if (!text || isSending) return;
+
+    if (isListening) {
+      stopListening(false);
+    }
 
     setInputText('');
     setInterimSpokenText('');
@@ -397,8 +401,10 @@ const ChatScreen = () => {
           selectedQuickReply: quickReplyTag,
           studentContext: {
             studentName: location.state?.studentName || currentUser?.name || activeStudent?.displayName || 'Student',
-            question: question.text,
-            studentAnswer: currentAnswer,
+            question: anchorQuestion,
+            studentAnswer: anchorStudentAnswer || currentAnswer,
+            anchorTopic,
+            anchorQuestion,
           },
         });
 
@@ -467,7 +473,6 @@ const ChatScreen = () => {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
     const activeStudentName = location.state?.studentName || currentUser?.name || activeStudent?.displayName || 'Student';
-    const activeQuestionText = location.state?.questionText || question.text;
     let generatedSummary = null;
 
     try {
@@ -476,8 +481,10 @@ const ChatScreen = () => {
           sessionId,
           studentContext: {
             studentName: activeStudentName,
-            question: activeQuestionText,
-            studentAnswer: currentAnswer,
+            question: anchorQuestion,
+            studentAnswer: anchorStudentAnswer || currentAnswer,
+            anchorTopic,
+            anchorQuestion,
           },
           existingDiagnosis: diagnosticResult,
         });
@@ -527,7 +534,7 @@ const ChatScreen = () => {
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-gray-500 font-medium">Class 4 Math Guide • Turn {Math.min(currentTurn, 4)}/4</p>
+              <p className="text-[11px] text-gray-500 font-medium">Class 3 Math Guide • Turn {Math.min(currentTurn, 4)}/4</p>
             </div>
           </div>
 
@@ -544,18 +551,27 @@ const ChatScreen = () => {
 
         {/* Question Reminder Card */}
         <div className="px-5 py-2.5 bg-blue-50/70 border-b border-blue-100 flex items-center justify-between text-xs">
-          <span className="text-gray-500 font-medium">सवाल: <strong className="text-darkText font-bold">{question.text}</strong></span>
+          <span className="text-gray-500 font-medium">
+            {anchorTopic ? `${anchorTopic}: ` : 'सवाल: '}
+            <strong className="text-darkText font-bold">{anchorQuestion || question.text}</strong>
+          </span>
           <span className="px-2 py-0.5 bg-white border border-blue-200 rounded-lg text-primary font-bold">
-            उत्तर: {currentAnswer}
+            उत्तर: {anchorStudentAnswer || currentAnswer}
           </span>
         </div>
 
         {/* Chat Transcript Area */}
         <div className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-16 text-gray-400 gap-3">
-              <Loader2 className="animate-spin text-primary" size={28} />
-              <p className="text-xs font-semibold">दीदी सोच रही हैं...</p>
+            <div className="flex flex-col items-center justify-center py-16 px-6 text-center gap-3 animate-fade-in">
+              <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center border-2 border-blue-100 shadow-xs mb-1">
+                <Bot className="text-primary" size={32} />
+              </div>
+              <h3 className="text-base font-bold text-darkText">Great job finishing the test!</h3>
+              <p className="text-xs text-gray-500 font-medium max-w-xs leading-relaxed">
+                Now, let's talk about some of your answers so I can help you better.
+              </p>
+              <Loader2 className="animate-spin text-primary mt-3" size={24} />
             </div>
           ) : (
             messages.map((msg) => {

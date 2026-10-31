@@ -1,12 +1,12 @@
 // backend/chat/chatRoutes.js
-// Express API router for Teacher Bot Chat feature.
+// Express API router for Teacher Bot Chat feature with Smart Focus topic selection.
 // Prefix: /chat
 
 const express = require('express');
 const { randomUUID } = require('crypto');
 const config = require('./config');
 const chatModel = require('./chatModel');
-const { nextBotTurn, generateTeacherSummary } = require('./chatBrain');
+const { nextBotTurn, generateTeacherSummary, selectSmartFocusAnchor } = require('./chatBrain');
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.use((req, res, next) => {
 
 /**
  * 1. POST /chat/start
- * Initializes a new diagnostic dialogue session and produces the opening bot turn.
+ * Initializes a new diagnostic dialogue session with "Smart Focus" topic anchor.
  */
 router.post('/start', async (req, res) => {
   try {
@@ -40,32 +40,50 @@ router.post('/start', async (req, res) => {
       question = '',
       studentAnswer = '',
       studentExplanation = '',
+      quizResults = [],
+      responses = [],
     } = req.body;
 
     const sessionId = randomUUID();
 
-    // 1. Persist session
+    // 1. Smart Focus Logic: Topic Grouping & Anchor Question Selection
+    const resultsPool = Array.isArray(quizResults) && quizResults.length > 0 ? quizResults : responses;
+    const smartFocus = selectSmartFocusAnchor(resultsPool, {
+      questionId,
+      questionText: question,
+      studentAnswer,
+      studentExplanation,
+    });
+
+    const activeQuestion = smartFocus.anchorQuestion || question || '61 - 24 = ?';
+    const activeQuestionId = smartFocus.anchorQuestionId || questionId || 'probe_01';
+    const activeStudentAnswer = smartFocus.anchorStudentAnswer || studentAnswer || '43';
+
+    // 2. Persist session
     const session = await chatModel.createSession({
       id: sessionId,
       responseId,
       studentId,
-      questionId,
+      questionId: activeQuestionId,
       language,
     });
 
-    // 2. Prepare student context
+    // 3. Prepare student context with Anchor Question & Anchor Topic
     const studentContext = {
       studentName,
-      question,
-      studentAnswer,
+      question: activeQuestion,
+      studentAnswer: activeStudentAnswer,
       studentExplanation,
       language,
+      anchorTopic: smartFocus.anchorTopic,
+      anchorQuestion: activeQuestion,
+      isMixedTopics: smartFocus.isMixedTopics,
     };
 
-    // 3. Generate opening turn from bot
+    // 4. Generate opening turn from bot
     const botTurn = await nextBotTurn([], studentContext);
 
-    // 4. Save bot message to DB
+    // 5. Save bot message to DB with metadata
     const botMsgId = randomUUID();
     await chatModel.addMessage({
       id: botMsgId,
@@ -78,6 +96,11 @@ router.post('/start', async (req, res) => {
         phrase_key: botTurn.phrase_key || null,
         hypothesis: botTurn.hypothesis,
         evidence_so_far: botTurn.evidence_so_far,
+        anchor_topic: smartFocus.anchorTopic,
+        anchor_question: activeQuestion,
+        anchor_question_id: activeQuestionId,
+        anchor_answer: activeStudentAnswer,
+        is_mixed_topics: smartFocus.isMixedTopics,
       },
     });
 
@@ -89,6 +112,11 @@ router.post('/start', async (req, res) => {
       sessionId,
       dbPersisted: Boolean(session?.persistedToDb),
       turn: 1,
+      anchorTopic: smartFocus.anchorTopic,
+      anchorQuestion: activeQuestion,
+      anchorQuestionId: activeQuestionId,
+      anchorStudentAnswer: activeStudentAnswer,
+      isMixedTopics: smartFocus.isMixedTopics,
       bot: {
         id: botMsgId,
         reply: botTurn.reply,
@@ -107,6 +135,7 @@ router.post('/start', async (req, res) => {
 /**
  * 2. POST /chat/message
  * Accepts the student's reply (text or quick-reply) and computes the bot's response.
+ * Maintains focus on the anchor topic even if student mentions other topics.
  */
 router.post('/message', async (req, res) => {
   try {
@@ -148,12 +177,21 @@ router.post('/message', async (req, res) => {
     // 3. Rebuild updated transcript for the bot
     const updatedHistory = [...existingMessages, { sender: 'student', text }];
 
+    const firstBotMsg = existingMessages.find((m) => m.sender === 'bot');
+    const anchorTopic = studentContext.anchorTopic || firstBotMsg?.metadata?.anchor_topic || 'Subtraction';
+    const anchorQuestion = studentContext.anchorQuestion || firstBotMsg?.metadata?.anchor_question || studentContext.question || '61 - 24 = ?';
+    const anchorAnswer = studentContext.studentAnswer || firstBotMsg?.metadata?.anchor_answer || '43';
+    const isMixedTopics = studentContext.isMixedTopics ?? firstBotMsg?.metadata?.is_mixed_topics ?? false;
+
     const context = {
       studentName: studentContext.studentName || 'Student',
-      question: studentContext.question || '1/2 + 1/4 = ?',
-      studentAnswer: studentContext.studentAnswer || '2/6',
+      question: anchorQuestion,
+      studentAnswer: anchorAnswer,
       studentExplanation: studentContext.studentExplanation || '',
       language: session.language || config.defaultLanguage,
+      anchorTopic,
+      anchorQuestion,
+      isMixedTopics,
     };
 
     // 4. Generate next bot turn
@@ -173,6 +211,9 @@ router.post('/message', async (req, res) => {
         phrase_key: botTurn.phrase_key || null,
         hypothesis: botTurn.hypothesis,
         evidence_so_far: botTurn.evidence_so_far,
+        anchor_topic: anchorTopic,
+        anchor_question: anchorQuestion,
+        is_mixed_topics: isMixedTopics,
       },
     });
 
@@ -229,8 +270,15 @@ router.post('/finish', async (req, res) => {
     const messages = await chatModel.getMessages(sessionId);
 
     // 1. Prepare student context & dialogue data
-    const questionId = session.questionId || studentContext.questionId || 'probe_01';
-    const rawAnswer = studentContext.studentAnswer ?? existingDiagnosis?.answer ?? existingDiagnosis?.selectedAnswer ?? 43;
+    const firstBotMsg = messages.find((m) => m.sender === 'bot');
+    const anchorTopic = studentContext.anchorTopic || firstBotMsg?.metadata?.anchor_topic || 'Subtraction';
+    const anchorQuestion = studentContext.question || firstBotMsg?.metadata?.anchor_question || '61 - 24 = ?';
+    const anchorQuestionId = session.questionId || firstBotMsg?.metadata?.anchor_question_id || studentContext.questionId || 'probe_01';
+    const anchorAnswer = studentContext.studentAnswer ?? firstBotMsg?.metadata?.anchor_answer ?? existingDiagnosis?.answer ?? existingDiagnosis?.selectedAnswer ?? 43;
+    const isMixedTopics = studentContext.isMixedTopics ?? firstBotMsg?.metadata?.is_mixed_topics ?? false;
+
+    const questionId = anchorQuestionId;
+    const rawAnswer = anchorAnswer;
     const studentAnswer = Number.isNaN(Number(rawAnswer)) ? rawAnswer : Number(rawAnswer);
     const studentSpokenText = messages.filter(m => m.sender === 'student').map(m => m.text).join(' ');
     const fullTranscript = messages.map(m => `${m.sender === 'student' ? 'Student' : 'Teacher'}: ${m.text}`).join('\n');
@@ -238,10 +286,13 @@ router.post('/finish', async (req, res) => {
 
     const context = {
       studentName: studentContext.studentName || 'Student',
-      question: studentContext.question || '61 - 24 = ?',
+      question: anchorQuestion,
       studentAnswer: String(studentAnswer),
       studentExplanation: studentContext.studentExplanation || studentSpokenText,
       language: session.language || 'hi',
+      anchorTopic,
+      anchorQuestion,
+      isMixedTopics,
     };
 
     // 2. Use LLM strictly for conversational synthesis and dialogue nuances (NOT final misconception ID)

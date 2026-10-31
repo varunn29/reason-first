@@ -17,6 +17,7 @@ const QuestionSolving = () => {
     studentAnswer, 
     setStudentAnswer, 
     setDiagnosticResult,
+    diagnosticResult,
     setLatestResponseId,
     currentQuestionIndex,
     setCurrentQuestionIndex,
@@ -31,6 +32,7 @@ const QuestionSolving = () => {
   const [hasCheckedAnswer, setHasCheckedAnswer] = useState(false);
   const [currentQuestionResult, setCurrentQuestionResult] = useState(null);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [showTransition, setShowTransition] = useState(false);
   const [activeSessionId, setActiveSessionId] = useState(null);
 
   // Initialize unique assessment session
@@ -57,6 +59,8 @@ const QuestionSolving = () => {
       text: '61 - 24 = ?',
       options: [37, 43, 47, 35],
       correctAnswer: 37,
+      topic: 'Subtraction',
+      chapter: 'NCERT Class 3 Chapter 4',
       distractors: {
         43: 'Smaller-from-larger (subtracted 4 - 1 = 3 in ones)',
         47: 'Borrow without decrement (forgot to reduce tens)',
@@ -123,7 +127,7 @@ const QuestionSolving = () => {
         setLatestResponseId(diag.responseId);
       }
 
-      // Accumulate into results list
+      // Accumulate into results list with topic and chapter for smart grouping
       setCompletedQuizResults((prev) => [
         ...prev,
         {
@@ -133,6 +137,8 @@ const QuestionSolving = () => {
           correctAnswer,
           isCorrect: studentAnswer === correctAnswer,
           diagnosis: diag,
+          topic: question.topic || question.chapter || currentAssignment?.topic || 'Subtraction',
+          chapter: question.chapter || question.topic || 'NCERT Class 3',
         }
       ]);
 
@@ -163,15 +169,13 @@ const QuestionSolving = () => {
     }
   };
 
-  // 2. Next question or proceed to ChatScreen
+  // 2. Next question or proceed to Transition Screen
   const handleProceed = async () => {
     if (isLastQuestion) {
-      let sessionDiag = null;
       if (activeSessionId) {
         try {
           const comp = await api.completeAssessmentSession(activeSessionId);
-          if (comp.diagnosis) {
-            sessionDiag = comp.diagnosis;
+          if (comp?.diagnosis) {
             setDiagnosticResult(comp.diagnosis);
           }
         } catch (compErr) {
@@ -181,18 +185,7 @@ const QuestionSolving = () => {
 
       const isChatEnabled = import.meta.env.VITE_CHAT_FEATURE_ENABLED !== 'false';
       if (isChatEnabled) {
-        navigate('/chat', {
-          state: {
-            studentAnswer,
-            responseId: currentQuestionResult?.responseId || null,
-            sessionId: activeSessionId,
-            questionId: question.id,
-            questionText: question.text,
-            studentId,
-            studentName,
-            existingDiagnosis: sessionDiag || currentQuestionResult,
-          },
-        });
+        setShowTransition(true);
       } else {
         navigate('/report', {
           state: {
@@ -205,6 +198,22 @@ const QuestionSolving = () => {
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
     }
+  };
+
+  const proceedToChat = () => {
+    navigate('/chat', {
+      state: {
+        studentAnswer,
+        responseId: currentQuestionResult?.responseId || null,
+        sessionId: activeSessionId,
+        questionId: question.id,
+        questionText: question.text,
+        studentId,
+        studentName,
+        existingDiagnosis: diagnosticResult || currentQuestionResult,
+        quizResults: completedQuizResults,
+      },
+    });
   };
 
   // Text-to-speech replacing hyphen/minus with "minus"
@@ -232,7 +241,35 @@ const QuestionSolving = () => {
     return currentQuestionResult?.message || 'Remember to borrow 1 ten from the tens column before subtracting the ones.';
   };
 
-  // Student completion screen (Child-Friendly & celebratory)
+  // Transition Screen (Smart Focus)
+  if (showTransition) {
+    return (
+      <MobileWrapper>
+        <div className="min-h-screen bg-bgMain flex flex-col justify-between p-6 pb-12 text-center animate-fade-in">
+          <div className="pt-16">
+            <div className="w-24 h-24 bg-blue-100 rounded-full mx-auto flex items-center justify-center mb-6 shadow-sm border-4 border-white">
+              <Bot className="text-primary" size={48} />
+            </div>
+            <h1 className="text-2xl font-extrabold text-darkText mb-3">Great job finishing the test!</h1>
+            <p className="text-sm text-gray-600 font-medium leading-relaxed max-w-xs mx-auto mb-8">
+              Now, let's talk about some of your answers so I can help you better.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <CustomButton 
+              text="Talk with TeacherBot 💬" 
+              onClick={proceedToChat} 
+              variant="primary"
+              icon={<ArrowRight size={18} />}
+            />
+          </div>
+        </div>
+      </MobileWrapper>
+    );
+  }
+
+  // Student completion screen (Child-Friendly fallback)
   if (quizFinished) {
     const totalCorrect = completedQuizResults.filter((r) => r.isCorrect).length;
     return (
@@ -242,7 +279,7 @@ const QuestionSolving = () => {
             <div className="w-24 h-24 bg-green-100 rounded-full mx-auto flex items-center justify-center mt-10 mb-5 shadow-sm border-4 border-white">
               <Award className="text-secondary" size={48} />
             </div>
-            <h1 className="text-3xl font-extrabold text-darkText mb-2">Mission Completed!</h1>
+            <h1 className="text-3xl font-extrabold text-darkText mb-2">Great job finishing the test!</h1>
             <p className="text-sm text-gray-600 font-medium mb-6">
               Fantastic effort, {studentName}!
             </p>
@@ -267,9 +304,7 @@ const QuestionSolving = () => {
                 <h4 className="text-xs font-bold text-darkText">Mascot Feedback</h4>
               </div>
               <p className="text-xs text-gray-700 leading-relaxed">
-                {totalCorrect === totalQuestions 
-                  ? "You've completely mastered tens-to-ones regrouping! Your teacher will be super proud!" 
-                  : "You did great practicing tricky subtraction! Keep practicing regrouping 1 ten into 10 ones!"}
+                Great job finishing the test! Now, let's talk about some of your answers so I can help you better.
               </p>
             </div>
           </div>
@@ -337,7 +372,6 @@ const QuestionSolving = () => {
                 const isSelected = studentAnswer === option;
                 const isCorrect = option === correctAnswer;
 
-                // BUG-01 FIXED: Only reveal red/green after pressing "Check Answer"
                 const showCorrect = hasCheckedAnswer && isSelected && isCorrect;
                 const showWrong = hasCheckedAnswer && isSelected && !isCorrect;
                 const showSelectedOnly = !hasCheckedAnswer && isSelected;
