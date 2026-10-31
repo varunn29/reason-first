@@ -37,19 +37,22 @@ const Register = () => {
 
     try {
       setIsSubmitting(true);
+      let authData = null;
       if (register) {
-        await register({
+        authData = await register({
           name: name.trim(),
           email: email.trim(),
+
           password,
           schoolName: schoolName.trim() || 'Primary School',
         });
       }
-      if (setActiveTeacher) {
+      if (setActiveTeacher && authData?.user) {
         setActiveTeacher({
-          name: name.trim(),
+          name: authData.user.name,
           greeting: 'Good Morning',
-          email: email.trim(),
+          email: authData.user.email,
+          classCode: authData.user.classCode || authData.classroom?.classCode,
           avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name.trim().split(' ')[0])}`,
         });
       }

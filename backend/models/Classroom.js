@@ -45,12 +45,23 @@ async function getByTeacherId(teacherId) {
 
 async function create({ id, teacherId, name, classCode, grade = 'Grade 3 - Section A' }) {
   if (!process.env.DATABASE_URL) return null;
-  await pool.query(
-    'INSERT INTO classrooms (id, teacher_id, name, class_code, grade) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (class_code) DO NOTHING',
+  const result = await pool.query(
+    `INSERT INTO classrooms (id, teacher_id, name, class_code, grade)
+     VALUES ($1, $2, $3, $4, $5)
+     ON CONFLICT (class_code) DO NOTHING
+     RETURNING id, teacher_id, name, class_code, grade, created_at`,
     [id, teacherId, name, classCode.toUpperCase().trim(), grade]
   );
-  return { id, teacherId, name, classCode: classCode.toUpperCase().trim(), grade };
+  if (result.rows.length === 0) return null;
+  const row = result.rows[0];
+  return {
+    id: row.id,
+    teacherId: row.teacher_id,
+    name: row.name,
+    classCode: row.class_code,
+    grade: row.grade,
+    createdAt: row.created_at,
+  };
 }
 
 module.exports = { getByCode, getByTeacherId, create };
-

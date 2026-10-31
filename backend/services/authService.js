@@ -122,6 +122,34 @@ function verifyToken(token) {
 }
 
 // ---------------------------------------------------------------------------
+// Unique Join Code Generator (e.g. "C505", checks DB & Memory for collisions)
+// ---------------------------------------------------------------------------
+async function generateUniqueClassCode() {
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const num = Math.floor(100 + Math.random() * 900); // 100-999
+    const candidate = `C${num}`;
+
+    // Check DB for existing classroom code
+    if (process.env.DATABASE_URL && ClassroomModel) {
+      try {
+        const existing = await ClassroomModel.getByCode(candidate);
+        if (existing) continue; // Collision, try next number
+      } catch (err) {}
+    }
+
+    // Check in-memory store
+    if (inMemory.classrooms.has(candidate)) {
+      continue;
+    }
+
+    return candidate;
+  }
+
+  // Fallback to 4 digits if 3-digit space encounters high density
+  return 'C' + Math.floor(1000 + Math.random() * 9000);
+}
+
+// ---------------------------------------------------------------------------
 // DB Migration on boot if DB is configured
 // ---------------------------------------------------------------------------
 async function initDatabase() {
@@ -180,10 +208,10 @@ async function registerTeacher({ name, email, password, schoolName = 'Primary Sc
     createdAt: new Date().toISOString(),
   };
 
-  // Create default classroom for this teacher
-  const classCode = 'C' + Math.floor(100 + Math.random() * 900); // e.g. C345
+  // Generate verified collision-free join code
+  let classCode = await generateUniqueClassCode();
   const classroomId = 'class_' + crypto.randomUUID().slice(0, 8);
-  const newClassroom = {
+  let newClassroom = {
     id: classroomId,
     teacherId,
     name: `${newTeacher.name}'s Math Class`,
@@ -204,13 +232,27 @@ async function registerTeacher({ name, email, password, schoolName = 'Primary Sc
         passwordHash,
         schoolName: newTeacher.schoolName,
       });
-      await ClassroomModel.create({
+
+      let createdClass = await ClassroomModel.create({
         id: classroomId,
         teacherId,
         name: newClassroom.name,
         classCode,
         grade: newClassroom.grade,
       });
+
+      // Handle race condition: if unique constraint triggered, re-roll code
+      if (!createdClass) {
+        classCode = await generateUniqueClassCode();
+        newClassroom.classCode = classCode;
+        createdClass = await ClassroomModel.create({
+          id: classroomId,
+          teacherId,
+          name: newClassroom.name,
+          classCode,
+          grade: newClassroom.grade,
+        });
+      }
     } catch (dbErr) {
       console.warn('DB save for registered teacher failed, fallback to memory:', dbErr.message);
     }
@@ -377,17 +419,31 @@ async function loginStudent({ classCode, studentName = 'Student' }) {
   const studentId = 'student_' + (baseSlug || 'user');
   const classLabel = classroom.name || `Grade ${classroom.grade || 3} - Section ${classroom.classCode || ''}`;
 
-  // Persist to Postgres students table if connected
+  // Persist to Postgres students table with class_code and classroom_id
   if (process.env.DATABASE_URL) {
     try {
       await pool.query(
-        `INSERT INTO students (id, display_name, class_label)
-         VALUES ($1, $2, $3)
-         ON CONFLICT (id) DO UPDATE SET display_name = EXCLUDED.display_name, class_label = EXCLUDED.class_label`,
-        [studentId, cleanName, classLabel]
+        `INSERT INTO students (id, display_name, class_label, class_code, classroom_id)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (id) DO UPDATE SET 
+           display_name = EXCLUDED.display_name, 
+           class_label = EXCLUDED.class_label,
+           class_code = EXCLUDED.class_code,
+           classroom_id = EXCLUDED.classroom_id`,
+        [studentId, cleanName, classLabel, classroom.classCode, classroom.id]
       );
     } catch (e) {
-      console.warn('DB student upsert skipped in loginStudent:', e.message);
+      // Fallback for earlier schema if migration has not run yet
+      try {
+        await pool.query(
+          `INSERT INTO students (id, display_name, class_label)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (id) DO UPDATE SET display_name = EXCLUDED.display_name, class_label = EXCLUDED.class_label`,
+          [studentId, cleanName, classLabel]
+        );
+      } catch (fallbackErr) {
+        console.warn('DB student upsert skipped in loginStudent:', fallbackErr.message);
+      }
     }
   }
 
@@ -419,6 +475,7 @@ module.exports = {
   verifyPassword,
   generateToken,
   verifyToken,
+  generateUniqueClassCode,
   registerTeacher,
   loginTeacher,
   getTeacherById,

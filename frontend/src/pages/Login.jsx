@@ -33,6 +33,7 @@ const Login = () => {
           setActiveTeacher({
             name: data.user.name,
             email: data.user.email,
+            classCode: data.user.classCode || data.classroom?.classCode,
             greeting: 'Good Morning',
             avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(data.user.name.split(' ')[0])}`,
           });

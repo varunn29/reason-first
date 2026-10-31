@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Bell, LogOut, Plus, Users, Clock, BookOpen, KeyRound, CheckCircle2, ChevronRight, RefreshCw } from 'lucide-react';
+import { Bell, LogOut, Plus, Users, Clock, BookOpen, KeyRound, CheckCircle2, ChevronRight, RefreshCw, Copy, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import BottomNav from '../components/BottomNav';
@@ -17,6 +17,7 @@ const TeacherDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [studentFilter, setStudentFilter] = useState('ALL'); // 'ALL' or 'PENDING'
   const [showNotification, setShowNotification] = useState(false);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const { currentUser, classroom, logout } = useAuth();
 
@@ -46,6 +47,16 @@ const TeacherDashboard = () => {
     return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
+  const handleCopyCode = () => {
+    if (classCode) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(classCode);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   const statIcons = { Users, Clock, BookOpen };
 
   const teacher = activeTeacher?.name ? activeTeacher : dashboardData?.teacher;
@@ -73,7 +84,7 @@ const TeacherDashboard = () => {
 
   const displayName = currentUser?.name || teacher?.name || 'Educator';
   const schoolName = currentUser?.schoolName || teacher?.schoolName || 'Primary School';
-  const classCode = currentUser?.classCode || classroom?.classCode || teacher?.classCode || '3A';
+  const classCode = dashboardData?.teacher?.classCode || currentUser?.classCode || classroom?.classCode || teacher?.classCode || '3A';
 
   const handleLogout = () => {
     logout();
@@ -85,7 +96,7 @@ const TeacherDashboard = () => {
       {/* Teacher AI Consent Modal (shown once on first visit) */}
       <TeacherConsentModal />
 
-      <div className="pb-28">
+      <div className="pb-36">
         {/* Header */}
         <div className="px-5 pt-8 pb-3 flex justify-between items-center bg-bgMain">
           <div>
@@ -124,107 +135,92 @@ const TeacherDashboard = () => {
 
             <button 
               type="button"
-              aria-label="Logout"
-              onClick={handleLogout} 
-              title="Log out"
-              className="p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-danger transition active:scale-95"
+              aria-label="Refresh Dashboard"
+              onClick={() => { setIsRefreshing(true); fetchDashboard(); }}
+              className={`p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-primary transition active:scale-95 ${isRefreshing ? 'animate-spin text-primary' : ''}`}
             >
-              <LogOut size={18} />
+              <RefreshCw size={20} />
             </button>
-            <img 
-              src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${displayName.split(' ')[0]}`} 
-              alt="Profile" 
-              className="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-blue-50 ml-1" 
-            />
+            <button 
+              type="button"
+              aria-label="Logout"
+              onClick={handleLogout}
+              className="p-2 bg-red-50 text-danger rounded-full shadow-sm hover:bg-red-100 transition active:scale-95 border border-red-100"
+            >
+              <LogOut size={20} />
+            </button>
           </div>
         </div>
 
-        {/* Active Class Code Banner */}
-        <div className="px-5 mb-3">
-          <div className="bg-white rounded-2xl p-3 border border-blue-100 shadow-sm flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <KeyRound size={16} />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Student Join Code</p>
-                <p className="text-xs font-semibold text-darkText">Tell students to enter this code:</p>
-              </div>
-            </div>
-            <span className="px-3 py-1 rounded-xl bg-primary text-white text-sm font-extrabold tracking-wider shadow-sm">
-              {classCode}
-            </span>
-          </div>
-        </div>
-
-        {/* Active Assignment Pill */}
-        <div className="px-5 mb-4">
-          <div 
-            onClick={() => navigate('/create')}
-            className="bg-primary/5 border border-primary/20 rounded-2xl p-3 flex justify-between items-center cursor-pointer hover:bg-primary/10 transition"
-          >
-            <div>
-              <span className="text-[10px] font-bold text-primary tracking-wider uppercase block">Active Diagnostic Track</span>
-              <p className="text-xs font-bold text-darkText mt-0.5">
-                {currentAssignment?.title || 'Class 3 Subtraction Diagnostic with Regrouping'}
-              </p>
-            </div>
-            <span className="text-[10px] font-semibold text-primary bg-white px-2.5 py-1 rounded-full shadow-xs">
-              {currentAssignment?.questions?.length || 5} Probes
-            </span>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="px-5 grid grid-cols-3 gap-3 mb-6">
+        {/* Stats Grid */}
+        <div className="px-5 grid grid-cols-3 gap-2.5 mb-6">
           {stats.map((stat) => {
-            const Icon = statIcons[stat.icon] || Users;
-            const isFilterActive = stat.label === 'Pending Reviews' && studentFilter === 'PENDING';
+            const IconComponent = statIcons[stat.icon] || Users;
+            const isClickable = stat.label === 'Pending Reviews' || stat.label === 'Total Students' || stat.label === 'Total Assignments';
+            const isActive = (stat.label === 'Pending Reviews' && studentFilter === 'PENDING') ||
+                             (stat.label === 'Total Students' && studentFilter === 'ALL');
+
             return (
               <div 
                 key={stat.id} 
                 onClick={() => handleStatClick(stat.label)}
-                className={`p-3 rounded-2xl ${stat.bgColor} flex flex-col justify-between cursor-pointer transition-transform hover:scale-[1.03] active:scale-95 ${
-                  isFilterActive ? 'ring-2 ring-orange-400 shadow-sm' : ''
-                }`}
-                title={`Click to filter by ${stat.label}`}
+                className={`bg-white rounded-3xl p-3.5 flex flex-col justify-between shadow-sm border transition relative ${
+                  isActive ? 'border-primary ring-2 ring-primary/20' : 'border-gray-50'
+                } ${isClickable ? 'cursor-pointer hover:border-blue-200 active:scale-95' : ''}`}
               >
-                <div className={`w-8 h-8 rounded-full bg-white flex items-center justify-center ${stat.iconColor} mb-2 shadow-sm`}>
-                  <Icon size={16} />
+                <div className="flex justify-between items-start">
+                  <span className="text-xl font-extrabold text-darkText tracking-tight">{stat.value}</span>
+                  <div className={`p-1.5 rounded-xl ${stat.bgColor} ${stat.iconColor}`}>
+                    <IconComponent size={14} />
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-darkText">{stat.value}</h3>
-                  <p className="text-[10px] text-gray-600 font-medium leading-tight mt-1">{stat.label}</p>
+                <div className="mt-2">
+                  <p className="text-[11px] font-semibold text-gray-600 leading-tight">{stat.label}</p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Student List */}
-        <div className="px-5">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-darkText">My Students</h2>
-              <button 
-                type="button" 
-                onClick={() => { setIsRefreshing(true); fetchDashboard(); }}
-                title="Refresh student list"
-                className={`p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition ${isRefreshing ? 'animate-spin text-primary' : ''}`}
-              >
-                <RefreshCw size={14} />
-              </button>
-              {studentFilter === 'PENDING' && (
-                <span className="text-[10px] text-orange-600 font-semibold">Filtering: Needs Review</span>
-              )}
+        {/* Active Class Assignment Banner */}
+        <div className="px-5 mb-5">
+          <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-50 flex items-center justify-between">
+            <div>
+              <span className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-0.5">Active Assignment</span>
+              <h2 className="text-sm font-bold text-darkText leading-tight">
+                {currentAssignment?.topic || 'Class 3 Subtraction Diagnostic'}
+              </h2>
+              <p className="text-[11px] text-gray-400 font-medium mt-0.5">
+                5 diagnostic probes active
+              </p>
             </div>
-            {allStudents.length > 0 && (
+            <button 
+              type="button"
+              onClick={() => navigate('/create')}
+              className="p-2.5 bg-blue-50 text-primary hover:bg-blue-100 rounded-2xl transition active:scale-95"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* Student Section Header */}
+        <div className="px-5">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-sm font-bold text-darkText flex items-center gap-2">
+              <span>Class Roster</span>
+              <span className="text-[11px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                {students.length}
+              </span>
+            </h2>
+
+            {studentFilter === 'PENDING' && (
               <button 
                 type="button"
-                onClick={() => setStudentFilter((prev) => (prev === 'PENDING' ? 'ALL' : 'PENDING'))}
-                className="text-xs font-semibold text-primary hover:underline cursor-pointer"
+                onClick={() => setStudentFilter('ALL')}
+                className="text-[11px] font-bold text-primary hover:underline"
               >
-                {studentFilter === 'PENDING' ? 'Show All Students' : 'Filter Pending'}
+                Show All Students
               </button>
             )}
           </div>
@@ -236,17 +232,35 @@ const TeacherDashboard = () => {
               <SkeletonLoader />
             </div>
           ) : students.length === 0 ? (
-            <div className="bg-white rounded-3xl p-8 text-center border-2 border-dashed border-gray-200 my-4 shadow-sm animate-fade-in">
+            <div className="bg-white rounded-3xl p-8 text-center border-2 border-dashed border-gray-200 my-4 mb-28 shadow-sm animate-fade-in relative z-10">
               <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
                 <Users size={30} />
               </div>
               <h3 className="text-base font-bold text-darkText mb-1.5">No Students Have Joined Yet</h3>
-              <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed mb-5">
-                No students have joined your class yet. Share class code <span className="font-extrabold text-primary px-2 py-0.5 bg-blue-50 rounded-lg">{classCode}</span> to get started.
+              <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed mb-6">
+                No students have joined your class yet. Share your Class Code to get started.
               </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700">
-                <KeyRound size={15} className="text-primary" />
-                Join Code: <span className="font-extrabold text-primary tracking-widest">{classCode}</span>
+              
+              <div className="flex flex-col items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyCode}
+                  className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-blue-50/80 hover:bg-blue-100 border border-blue-200 rounded-2xl text-xs font-bold text-primary active:scale-95 transition shadow-sm cursor-pointer"
+                  title="Click to copy join code"
+                >
+                  <KeyRound size={16} className="text-primary" />
+                  Join Code: <span className="font-extrabold text-primary tracking-widest text-base">{classCode}</span>
+                  {copied ? (
+                    <span className="flex items-center gap-1 text-[11px] text-green-700 bg-green-100/90 px-2 py-0.5 rounded-full font-semibold ml-1">
+                      <Check size={12} /> Copied!
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full font-medium ml-1 border border-gray-200">
+                      <Copy size={11} /> Tap to Copy
+                    </span>
+                  )}
+                </button>
+                <span className="text-[10px] text-gray-400 font-medium">Students enter this code on the student login screen</span>
               </div>
             </div>
           ) : (

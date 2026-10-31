@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Migration 002: Teachers, Classrooms & Authentication
--- Safe & non-destructive: only creates new tables and indexes.
+-- Safe & non-destructive: creates new tables, alters students, and adds indexes.
 -- ============================================================================
 
 -- 1. Teachers table: Stores authenticated educators
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS teachers (
   name          TEXT NOT NULL,
   email         TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
-  school_name   TEXT DEFAULT 'Kendriya Vidyalaya',
+  school_name   TEXT DEFAULT 'Primary School',
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -18,13 +18,17 @@ CREATE TABLE IF NOT EXISTS classrooms (
   id          TEXT PRIMARY KEY,
   teacher_id  TEXT REFERENCES teachers(id) ON DELETE CASCADE,
   name        TEXT NOT NULL,
-  class_code  TEXT NOT NULL UNIQUE, -- e.g. "3A", "GRADE3A", "MATH4"
+  class_code  TEXT NOT NULL UNIQUE, -- e.g. "C505"
   grade       TEXT NOT NULL DEFAULT 'Grade 3 - Section A',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- 3. Extend students table to link students directly to classrooms/class codes
+ALTER TABLE students ADD COLUMN IF NOT EXISTS class_code TEXT;
+ALTER TABLE students ADD COLUMN IF NOT EXISTS classroom_id TEXT;
 
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_teachers_email ON teachers(email);
 CREATE INDEX IF NOT EXISTS idx_classrooms_code ON classrooms(class_code);
 CREATE INDEX IF NOT EXISTS idx_classrooms_teacher ON classrooms(teacher_id);
-
+CREATE INDEX IF NOT EXISTS idx_students_class_code ON students(class_code);

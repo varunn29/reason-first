@@ -58,7 +58,7 @@ const memoryStore = {
 };
 
 // Dynamic helper: registers or updates student in memoryStore
-function registerStudentInMemory(id, displayName, classLabel) {
+function registerStudentInMemory(id, displayName, classLabel, classCode = '', classroomId = '') {
   if (!id) return;
   const cleanName = displayName || id.replace(/^student_/, '').replace(/_/g, ' ') || 'Student';
   const existing = memoryStore.students.find(s => s.id === id);
@@ -66,13 +66,17 @@ function registerStudentInMemory(id, displayName, classLabel) {
     memoryStore.students.push({
       id,
       displayName: cleanName,
-      classLabel: classLabel || 'Grade 3 - Section 3A',
+      classLabel: classLabel || 'Grade 3 - Section A',
+      classCode: classCode || '',
+      classroomId: classroomId || '',
       progress: 0,
       avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${cleanName.split(' ')[0]}`,
     });
   } else {
     if (displayName) existing.displayName = cleanName;
     if (classLabel) existing.classLabel = classLabel;
+    if (classCode) existing.classCode = classCode;
+    if (classroomId) existing.classroomId = classroomId;
   }
 }
 
@@ -558,6 +562,7 @@ app.get('/api/dashboard', async (req, res) => {
           s.id, 
           s.display_name, 
           s.class_label,
+          s.class_code,
           COUNT(r.id) as total_responses,
           SUM(CASE WHEN d.rule_id = 'CORRECT' OR d.status = 'Pass' THEN 1 ELSE 0 END) as correct_responses,
           BOOL_OR(d.rule_id != 'CORRECT' AND d.status = 'Fail') as has_misconception,
@@ -565,9 +570,10 @@ app.get('/api/dashboard', async (req, res) => {
         FROM students s
         LEFT JOIN responses r ON s.id = r.student_id
         LEFT JOIN diagnoses d ON r.id = d.response_id
-        GROUP BY s.id, s.display_name, s.class_label
+        WHERE ($1::text IS NULL OR s.class_code = $1 OR s.class_label ILIKE '%' || $1 || '%')
+        GROUP BY s.id, s.display_name, s.class_label, s.class_code
         ORDER BY last_submission DESC NULLS LAST, s.display_name ASC
-      `);
+      `, [classCode || null]);
 
       if (dbRes.rows && dbRes.rows.length > 0) {
         students = dbRes.rows.map(row => {
@@ -578,6 +584,7 @@ app.get('/api/dashboard', async (req, res) => {
             id: row.id,
             name: row.display_name,
             grade: row.class_label,
+            classCode: row.class_code,
             progress,
             totalResponses: total,
             hasMisconception: !!row.has_misconception,
@@ -592,7 +599,8 @@ app.get('/api/dashboard', async (req, res) => {
 
   // 2. Fall back to memoryStore students if DB returned none
   if (students.length === 0 && memoryStore.students.length > 0) {
-    students = memoryStore.students.map(s => {
+    const memList = memoryStore.students.filter(s => !classCode || s.classCode === classCode || (s.classLabel && s.classLabel.includes(classCode)));
+    students = memList.map(s => {
       const studentResponses = Array.from(memoryStore.responses.values()).filter(r => r.studentId === s.id);
       const correct = studentResponses.filter(r => r.correctAnswer !== null && Number(r.answer) === Number(r.correctAnswer)).length;
       const progress = studentResponses.length > 0 ? Math.round((correct / studentResponses.length) * 100) : (s.progress || 0);
