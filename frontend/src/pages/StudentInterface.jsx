@@ -7,9 +7,7 @@ import {
   Home, 
   LogOut, 
   Sparkles, 
-  BookOpen, 
   MessageSquare,
-  CheckCircle2,
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -113,8 +111,8 @@ const StudentInterface = () => {
           </div>
         </div>
 
-        {/* Active Mission Container (Exclusively Class 3 Mathematics) */}
-        <div className="px-5 space-y-3.5">
+        {/* Assigned By Teacher Section */}
+        <div className="px-5 space-y-3">
           <div className="flex justify-between items-center px-1">
             <h3 className="text-base font-bold text-darkText flex items-center gap-2">
               <Calculator size={18} className="text-primary" />
@@ -125,54 +123,49 @@ const StudentInterface = () => {
             </span>
           </div>
 
-          {/* Hero Math Adventure Card */}
+          {/* Compact Horizontal Assignment List Item (80-90px height) */}
           <div 
             onClick={handleStartMath}
-            className="bg-gradient-to-br from-primary via-blue-600 to-indigo-700 text-white p-5 rounded-3xl shadow-md cursor-pointer hover:shadow-lg active:scale-[0.99] transition relative overflow-hidden group"
+            className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-primary/40 hover:shadow-md active:scale-[0.99] transition cursor-pointer flex items-center justify-between gap-3 group"
           >
-            {/* Background Decorative Rings */}
-            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-xs pointer-events-none"></div>
-            <div className="absolute right-12 top-4 w-16 h-16 bg-white/10 rounded-full blur-xs pointer-events-none"></div>
-
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-xs">
-                  <Sparkles size={11} className="text-amber-300" /> Teacher Assigned
-                </span>
-                <span className="text-xs font-semibold text-white/80">Class 3 NCERT</span>
+            {/* Left: Icon in colored circle */}
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-primary flex items-center justify-center shrink-0 border border-blue-100 shadow-2xs group-hover:scale-105 transition-transform">
+                <Calculator size={22} className="stroke-[2.2px]" />
               </div>
-
-              <div className="flex items-start gap-3.5 mb-4">
-                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border border-white/20 shadow-xs">
-                  <Calculator size={26} className="text-white" />
+              
+              {/* Middle: Title & short subtitle */}
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-darkText truncate group-hover:text-primary transition-colors">
+                    Math Adventure
+                  </h4>
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-blue-50 text-primary border border-blue-100 shrink-0">
+                    NCERT
+                  </span>
                 </div>
-                <div>
-                  <h4 className="text-lg font-extrabold text-white leading-snug">Math Adventure</h4>
-                  <p className="text-[11px] text-white/80 font-medium">
-                    Assigned by your teacher • Class 3 NCERT
-                  </p>
-                  <p className="text-xs text-white/90 font-medium mt-0.5">
-                    2-Digit Subtraction with Column Regrouping
-                  </p>
-                </div>
+                <p className="text-xs text-gray-500 font-medium truncate mt-0.5">
+                  Class 3 Subtraction
+                </p>
               </div>
+            </div>
 
-              <p className="text-xs text-white/90 leading-relaxed mb-5">
-                Let's solve some fun math puzzles together! I will be right here to help you if you get stuck.
-              </p>
-
-              {/* Call to action button */}
-              <div className="w-full py-3 bg-white text-primary rounded-2xl text-xs font-bold shadow-sm flex items-center justify-center gap-2 group-hover:bg-blue-50 transition active:scale-95">
-                <span>Start Assigned Test</span>
-                <ArrowRight size={15} />
-              </div>
+            {/* Right: Small Start button with arrow */}
+            <div className="flex items-center shrink-0">
+              <button
+                type="button"
+                className="px-3.5 py-2 bg-primary text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1 group-hover:bg-primary/90 active:scale-95 transition cursor-pointer"
+              >
+                <span>Start</span>
+                <ArrowRight size={13} />
+              </button>
             </div>
           </div>
 
           {/* Educational Note */}
-          <div className="p-4 bg-white rounded-2xl border border-gray-100 shadow-2xs flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-50 text-primary flex items-center justify-center shrink-0">
-              <MessageSquare size={18} />
+          <div className="p-3.5 bg-white rounded-2xl border border-gray-100 shadow-2xs flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-primary flex items-center justify-center shrink-0">
+              <MessageSquare size={16} />
             </div>
             <div>
               <p className="text-xs font-bold text-darkText">TeacherBot is ready to help!</p>
