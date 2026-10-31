@@ -4,6 +4,7 @@ import { AppProvider } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 import StudentLogin from './pages/StudentLogin';
 import TeacherDashboard from './pages/TeacherDashboard';
+import Students from './pages/Students';
 import CreateAssignment from './pages/CreateAssignment';
 import StudentInterface from './pages/StudentInterface';
 import QuestionSolving from './pages/QuestionSolving';
@@ -31,7 +32,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<TeacherDashboard />} />
-            <Route path="/students" element={<TeacherDashboard />} />
+            <Route path="/students" element={<Students />} />
             <Route path="/create" element={<CreateAssignment />} />
             <Route path="/report" element={<DiagnosticReport />} />
             <Route path="/reports" element={<DiagnosticReport />} />

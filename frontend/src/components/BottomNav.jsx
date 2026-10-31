@@ -15,12 +15,24 @@ const BottomNav = () => {
   return (
     <nav aria-label="Bottom Navigation" className="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 flex justify-around items-center py-3 px-2 pb-safe z-50 rounded-t-3xl shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)]">
       {navItems.map((item) => {
-        const isActive = location.pathname === item.path;
+        const isActive = location.pathname === item.path || 
+          (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
         const Icon = item.icon;
         return (
-          <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 w-16 ${isActive ? 'text-primary' : 'text-gray-400 hover:text-gray-600'}`}>
-            <Icon size={20} className={isActive ? 'fill-primary/10' : ''} />
-            <span className="text-[10px] font-medium">{item.label}</span>
+          <Link 
+            key={item.path} 
+            to={item.path} 
+            className={`flex flex-col items-center gap-1 w-16 transition-colors ${
+              isActive ? 'text-primary' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <Icon 
+              size={20} 
+              className={isActive ? 'fill-primary/15 stroke-[2.5px]' : 'stroke-2'} 
+            />
+            <span className={`text-[10px] ${isActive ? 'font-bold text-primary' : 'font-medium'}`}>
+              {item.label}
+            </span>
           </Link>
         );
       })}
