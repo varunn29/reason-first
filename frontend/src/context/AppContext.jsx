@@ -1,4 +1,4 @@
-﻿import React, { createContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
 
 export const AppContext = createContext();
 
@@ -86,7 +86,7 @@ export const AppProvider = ({ children }) => {
       classLabel: `Grade 3 - Section ${cleanCode}`,
       classCode: cleanCode,
       stars: 0,
-      coins: 50,
+      coins: 0,
       avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${cleanName.split(' ')[0]}`,
     });
   };
