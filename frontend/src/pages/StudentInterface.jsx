@@ -157,22 +157,9 @@ const StudentInterface = () => {
                 </div>
               </div>
 
-              <p className="text-xs text-white/85 leading-relaxed mb-4">
-                Solve 5 arithmetic puzzles and explain your thinking step-by-step with TeacherBot!
+              <p className="text-xs text-white/90 leading-relaxed mb-5">
+                Let's solve some fun math puzzles together! I will be right here to help you if you get stuck.
               </p>
-
-              {/* Mission Details Chips */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                <span className="text-[10px] font-bold bg-white/15 px-2.5 py-1 rounded-lg">
-                  ✓ 5 Diagnostic Questions
-                </span>
-                <span className="text-[10px] font-bold bg-white/15 px-2.5 py-1 rounded-lg">
-                  ✓ Place Value Practice
-                </span>
-                <span className="text-[10px] font-bold bg-white/15 px-2.5 py-1 rounded-lg">
-                  ✓ Voice & Text Dialogue
-                </span>
-              </div>
 
               {/* Call to action button */}
               <div className="w-full py-3 bg-white text-primary rounded-2xl text-xs font-bold shadow-sm flex items-center justify-center gap-2 group-hover:bg-blue-50 transition active:scale-95">
