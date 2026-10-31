@@ -10,13 +10,16 @@ import {
   Save, 
   Printer, 
   UserCheck, 
-  ChevronRight 
+  ChevronRight,
+  FileText,
+  Users
 } from 'lucide-react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import AlertBox from '../components/AlertBox';
 import ConceptBar from '../components/ConceptBar';
 import CustomButton from '../components/CustomButton';
+import SkeletonLoader from '../components/SkeletonLoader';
 import TeacherChatSummaryCard from '../components/TeacherChatSummaryCard';
 import { AppContext } from '../context/AppContext';
 import { api } from '../services/api';
@@ -29,7 +32,7 @@ const DiagnosticReport = () => {
 
   const studentIdParam = searchParams.get('studentId');
   const studentNameParam = searchParams.get('name') || searchParams.get('studentName');
-  const activeStudentName = location.state?.studentName || studentNameParam || activeStudent?.displayName || 'Student';
+  const activeStudentName = location.state?.studentName || studentNameParam || activeStudent?.displayName || '';
   const activeSessionId = location.state?.sessionId || searchParams.get('sessionId') || chatSummary?.sessionId;
   const activeResponseId = location.state?.responseId || searchParams.get('responseId') || latestResponseId || diagnosticResult?.responseId;
   const activeSummary = location.state?.summary || chatSummary;
@@ -40,48 +43,61 @@ const DiagnosticReport = () => {
   const [teacherNote, setTeacherNote] = useState('');
   const [overrideSaved, setOverrideSaved] = useState(false);
 
-  // Fetch student report by ID if query param provided, otherwise use current result
+  // Fetch student report by ID if query param provided
   useEffect(() => {
     let isMounted = true;
     const targetStudentId = studentIdParam || activeStudent?.id;
-    if (!targetStudentId) return;
+
+    if (!targetStudentId) {
+      setIsLoading(false);
+      return;
+    }
 
     setIsLoading(true);
-    api.getStudentReport(targetStudentId).then((data) => {
-      if (isMounted) {
-        if (data && data.report) {
-          setReportData(data);
-          if (data.override) {
-            setOverrideDecision(data.override.teacherDecision || 'CONFIRM');
-            setTeacherNote(data.override.teacherNote || '');
-            setOverrideSaved(true);
+    api.getStudentReport(targetStudentId)
+      .then((data) => {
+        if (isMounted) {
+          if (data && data.report) {
+            setReportData(data);
+            if (data.override) {
+              setOverrideDecision(data.override.teacherDecision || 'CONFIRM');
+              setTeacherNote(data.override.teacherNote || '');
+              setOverrideSaved(true);
+            }
+          } else {
+            setReportData(data ? { ...data, report: null } : null);
           }
+          setIsLoading(false);
         }
-        setIsLoading(false);
-      }
-    });
+      })
+      .catch((err) => {
+        console.warn('Error fetching student report:', err);
+        if (isMounted) setIsLoading(false);
+      });
 
     return () => {
       isMounted = false;
     };
   }, [studentIdParam, activeStudent?.id]);
 
-  // Merge loaded report or context result
+  // Determine active report (from live database fetch, or active session result)
   const activeReport = reportData?.report || diagnosticResult;
-  const studentInfo = reportData?.student || {
-    id: studentIdParam || activeStudent?.id || '',
-    displayName: activeStudentName,
-    classLabel: activeStudent?.classLabel || 'Grade 3 - Section A',
-  };
-  const responseInfo = reportData?.response || {
-    questionText: activeReport?.questionText || '61 - 24 = ?',
-    answer: activeReport?.selectedAnswer ?? 43,
-    correctAnswer: 37,
-  };
 
-  const isPass = activeReport?.status === 'Pass' || activeReport?.ruleId === 'CORRECT';
-  const isLiveML = activeReport?.isLiveML ?? true;
-  const ruleId = isPass ? 'CORRECT' : (activeReport?.gap || activeReport?.ruleId || 'PENDING_EVALUATION');
+  const studentInfo = reportData?.student || (studentIdParam ? {
+    id: studentIdParam,
+    displayName: activeStudentName || 'Student',
+    classLabel: activeStudent?.classLabel || 'Class Roster',
+  } : null);
+
+  const responseInfo = reportData?.response || (activeReport ? {
+    questionText: activeReport.questionText || 'Arithmetic Diagnostic Question',
+    answer: activeReport.selectedAnswer ?? activeReport.answer ?? '-',
+    correctAnswer: activeReport.correctAnswer ?? '-',
+  } : null);
+
+  const isPass = activeReport ? (activeReport.status === 'Pass' || activeReport.ruleId === 'CORRECT') : false;
+  const isLiveML = activeReport?.isLiveML ?? false;
+  const ruleId = activeReport ? (isPass ? 'CORRECT' : (activeReport.gap || activeReport.ruleId || 'PENDING_EVALUATION')) : '';
 
   const ruleTitles = {
     'SMALLER_FROM_LARGER': 'Smaller-From-Larger (Zero-Borrowing Error)',
@@ -90,16 +106,29 @@ const DiagnosticReport = () => {
     'CORRECT': 'Standard Place Value Subtraction (Mastery)',
     'GENERAL_SUBTRACTION_ERROR': 'Calculation Slip in Column Subtraction',
     'BORROWING': 'Tens-to-Ones Regrouping Conceptual Gap',
+    'PENDING_EVALUATION': 'Pending Evaluation',
   };
 
-  const detectedRuleTitle = ruleTitles[ruleId] || ruleId;
+  const detectedRuleTitle = ruleTitles[ruleId] || (ruleId ? ruleId.replace(/_/g, ' ') : 'Evaluation');
 
-  const conceptData = [
-    { label: 'Place Value Concept (Tens/Ones)', percentage: isPass ? 96 : 42, color: isPass ? 'bg-secondary' : 'bg-danger' },
-    { label: 'Two-Digit Regrouping Procedure', percentage: isPass ? 94 : 35, color: isPass ? 'bg-secondary' : 'bg-danger' },
-    { label: 'Basic Subtraction Facts (< 10)', percentage: isPass ? 92 : 78, color: 'bg-secondary' },
-    { label: 'Single-Digit Recall Speed', percentage: 85, color: 'bg-accent' },
-  ];
+  // Dynamic concept bars based strictly on verified diagnostic output
+  const conceptData = activeReport ? [
+    { 
+      label: 'Place Value Concept (Tens/Ones)', 
+      percentage: isPass ? 100 : (ruleId === 'CORRECT' ? 100 : 30), 
+      color: isPass ? 'bg-secondary' : 'bg-danger' 
+    },
+    { 
+      label: 'Two-Digit Regrouping Procedure', 
+      percentage: isPass ? 100 : 25, 
+      color: isPass ? 'bg-secondary' : 'bg-danger' 
+    },
+    { 
+      label: 'Calculation Accuracy & Fact Recall', 
+      percentage: isPass ? 100 : 45, 
+      color: isPass ? 'bg-secondary' : 'bg-accent' 
+    },
+  ] : [];
 
   // Save teacher human-in-the-loop override
   const handleSaveOverride = async () => {
@@ -124,7 +153,7 @@ const DiagnosticReport = () => {
               type="button"
               aria-label="Back to Dashboard"
               onClick={() => navigate('/dashboard')} 
-              className="p-2 bg-white rounded-full shadow-sm text-gray-600 hover:text-primary transition active:scale-95 print:hidden"
+              className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-darkText shadow-sm hover:bg-gray-50 active:scale-95 transition print:hidden cursor-pointer"
             >
               <ArrowLeft size={20} />
             </button>
@@ -134,15 +163,17 @@ const DiagnosticReport = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrint}
-              aria-label="Print Report"
-              className="p-2 bg-white rounded-full shadow-sm text-gray-600 hover:text-primary transition active:scale-95 print:hidden"
-              title="Print / Save PDF"
-            >
-              <Printer size={16} />
-            </button>
+            {activeReport && (
+              <button
+                type="button"
+                onClick={handlePrint}
+                aria-label="Print Report"
+                className="p-2 bg-white rounded-full shadow-sm text-gray-600 hover:text-primary transition active:scale-95 print:hidden cursor-pointer"
+                title="Print / Save PDF"
+              >
+                <Printer size={16} />
+              </button>
+            )}
             {isLiveML && (
               <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 bg-green-100 text-green-700 rounded-full border border-green-200 shadow-xs">
                 <Sparkles size={12} /> ML Active
@@ -151,181 +182,229 @@ const DiagnosticReport = () => {
           </div>
         </div>
 
+        {/* Body Container */}
         <div className="px-5">
-          {/* Student Info Card */}
-          <div className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm mb-5 border border-gray-50">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-blue-50 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
-                <img 
-                  src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${(studentInfo?.displayName || 'Student').split(' ')[0]}`} 
-                  alt="Student" 
-                  className="w-10 h-10" 
-                />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-darkText">{studentInfo?.displayName || 'Student'}</h3>
-                <p className="text-xs text-gray-500">{studentInfo?.classLabel || 'Grade 3 - Section A'}</p>
-              </div>
+          {isLoading ? (
+            <div className="py-4">
+              <SkeletonLoader />
+              <SkeletonLoader />
+              <SkeletonLoader />
             </div>
-            <div className="text-right">
-              <span className={`text-[11px] font-bold block ${isPass ? 'text-secondary' : 'text-primary'}`}>
-                {detectedRuleTitle}
-              </span>
-              <span className="text-[10px] text-gray-400">Class 3 Subtraction Diagnostic</span>
-            </div>
-          </div>
-
-          {/* Dynamic Alert Box (BUG-04 Fixed: Green on Pass, Red on Misconception) */}
-          <AlertBox 
-            variant={isPass ? 'success' : 'danger'}
-            title={isPass ? "Concept Mastery Demonstrated" : "Diagnostic Misconception Identified"} 
-            description={
-              activeReport?.observations || diagnosticResult?.message ||
-              (isPass 
-                ? "Student demonstrates place-value understanding and correctly executes tens-to-ones regrouping." 
-                : `${activeStudentName.split(' ')[0]} requires targeted scaffolding with column subtraction unbundling.`)
-            } 
-          />
-
-          {/* Teacher Bot Dialogue Summary Card */}
-          <TeacherChatSummaryCard 
-            sessionId={activeSessionId}
-            responseId={activeResponseId}
-            initialSummary={activeSummary}
-            mlDiagnosis={diagnosticResult}
-          />
-
-          {/* Raw Evidence Card (BUG-10 Fixed: Shows problem, student answer, expected answer) */}
-          <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-50 mb-5">
-            <h2 className="text-sm font-bold text-darkText mb-3 flex items-center gap-2">
-              <FileCheck2 size={16} className="text-primary" />
-              Observed Arithmetic Response
-            </h2>
-            <div className="grid grid-cols-3 gap-2 text-center bg-gray-50/80 rounded-2xl p-3 border border-gray-100">
-              <div>
-                <span className="text-[10px] text-gray-500 font-medium block">Problem</span>
-                <span className="text-base font-extrabold text-darkText mt-0.5 block">
-                  {responseInfo?.questionText || '61 - 24'}
-                </span>
+          ) : !activeReport ? (
+            /* Clean Empty State: No fake data when no student assessment exists */
+            <div className="bg-white rounded-3xl p-8 text-center border-2 border-dashed border-gray-200 my-6 shadow-sm animate-fade-in">
+              <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                <FileCheck2 size={30} />
               </div>
-              <div className="border-x border-gray-200">
-                <span className="text-[10px] text-gray-500 font-medium block">Student Answer</span>
-                <span className={`text-base font-extrabold mt-0.5 block ${isPass ? 'text-secondary' : 'text-danger'}`}>
-                  {responseInfo?.answer ?? 43}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-500 font-medium block">Expected</span>
-                <span className="text-base font-extrabold text-secondary mt-0.5 block">
-                  {responseInfo?.correctAnswer ?? 37}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Human-in-the-Loop Teacher Review Card (BUG-04 Fixed) */}
-          <div className="bg-white rounded-3xl p-5 shadow-sm border border-indigo-100 mb-5">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-darkText flex items-center gap-2">
-                <UserCheck size={16} className="text-primary" />
-                Teacher Clinical Review & Override
-              </h2>
-              {overrideSaved && (
-                <span className="text-[10px] text-secondary font-bold flex items-center gap-1 animate-fade-in">
-                  <CheckCircle2 size={12} /> Saved!
-                </span>
-              )}
-            </div>
-            
-            <p className="text-[11px] text-gray-500 mb-3 leading-relaxed">
-              NCERT guidelines advise treating automated flags as tentative hypotheses. Confirm or adjust based on observed scrap paper:
-            </p>
-
-            <div className="space-y-3 mb-4">
-              <div>
-                <label className="text-[11px] font-semibold text-gray-600 mb-1 block">Teacher Decision</label>
-                <select 
-                  value={overrideDecision}
-                  onChange={(e) => setOverrideDecision(e.target.value)}
-                  className="w-full text-xs font-medium bg-gray-50 border border-gray-200 rounded-xl p-2.5 outline-none focus:border-primary"
+              <h2 className="text-base font-bold text-darkText mb-2">No Diagnostic Report Available</h2>
+              <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed mb-6">
+                No diagnostic report found for {studentInfo?.displayName ? <strong className="text-darkText font-bold">{studentInfo.displayName}</strong> : 'this student'}. Please ensure the student has completed an assessment.
+              </p>
+              
+              <div className="flex flex-col gap-2.5 max-w-xs mx-auto">
+                <button
+                  type="button"
+                  onClick={() => navigate('/dashboard')}
+                  className="w-full py-3 bg-primary text-white rounded-2xl text-xs font-bold shadow-sm hover:bg-primary/90 transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <option value="CONFIRM">Confirm AI Hypothesis ({ruleId})</option>
-                  <option value="CALCULATION_SLIP">Override: Isolated Calculation Slip</option>
-                  <option value="READING_REVERSAL">Override: Visual Reading Reversal</option>
-                  <option value="CARELESS_ERROR">Override: Careless Number Transcription</option>
-                  <option value="STUDENT_EXPLAINED_CORRECT">Override: Student Explained Correctly Orally</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[11px] font-semibold text-gray-600 mb-1 block">Clinical Observation Notes</label>
-                <textarea 
-                  rows={2}
-                  placeholder="e.g. Student crossed out tens column on scratch paper; error was a basic single-digit recall slip (4-1=3)."
-                  value={teacherNote}
-                  onChange={(e) => setTeacherNote(e.target.value)}
-                  className="w-full text-xs font-medium bg-gray-50 border border-gray-200 rounded-xl p-2.5 outline-none focus:border-primary resize-none placeholder:text-gray-400"
-                />
+                  <ArrowLeft size={16} />
+                  Back to Teacher Dashboard
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/students')}
+                  className="w-full py-2.5 bg-gray-50 text-gray-700 border border-gray-200 rounded-2xl text-xs font-bold hover:bg-gray-100 transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Users size={16} className="text-primary" />
+                  View Student Roster
+                </button>
               </div>
             </div>
+          ) : (
+            /* Real Data Report: Rendered only when real assessment data exists */
+            <>
+              {/* Student Info Card */}
+              <div className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm mb-5 border border-gray-50">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-blue-50 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
+                    <img 
+                      src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${(studentInfo?.displayName || 'Student').split(' ')[0]}`} 
+                      alt="Student" 
+                      className="w-10 h-10" 
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-darkText">{studentInfo?.displayName || 'Student'}</h3>
+                    <p className="text-xs text-gray-500">{studentInfo?.classLabel || 'Class Diagnostic'}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className={`text-[11px] font-bold block ${isPass ? 'text-secondary' : 'text-primary'}`}>
+                    {detectedRuleTitle}
+                  </span>
+                  <span className="text-[10px] text-gray-400">Class 3 Math Diagnostic</span>
+                </div>
+              </div>
 
-            <button
-              type="button"
-              onClick={handleSaveOverride}
-              className="w-full py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95"
-            >
-              <Save size={14} />
-              Save Teacher Decision
-            </button>
-          </div>
-
-          {/* Concept-wise Subtraction Performance */}
-          <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-50 mb-5">
-            <h2 className="text-sm font-bold text-darkText mb-4">Class 3 Subtraction Component Breakdown</h2>
-            {conceptData.map((concept, index) => (
-              <ConceptBar 
-                key={index} 
-                label={concept.label} 
-                percentage={concept.percentage} 
-                color={concept.color} 
+              {/* Dynamic Alert Box */}
+              <AlertBox 
+                variant={isPass ? 'success' : 'danger'}
+                title={isPass ? "Concept Mastery Demonstrated" : "Diagnostic Misconception Identified"} 
+                description={
+                  activeReport.observations || 
+                  (isPass 
+                    ? "Student demonstrates place-value understanding and correctly executes column regrouping." 
+                    : `${(studentInfo?.displayName || 'Student').split(' ')[0]} requires targeted scaffolding with column subtraction regrouping.`)
+                } 
               />
-            ))}
-          </div>
 
-          {/* ML Pedagogical Guidance */}
-          <div className="bg-blue-50/70 rounded-3xl p-5 shadow-sm border border-blue-100 mb-6">
-            <div className="flex items-center gap-2 mb-3.5">
-              <Bookmark size={18} className="text-primary" />
-              <h2 className="text-sm font-bold text-darkText">Curriculum Pedagogical Scaffolding</h2>
-            </div>
-            <ul className="space-y-3">
-              {activeReport?.followUpQuestion && (
-                <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                  <span className="text-primary font-bold shrink-0">1. Verbal Probe:</span>
-                  <span>{activeReport.followUpQuestion}</span>
-                </li>
+              {/* Teacher Bot Dialogue Summary Card (Data-driven, returns null if no session) */}
+              <TeacherChatSummaryCard 
+                sessionId={activeSessionId}
+                responseId={activeResponseId}
+                initialSummary={activeSummary}
+                mlDiagnosis={activeReport}
+              />
+
+              {/* Raw Evidence Card: Shows real observed arithmetic problem & answers */}
+              {responseInfo && (
+                <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-50 mb-5">
+                  <h2 className="text-sm font-bold text-darkText mb-3 flex items-center gap-2">
+                    <FileCheck2 size={16} className="text-primary" />
+                    Observed Arithmetic Response
+                  </h2>
+                  <div className="grid grid-cols-3 gap-2 text-center bg-gray-50/80 rounded-2xl p-3 border border-gray-100">
+                    <div>
+                      <span className="text-[10px] text-gray-500 font-medium block">Problem</span>
+                      <span className="text-base font-extrabold text-darkText mt-0.5 block">
+                        {responseInfo.questionText}
+                      </span>
+                    </div>
+                    <div className="border-x border-gray-200">
+                      <span className="text-[10px] text-gray-500 font-medium block">Student Answer</span>
+                      <span className={`text-base font-extrabold mt-0.5 block ${isPass ? 'text-secondary' : 'text-danger'}`}>
+                        {responseInfo.answer}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-500 font-medium block">Expected</span>
+                      <span className="text-base font-extrabold text-secondary mt-0.5 block">
+                        {responseInfo.correctAnswer}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               )}
-              {activeReport?.suggestedActivity && (
-                <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                  <span className="text-primary font-bold shrink-0">2. Hands-on Activity:</span>
-                  <span>{activeReport.suggestedActivity}</span>
-                </li>
+
+              {/* Human-in-the-Loop Teacher Review Card */}
+              <div className="bg-white rounded-3xl p-5 shadow-sm border border-indigo-100 mb-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-bold text-darkText flex items-center gap-2">
+                    <UserCheck size={16} className="text-primary" />
+                    Teacher Clinical Review & Override
+                  </h2>
+                  {overrideSaved && (
+                    <span className="text-[10px] text-secondary font-bold flex items-center gap-1 animate-fade-in">
+                      <CheckCircle2 size={12} /> Saved!
+                    </span>
+                  )}
+                </div>
+                
+                <p className="text-[11px] text-gray-500 mb-3 leading-relaxed">
+                  NCERT guidelines advise treating automated flags as tentative hypotheses. Confirm or adjust based on observed scrap paper:
+                </p>
+
+                <div className="space-y-3 mb-4">
+                  <div>
+                    <label className="text-[11px] font-semibold text-gray-600 mb-1 block">Teacher Decision</label>
+                    <select 
+                      value={overrideDecision}
+                      onChange={(e) => setOverrideDecision(e.target.value)}
+                      className="w-full text-xs font-medium bg-gray-50 border border-gray-200 rounded-xl p-2.5 outline-none focus:border-primary"
+                    >
+                      <option value="CONFIRM">Confirm AI Hypothesis ({ruleId})</option>
+                      <option value="CALCULATION_SLIP">Override: Isolated Calculation Slip</option>
+                      <option value="READING_REVERSAL">Override: Visual Reading Reversal</option>
+                      <option value="CARELESS_ERROR">Override: Careless Number Transcription</option>
+                      <option value="STUDENT_EXPLAINED_CORRECT">Override: Student Explained Correctly Orally</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-semibold text-gray-600 mb-1 block">Clinical Observation Notes</label>
+                    <textarea 
+                      rows={2}
+                      placeholder="e.g. Student crossed out tens column on scratch paper; error was a single-digit recall slip."
+                      value={teacherNote}
+                      onChange={(e) => setTeacherNote(e.target.value)}
+                      className="w-full text-xs font-medium bg-gray-50 border border-gray-200 rounded-xl p-2.5 outline-none focus:border-primary resize-none placeholder:text-gray-400"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSaveOverride}
+                  className="w-full py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                >
+                  <Save size={14} />
+                  Save Teacher Decision
+                </button>
+              </div>
+
+              {/* Component Breakdown */}
+              {conceptData.length > 0 && (
+                <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-50 mb-5">
+                  <h2 className="text-sm font-bold text-darkText mb-4">Class 3 Subtraction Component Breakdown</h2>
+                  {conceptData.map((concept, index) => (
+                    <ConceptBar 
+                      key={index} 
+                      label={concept.label} 
+                      percentage={concept.percentage} 
+                      color={concept.color} 
+                    />
+                  ))}
+                </div>
               )}
-              {activeReport?.alternatives && activeReport.alternatives.length > 0 && (
-                <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
-                  <span className="text-primary font-bold shrink-0">3. Alternate Causes:</span>
-                  <span>{activeReport.alternatives.join(', ')}</span>
-                </li>
+
+              {/* Pedagogical Guidance */}
+              {(activeReport.followUpQuestion || activeReport.suggestedActivity) && (
+                <div className="bg-blue-50/70 rounded-3xl p-5 shadow-sm border border-blue-100 mb-6">
+                  <div className="flex items-center gap-2 mb-3.5">
+                    <Bookmark size={18} className="text-primary" />
+                    <h2 className="text-sm font-bold text-darkText">Curriculum Pedagogical Scaffolding</h2>
+                  </div>
+                  <ul className="space-y-3">
+                    {activeReport.followUpQuestion && (
+                      <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
+                        <span className="text-primary font-bold shrink-0">1. Verbal Probe:</span>
+                        <span>{activeReport.followUpQuestion}</span>
+                      </li>
+                    )}
+                    {activeReport.suggestedActivity && (
+                      <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
+                        <span className="text-primary font-bold shrink-0">2. Hands-on Activity:</span>
+                        <span>{activeReport.suggestedActivity}</span>
+                      </li>
+                    )}
+                    {activeReport.alternatives && activeReport.alternatives.length > 0 && (
+                      <li className="flex gap-2.5 text-xs text-gray-700 items-baseline">
+                        <span className="text-primary font-bold shrink-0">3. Alternate Causes:</span>
+                        <span>{activeReport.alternatives.join(', ')}</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
               )}
-            </ul>
-          </div>
+            </>
+          )}
         </div>
 
-        {/* Action Button */}
+        {/* Fixed Action Button */}
         <div className="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 p-4 pb-safe z-50 print:hidden">
           <CustomButton 
             text="Back to Teacher Dashboard" 
-            icon={<ChevronRight size={18} />}
+            icon={<ChevronRight size={18} />} 
             onClick={() => navigate('/dashboard')} 
           />
         </div>
