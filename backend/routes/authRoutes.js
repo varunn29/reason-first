@@ -62,9 +62,20 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ ok: false, error: 'Session expired or invalid token' });
     }
 
-    // If teacher, fetch fresh details
+    // If teacher, fetch fresh details and classroom
     if (payload.role === 'teacher') {
       const teacher = await authService.getTeacherById(payload.id);
+      let classroom = null;
+      if (process.env.DATABASE_URL) {
+        try {
+          const ClassroomModel = require('../models/Classroom');
+          const classes = await ClassroomModel.getByTeacherId(payload.id);
+          if (classes && classes.length > 0) {
+            classroom = classes[0];
+          }
+        } catch (e) {}
+      }
+
       return res.json({
         ok: true,
         user: {
@@ -73,7 +84,9 @@ router.get('/me', async (req, res) => {
           email: teacher ? teacher.email : payload.email,
           schoolName: teacher ? (teacher.schoolName || '') : '',
           role: 'teacher',
+          classCode: classroom ? classroom.classCode : undefined,
         },
+        classroom: classroom || null,
       });
     }
 
@@ -120,5 +133,33 @@ router.get('/classroom/:code', async (req, res) => {
   }
 });
 
-module.exports = router;
+// 6. Teacher Change Password
+router.post('/change-password', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ ok: false, error: 'Authorization header missing' });
+    }
 
+    const token = authHeader.split(' ')[1];
+    const payload = authService.verifyToken(token);
+    if (!payload || payload.role !== 'teacher') {
+      return res.status(401).json({ ok: false, error: 'Unauthorized. Teachers only.' });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    await authService.changePassword(payload.id, currentPassword, newPassword);
+
+    res.json({
+      ok: true,
+      message: 'Password successfully changed.',
+    });
+  } catch (err) {
+    res.status(400).json({
+      ok: false,
+      error: err.message,
+    });
+  }
+});
+
+module.exports = router;

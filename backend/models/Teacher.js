@@ -48,5 +48,14 @@ async function create({ id, name, email, passwordHash, schoolName = 'Primary Sch
   return { id, name, email: email.toLowerCase().trim(), schoolName };
 }
 
-module.exports = { getByEmail, getById, create };
+async function updatePassword(id, passwordHash) {
+  if (!process.env.DATABASE_URL) return false;
+  await pool.query(
+    'UPDATE teachers SET password_hash = $1 WHERE id = $2',
+    [passwordHash, id]
+  );
+  return true;
+}
+
+module.exports = { getByEmail, getById, create, updatePassword };
 

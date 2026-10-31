@@ -41,6 +41,10 @@ export const AuthProvider = ({ children }) => {
           if (res && res.ok && res.user) {
             setCurrentUser((prev) => ({ ...prev, ...res.user }));
             localStorage.setItem('rf_auth_user', JSON.stringify(res.user));
+            if (res.classroom) {
+              setClassroom(res.classroom);
+              localStorage.setItem('rf_auth_classroom', JSON.stringify(res.classroom));
+            }
           } else {
             // Expired or invalid token
             logout();
@@ -173,4 +177,3 @@ export const useAuth = () => {
 };
 
 export default AuthContext;
-

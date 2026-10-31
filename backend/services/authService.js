@@ -470,6 +470,54 @@ async function loginStudent({ classCode, studentName = 'Student' }) {
   };
 }
 
+async function changePassword(teacherId, currentPassword, newPassword) {
+  if (!currentPassword || !newPassword) {
+    throw new Error('Current and new password are required.');
+  }
+  if (newPassword.length < 6) {
+    throw new Error('New password must be at least 6 characters.');
+  }
+
+  let teacher = null;
+  if (process.env.DATABASE_URL && TeacherModel) {
+    try {
+      teacher = await TeacherModel.getById(teacherId);
+    } catch (err) {
+      console.warn('DB error fetching teacher for password change:', err.message);
+    }
+  }
+
+  if (!teacher) {
+    for (const t of inMemory.teachers.values()) {
+      if (t.id === teacherId) {
+        teacher = t;
+        break;
+      }
+    }
+  }
+
+  if (!teacher) {
+    throw new Error('Teacher account not found.');
+  }
+
+  if (!verifyPassword(currentPassword, teacher.passwordHash)) {
+    throw new Error('Current password is incorrect.');
+  }
+
+  const newHash = hashPassword(newPassword);
+
+  if (process.env.DATABASE_URL && TeacherModel && TeacherModel.updatePassword) {
+    try {
+      await TeacherModel.updatePassword(teacherId, newHash);
+    } catch (err) {
+      console.warn('DB error updating password:', err.message);
+    }
+  }
+
+  teacher.passwordHash = newHash;
+  return true;
+}
+
 module.exports = {
   hashPassword,
   verifyPassword,
@@ -481,4 +529,5 @@ module.exports = {
   getTeacherById,
   getClassroom,
   loginStudent,
+  changePassword,
 };

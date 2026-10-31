@@ -412,6 +412,20 @@ export const api = {
     const data = await res.json();
     return data.classroom;
   },
+
+  // Change Teacher Password
+  changePassword: async (currentPassword, newPassword) => {
+    const res = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to update password.');
+    }
+    return data;
+  },
 };
 
 export default api;
