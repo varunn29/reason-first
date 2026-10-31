@@ -235,6 +235,27 @@ router.post('/finish', async (req, res) => {
 
     const summaryData = await generateTeacherSummary(messages, context, existingDiagnosis);
 
+    // Reconcile student verbal reasoning with quantitative diagnostic hypothesis
+    let reconciledDiagnosis = null;
+    try {
+      const mlService = require('../services/mlService');
+      const studentExpl = messages.filter(m => m.sender === 'student').map(m => m.text).join(' ');
+      const baseDiag = existingDiagnosis || {
+        ruleId: summaryData.misconception_id,
+        candidate_misconception: summaryData.misconception_id,
+        status: existingDiagnosis?.status || 'Fail',
+        diagnostic_status: 'CANDIDATE_MISCONCEPTION',
+        confidence: 'LOW',
+        evidence_strength: 'WEAK',
+      };
+      const rec = await mlService.reconcileReasoning(baseDiag, studentExpl, messages);
+      if (rec.status === 'ok') {
+        reconciledDiagnosis = rec.diagnosis;
+      }
+    } catch (recErr) {
+      console.warn('[ChatRoutes] Reasoning reconciliation error:', recErr.message);
+    }
+
     const summaryId = randomUUID();
     const saved = await chatModel.saveSummary({
       id: summaryId,
@@ -261,6 +282,7 @@ router.post('/finish', async (req, res) => {
       sessionId,
       dbPersisted: Boolean(saved?.persistedToDb),
       summary: saved,
+      reconciledDiagnosis,
     });
   } catch (err) {
     console.error('Error finishing chat session:', err);

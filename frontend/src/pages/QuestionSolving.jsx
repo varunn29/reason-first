@@ -31,6 +31,25 @@ const QuestionSolving = () => {
   const [hasCheckedAnswer, setHasCheckedAnswer] = useState(false);
   const [currentQuestionResult, setCurrentQuestionResult] = useState(null);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [activeSessionId, setActiveSessionId] = useState(null);
+
+  // Initialize unique assessment session
+  useEffect(() => {
+    let isMounted = true;
+    async function initSession() {
+      const assignmentId = currentAssignment?.id || 'asgn_class3_subtraction';
+      try {
+        const res = await api.startAssessmentSession(studentId, assignmentId, studentName);
+        if (isMounted && res?.session?.id) {
+          setActiveSessionId(res.session.id);
+        }
+      } catch (err) {
+        console.warn('Session init fallback:', err);
+      }
+    }
+    initSession();
+    return () => { isMounted = false; };
+  }, [studentId, studentName, currentAssignment?.id]);
 
   const questions = currentAssignment?.questions || [
     {
@@ -73,6 +92,17 @@ const QuestionSolving = () => {
     setIsSubmitting(true);
     let submittedDiag = null;
     try {
+      if (activeSessionId) {
+        await api.submitSessionResponse(activeSessionId, {
+          questionId: question.id,
+          questionText: question.text,
+          answer: studentAnswer,
+          correctAnswer,
+          studentId,
+          studentName,
+        });
+      }
+
       const diag = await api.submitAnswer(
         studentId,
         question.id,
@@ -82,6 +112,7 @@ const QuestionSolving = () => {
           questionText: question.text,
           assignmentId: currentAssignment?.id || 'asgn_class3_subtraction',
           studentName: studentName,
+          sessionId: activeSessionId,
         }
       );
       submittedDiag = diag;
@@ -133,22 +164,43 @@ const QuestionSolving = () => {
   };
 
   // 2. Next question or proceed to ChatScreen
-  const handleProceed = () => {
+  const handleProceed = async () => {
     if (isLastQuestion) {
+      let sessionDiag = null;
+      if (activeSessionId) {
+        try {
+          const comp = await api.completeAssessmentSession(activeSessionId);
+          if (comp.diagnosis) {
+            sessionDiag = comp.diagnosis;
+            setDiagnosticResult(comp.diagnosis);
+          }
+        } catch (compErr) {
+          console.warn('Session completion error:', compErr);
+        }
+      }
+
       const isChatEnabled = import.meta.env.VITE_CHAT_FEATURE_ENABLED !== 'false';
       if (isChatEnabled) {
         navigate('/chat', {
           state: {
             studentAnswer,
             responseId: currentQuestionResult?.responseId || null,
+            sessionId: activeSessionId,
             questionId: question.id,
             questionText: question.text,
             studentId,
             studentName,
+            existingDiagnosis: sessionDiag || currentQuestionResult,
           },
         });
       } else {
-        setQuizFinished(true);
+        navigate('/report', {
+          state: {
+            sessionId: activeSessionId,
+            studentName,
+            studentId,
+          },
+        });
       }
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);

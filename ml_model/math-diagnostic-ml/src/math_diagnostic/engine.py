@@ -407,11 +407,161 @@ SIG_ASYMMETRIC_FOLD_MISCONCEPTION = "ASYMMETRIC_FOLD_MISCONCEPTION"
 SIG_MAP_LEGEND_PURPOSE_MISCONCEPTION = "MAP_LEGEND_PURPOSE_MISCONCEPTION"
 SIG_CUBE_EDGES_CONFUSION = "CUBE_EDGES_CONFUSION"
 
-# Four Conservative Diagnostic Statuses
+# Conservative Diagnostic Statuses
 STATUS_SUPPORTED_HYPOTHESIS = "SUPPORTED_HYPOTHESIS"
+STATUS_CANDIDATE_MISCONCEPTION = "CANDIDATE_MISCONCEPTION"
+STATUS_CONTRADICTED_HYPOTHESIS = "CONTRADICTED_HYPOTHESIS"
 STATUS_INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
 STATUS_AMBIGUOUS_PATTERN = "AMBIGUOUS_PATTERN"
 STATUS_NO_TARGET_PATTERN_DETECTED = "NO_TARGET_PATTERN_DETECTED"
+
+# Skill Mastery States (Pedagogically Grounded - Require Multiple Validated Indicators)
+MASTERY_NOT_ASSESSED = "NOT_ASSESSED"
+MASTERY_INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
+MASTERY_DEVELOPING = "DEVELOPING"
+MASTERY_PROVISIONALLY_SECURE = "PROVISIONALLY_SECURE"
+MASTERY_SECURE = "SECURE"
+
+# Transparent Qualitative Evidence Levels
+EVIDENCE_NONE = "NONE"
+EVIDENCE_WEAK = "WEAK"
+EVIDENCE_MODERATE = "MODERATE"
+EVIDENCE_STRONG = "STRONG"
+
+# Explicit NCERT-Aligned Cognitive Prerequisite Graph for Primary Mathematics
+PREREQUISITE_GRAPH = {
+    "SINGLE_DIGIT_FACTS": {
+        "id": "SINGLE_DIGIT_FACTS",
+        "name": "Single-Digit Subtraction Facts (< 10)",
+        "prerequisites": [],
+        "ncert_ref": "NCERT Class 3 Chapter 4, pp. 29-31",
+        "description": "Recalling basic differences like 7 - 3 = 4, 9 - 4 = 5 without column regrouping.",
+    },
+    "PLACE_VALUE_BUNDLES": {
+        "id": "PLACE_VALUE_BUNDLES",
+        "name": "Base-10 Tens & Ones Structure",
+        "prerequisites": ["SINGLE_DIGIT_FACTS"],
+        "ncert_ref": "NCERT Class 3 Chapter 3, pp. 16-24",
+        "description": "Understanding that 61 is 6 tens and 1 one, decomposing into 5 tens and 11 ones.",
+    },
+    "NON_REGROUPING_SUBTRACTION": {
+        "id": "NON_REGROUPING_SUBTRACTION",
+        "name": "Multi-Digit Subtraction Without Regrouping",
+        "prerequisites": ["SINGLE_DIGIT_FACTS", "PLACE_VALUE_BUNDLES"],
+        "ncert_ref": "NCERT Class 3 Chapter 12, pp. 150-151",
+        "description": "Subtracting columns independently when minuend digit >= subtrahend digit (e.g. 58 - 23 = 35).",
+    },
+    "ONES_REGROUPING": {
+        "id": "ONES_REGROUPING",
+        "name": "Tens-to-Ones Regrouping (Borrowing)",
+        "prerequisites": ["PLACE_VALUE_BUNDLES", "NON_REGROUPING_SUBTRACTION"],
+        "ncert_ref": "NCERT Class 3 Chapter 12, pp. 152-154",
+        "description": "Unbundling 1 ten into 10 ones when minuend ones < subtrahend ones, AND decrementing tens column.",
+    },
+    "TENS_REGROUPING": {
+        "id": "TENS_REGROUPING",
+        "name": "Hundreds-to-Tens Regrouping",
+        "prerequisites": ["ONES_REGROUPING"],
+        "ncert_ref": "NCERT Class 3 Chapter 12, pp. 154-156",
+        "description": "Unbundling 1 hundred into 10 tens in 3-digit subtraction.",
+    },
+    "ZERO_ACROSS_REGROUPING": {
+        "id": "ZERO_ACROSS_REGROUPING",
+        "name": "Regrouping Across Zero Placeholders",
+        "prerequisites": ["TENS_REGROUPING"],
+        "ncert_ref": "NCERT Class 3 Chapter 12, pp. 162-164",
+        "description": "Sequential two-stage unbundling across zeros (e.g. 500 - 209).",
+    },
+    "WORD_PROBLEM_APPLICATION": {
+        "id": "WORD_PROBLEM_APPLICATION",
+        "name": "Subtraction Word Problem Modeling",
+        "prerequisites": ["ONES_REGROUPING"],
+        "ncert_ref": "NCERT Class 3 Chapter 12, pp. 152-160",
+        "description": "Interpreting situational contexts (take-away, comparison) and formulating correct subtraction sentences.",
+    },
+}
+
+# Structured Teacher-Controlled Intervention Catalogue (NCERT-Aligned)
+INTERVENTION_CATALOGUE = {
+    "SMALLER_FROM_LARGER": {
+        "misconception_id": "SMALLER_FROM_LARGER",
+        "title": "Tens-and-Ones Bundling Mat & Concrete Unbundling",
+        "target_skill": "ONES_REGROUPING",
+        "prerequisite_skill": "PLACE_VALUE_BUNDLES",
+        "learning_objective": "Understand that when ones cannot be subtracted directly, 1 ten must be unbundled into 10 ones before subtracting.",
+        "teacher_guidance": "Provide physical Dienes blocks or matchstick bundles (NCERT Class 3 Chapter 12, p. 152). Have the child represent the minuend with tens and ones. Ask them to remove the subtrahend ones. When they cannot, guide them to exchange 1 ten bundle for 10 loose units.",
+        "student_activity": "The Matchstick Exchange: Take 6 bundles of 10 and 1 loose stick. Try to give away 4 sticks. Open 1 bundle into 10 sticks. Now count how many loose sticks you have (11) and subtract 4.",
+        "example_problem": "52 - 27",
+        "success_indicator": "Child spontaneously unbundles a ten-rod before touching the ones column and decrements the tens column to 4 tens.",
+        "reassessment_probe_id": "probe_02",
+        "transfer_probe_id": "ncert_ch12_herbs_270_36",
+    },
+    "BORROW_WITHOUT_DECREMENT": {
+        "misconception_id": "BORROW_WITHOUT_DECREMENT",
+        "title": "The Banker's Exchange & Crossing-Out Routine",
+        "target_skill": "ONES_REGROUPING",
+        "prerequisite_skill": "PLACE_VALUE_BUNDLES",
+        "learning_objective": "Consistently record the decrement in the tens column when regrouping 1 ten into 10 ones.",
+        "teacher_guidance": "Use token money (NCERT p. 156-160). When the student takes 10 one-rupee coins from the bank, they must immediately surrender one ₹10 note. Emphasize physical removal of the higher note before writing.",
+        "student_activity": "Play 'Banker and Customer': You cannot get 10 ones without handing back 1 ten note. Physically cross out the 6 tens on paper and write 5 tens above it before subtracting ones.",
+        "example_problem": "63 - 28",
+        "success_indicator": "Child consistently writes the reduced tens digit above the column before calculating the difference.",
+        "reassessment_probe_id": "probe_03",
+        "transfer_probe_id": "ncert_ch12_library_356_138",
+    },
+    "OPERATION_CONFUSION_ADD": {
+        "misconception_id": "OPERATION_CONFUSION_ADD",
+        "title": "Part-Whole Situational Modeling",
+        "target_skill": "WORD_PROBLEM_SEMANTICS",
+        "prerequisite_skill": "SINGLE_DIGIT_FACTS",
+        "learning_objective": "Discriminate between addition (combining parts to find total) and subtraction (removing part to find difference).",
+        "teacher_guidance": "Draw Bar Model / Part-Whole diagrams (NCERT pp. 151-155). Identify whether the problem gives the total or asks for the total.",
+        "student_activity": "Story Match: Match word cards ('how many left?', 'spent', 'gave away') with the minus symbol (-).",
+        "example_problem": "45 saplings planted, 18 dried up. How many alive?",
+        "success_indicator": "Child correctly identifies whether the situation is take-away or combining before doing arithmetic.",
+        "reassessment_probe_id": "ctrl_01",
+        "transfer_probe_id": "ncert_ch12_sacks_305_210",
+    },
+    "PLACE_VALUE_GAP": {
+        "misconception_id": "PLACE_VALUE_GAP",
+        "title": "Base-10 Decomposition with Ginladi Bead Strings",
+        "target_skill": "PLACE_VALUE_BUNDLES",
+        "prerequisite_skill": "SINGLE_DIGIT_FACTS",
+        "learning_objective": "Decompose 2-digit numbers into tens and ones and navigate 10s steps on bead strings.",
+        "teacher_guidance": "Use a 100-bead Ginladi string with alternating colors of 10 beads (NCERT Chapter 3, pp. 23-28).",
+        "student_activity": "Bead Slider: Slide 61 beads. Count how many groups of 10 and how many loose ones.",
+        "example_problem": "Show 61 on the Ginladi string.",
+        "success_indicator": "Child instantly reads 61 as 6 tens + 1 one without counting from 1.",
+        "reassessment_probe_id": "ctrl_01",
+        "transfer_probe_id": "probe_01",
+    },
+    "INSUFFICIENT_EVIDENCE": {
+        "misconception_id": "INSUFFICIENT_EVIDENCE",
+        "title": "Gentle 1-on-1 Clinical Inquiry Interview",
+        "target_skill": "ONES_REGROUPING",
+        "prerequisite_skill": "SINGLE_DIGIT_FACTS",
+        "learning_objective": "Gather qualitative evidence regarding child's internal thinking strategy.",
+        "teacher_guidance": "Sit with the child with paper and concrete counters. Ask: 'Tell me how you solved this in your head or on paper.' Do not prompt or correct.",
+        "student_activity": "Think-Aloud Math: Child narrates steps out loud while solving 53 - 18.",
+        "example_problem": "53 - 18",
+        "success_indicator": "Child articulates whether they are reversing digits, guessing, or attempting regrouping.",
+        "reassessment_probe_id": "probe_01",
+        "transfer_probe_id": "ctrl_01",
+    },
+    "AMBIGUOUS_PATTERN": {
+        "misconception_id": "AMBIGUOUS_PATTERN",
+        "title": "Prerequisite Check & Non-Regrouping Baseline Audit",
+        "target_skill": "NON_REGROUPING_SUBTRACTION",
+        "prerequisite_skill": "SINGLE_DIGIT_FACTS",
+        "learning_objective": "Verify whether child has mastered non-regrouping subtraction facts before re-introducing regrouping.",
+        "teacher_guidance": "Administer 3 non-regrouping problems (58 - 23, 79 - 45, 64 - 31). If errors persist, practice single-digit subtraction facts and column alignment first.",
+        "student_activity": "Column Subtraction Cards: Solve 58 - 23 and 79 - 45.",
+        "example_problem": "64 - 31",
+        "success_indicator": "Child solves non-regrouping problems accurately with 100% confidence.",
+        "reassessment_probe_id": "ctrl_01",
+        "transfer_probe_id": "ctrl_02",
+    }
+}
 
 
 def calculate_signature_answer(probe: SubtractionProbe, signature_id: str) -> Optional[int]:
@@ -736,13 +886,54 @@ def diagnose_responses(
     else:
         summary = f"Diagnostic status: {status}"
 
+    # Evidence categorization and transparent qualitative evidence strength
+    if status == STATUS_SUPPORTED_HYPOTHESIS:
+        evidence_strength = EVIDENCE_STRONG
+    elif status == STATUS_AMBIGUOUS_PATTERN:
+        evidence_strength = EVIDENCE_WEAK
+    elif status == STATUS_INSUFFICIENT_EVIDENCE:
+        evidence_strength = EVIDENCE_NONE
+    else:
+        evidence_strength = EVIDENCE_MODERATE if all_correct else EVIDENCE_WEAK
+
+    supporting_ev = []
+    contradictory_ev = []
+    missing_ev = []
+
+    if status == STATUS_SUPPORTED_HYPOTHESIS and matched_signature:
+        supporting_ev.append(f"Matched {matched_signature} signature across all {regrouping_total} regrouping probes.")
+        supporting_ev.append(f"Answered all {controls_total} non-regrouping control probes correctly.")
+        missing_ev.append("Student verbal reasoning interview pending confirmation.")
+    elif status == STATUS_AMBIGUOUS_PATTERN:
+        if not controls_passed:
+            contradictory_ev.append("Non-regrouping control probe(s) failed; cannot isolate regrouping mechanism.")
+        else:
+            contradictory_ev.append("Inconsistent error patterns observed across different regrouping probes.")
+        missing_ev.append("1-on-1 teacher interview or structured verbal probe required.")
+    elif status == STATUS_INSUFFICIENT_EVIDENCE:
+        missing_ev.extend([f"Missing required probe: {pid}" for pid in missing_ids])
+
+    rec_intervention = INTERVENTION_CATALOGUE.get(matched_signature or status or "AMBIGUOUS_PATTERN")
+    prereq_key = rec_intervention.get("prerequisite_skill") if rec_intervention else "PLACE_VALUE_BUNDLES"
+    prereq_info = PREREQUISITE_GRAPH.get(prereq_key, PREREQUISITE_GRAPH["PLACE_VALUE_BUNDLES"])
+
     res_dict = {
-        "engine_version": "0.3.0",
+        "engine_version": "1.0.0",
         "diagnostic_status": status,
         "all_correct": all_correct,
         "summary": summary,
         "observed_pattern_match": observed_pattern_match,
         "inferred_misconception": inferred_misconception,
+        "candidate_misconception": matched_signature,
+        "evidence_strength": evidence_strength,
+        "supporting_evidence": supporting_ev,
+        "contradictory_evidence": contradictory_ev,
+        "missing_evidence": missing_ev,
+        "related_prerequisite_skill": prereq_info,
+        "recommended_follow_up_question": rec_intervention.get("teacher_guidance", "Can you explain how you solved this step by step?") if rec_intervention else "Can you explain how you solved this step by step?",
+        "teacher_facing_explanation": summary,
+        "recommended_intervention": rec_intervention,
+        "prerequisite_graph": PREREQUISITE_GRAPH,
         "disclaimer": (
             "PROTOTYPE ONLY: Automated rule-based pattern matching prototype. "
             "Synthetic and software tests do not establish educational validity. "
@@ -928,13 +1119,21 @@ def diagnose_single_response(probe_id: str, answer: int, explanation: str = "") 
         return _enrich_with_calibrated_model(probe_id, answer, {
             "status": "Pass",
             "ruleId": "CORRECT",
-            "observations": f"Answer {answer} is correct for '{prompt_label}'. Student demonstrated conceptual understanding and mastery.",
+            "diagnostic_status": STATUS_NO_TARGET_PATTERN_DETECTED,
+            "observations": f"Answer {answer} is correct for '{prompt_label}'. Single observation; preliminary evidence only. Multiple appropriate indicators required to establish mastery.",
             "evidence": {"observed": answer, "expected": correct, "is_correct": True},
-            "alternatives": [],
-            "confidence": "HIGH",
+            "alternatives": ["Coincidental arithmetic slip negation", "Lucky random guess"],
+            "confidence": "LOW",
+            "evidence_strength": EVIDENCE_WEAK,
+            "mastery_status": MASTERY_INSUFFICIENT_EVIDENCE,
             "followUpQuestion": "Explain the step-by-step strategy, number line jumps, or concrete model you used to solve this.",
-            "suggestedActivity": "Advance to multi-step reasoning extensions or student-designed word problems.",
-            "studentFeedback": "🌟 Superstar! You solved this question perfectly!",
+            "suggestedActivity": "Advance to further diagnostic probes to confirm consistent understanding across contexts.",
+            "studentFeedback": "🌟 Good job! Let's check a few more questions to make sure!",
+            "candidate_misconception": None,
+            "supporting_evidence": [f"Correct answer {answer} on probe {probe_id}."],
+            "contradictory_evidence": [],
+            "missing_evidence": ["Transfer probes and student verbal reasoning explanation required for mastery."],
+            "related_prerequisite_skill": PREREQUISITE_GRAPH.get("ONES_REGROUPING"),
         })
 
     # 1. Check if probe has a structured distractor mapping for this answer
@@ -948,10 +1147,14 @@ def diagnose_single_response(probe_id: str, answer: int, explanation: str = "") 
         activity_text = dist_info.get("activity", "Targeted hands-on practice with concrete materials.")
         student_msg = dist_info.get("studentHint", "Check your thinking carefully!")
 
+        rec_interv = INTERVENTION_CATALOGUE.get(rule_id, INTERVENTION_CATALOGUE.get("AMBIGUOUS_PATTERN"))
+        prereq_key = rec_interv.get("prerequisite_skill") if rec_interv else "PLACE_VALUE_BUNDLES"
+
         return _enrich_with_calibrated_model(probe_id, answer, {
             "status": "Fail",
             "ruleId": rule_id,
-            "observations": f"Answer {answer}: {explanation_text}",
+            "diagnostic_status": STATUS_CANDIDATE_MISCONCEPTION,
+            "observations": f"Answer {answer}: {explanation_text} (Candidate misconception pattern; preliminary observation from single question; requires verbal check-in or further probes to confirm).",
             "evidence": {
                 "observed": answer,
                 "expected": correct,
@@ -962,11 +1165,20 @@ def diagnose_single_response(probe_id: str, answer: int, explanation: str = "") 
                 "Careless reading of question prompt",
                 "Single arithmetic calculation slip",
                 "Perceptual / visual distraction",
+                "Random guessing",
             ],
-            "confidence": "HIGH",
+            "confidence": "LOW",
+            "evidence_strength": EVIDENCE_WEAK,
+            "mastery_status": MASTERY_DEVELOPING,
             "followUpQuestion": teacher_q,
             "suggestedActivity": activity_text,
             "studentFeedback": student_msg,
+            "candidate_misconception": rule_id,
+            "supporting_evidence": [f"Answer {answer} matches candidate {rule_id} distractor pattern."],
+            "contradictory_evidence": [],
+            "missing_evidence": ["Control non-regrouping probes and student verbal reasoning."],
+            "related_prerequisite_skill": PREREQUISITE_GRAPH.get(prereq_key, PREREQUISITE_GRAPH["PLACE_VALUE_BUNDLES"]),
+            "recommended_intervention": rec_interv,
         })
 
     # 2. Check mathematical calculation signatures (for regrouping subtraction)
@@ -983,9 +1195,11 @@ def diagnose_single_response(probe_id: str, answer: int, explanation: str = "") 
         return _enrich_with_calibrated_model(probe_id, answer, {
             "status": "Fail",
             "ruleId": SIG_SMALLER_FROM_LARGER,
+            "diagnostic_status": STATUS_CANDIDATE_MISCONCEPTION,
             "observations": (
-                f"Answer {answer} on {probe.minuend} - {probe.subtrahend} matches Smaller-From-Larger error: "
-                "student subtracted smaller digits from larger digits without unbundling from the higher column."
+                f"Answer {answer} on {probe.minuend} - {probe.subtrahend} matches candidate Smaller-From-Larger pattern: "
+                "student subtracted smaller digits from larger digits without unbundling from the higher column. "
+                "Preliminary observation from single question; requires verbal reasoning or further probes to substantiate."
             ),
             "evidence": {
                 "observed": answer,
@@ -995,25 +1209,36 @@ def diagnose_single_response(probe_id: str, answer: int, explanation: str = "") 
             },
             "alternatives": [
                 "Bottom-to-top visual reading reversal",
-                "Arithmetic calculation slip",
+                "Single mental arithmetic calculation slip",
                 "Overgeneralization of commutative addition property",
+                "Random guessing",
             ],
-            "confidence": "HIGH",
+            "confidence": "LOW",
+            "evidence_strength": EVIDENCE_WEAK,
+            "mastery_status": MASTERY_DEVELOPING,
             "followUpQuestion": f"Can you show how you solved the ones column in {probe.minuend} - {probe.subtrahend} using Dienes blocks?",
             "suggestedActivity": (
                 "Dienes HTO Unbundling Mat (NCERT p. 152): exchange 1 yellow ten-rod into 10 loose unit cubes "
                 "before taking away the subtrahend."
             ),
-            "studentFeedback": "Oops! Remember you cannot take a bigger number from a smaller one without unbundling from the tens!",
+            "studentFeedback": "Oops! Let's check the ones column carefully!",
+            "candidate_misconception": SIG_SMALLER_FROM_LARGER,
+            "supporting_evidence": [f"Answer {answer} matches candidate Smaller-From-Larger calculation rule."],
+            "contradictory_evidence": [],
+            "missing_evidence": ["Control non-regrouping probes and student verbal reasoning."],
+            "related_prerequisite_skill": PREREQUISITE_GRAPH.get("PLACE_VALUE_BUNDLES"),
+            "recommended_intervention": INTERVENTION_CATALOGUE.get("SMALLER_FROM_LARGER"),
         })
 
     if probe.is_regrouping and is_bwd:
         return _enrich_with_calibrated_model(probe_id, answer, {
             "status": "Fail",
             "ruleId": SIG_BORROW_WITHOUT_DECREMENT,
+            "diagnostic_status": STATUS_CANDIDATE_MISCONCEPTION,
             "observations": (
-                f"Answer {answer} on {probe.minuend} - {probe.subtrahend} matches Borrow-Without-Decrement: "
-                "student added 10 to the target column, but forgot to decrement the higher column."
+                f"Answer {answer} on {probe.minuend} - {probe.subtrahend} matches candidate Borrow-Without-Decrement: "
+                "student added 10 to the target column, but forgot to decrement the higher column. "
+                "Preliminary observation from single question; requires verification."
             ),
             "evidence": {
                 "observed": answer,
@@ -1024,14 +1249,23 @@ def diagnose_single_response(probe_id: str, answer: int, explanation: str = "") 
             "alternatives": [
                 "Forgot to record crossing-out markings",
                 "Arithmetic recall slip in the left column",
+                "Random guessing",
             ],
-            "confidence": "HIGH",
+            "confidence": "LOW",
+            "evidence_strength": EVIDENCE_WEAK,
+            "mastery_status": MASTERY_DEVELOPING,
             "followUpQuestion": "Look at the higher column after unbundling. What happened to it?",
             "suggestedActivity": (
                 "The Banker's Exchange (NCERT p. 156-160): cross out and reduce the higher denomination note "
                 "immediately upon receiving change."
             ),
-            "studentFeedback": "Great unbundling! But remember to cross out and reduce the tens column too!",
+            "studentFeedback": "Great unbundling! But remember to check the tens column too!",
+            "candidate_misconception": SIG_BORROW_WITHOUT_DECREMENT,
+            "supporting_evidence": [f"Answer {answer} matches candidate Borrow-Without-Decrement calculation rule."],
+            "contradictory_evidence": [],
+            "missing_evidence": ["Control non-regrouping probes and student verbal reasoning."],
+            "related_prerequisite_skill": PREREQUISITE_GRAPH.get("ONES_REGROUPING"),
+            "recommended_intervention": INTERVENTION_CATALOGUE.get("BORROW_WITHOUT_DECREMENT"),
         })
 
     if is_add:
@@ -1077,3 +1311,399 @@ def check_engine_status() -> str:
 
 if __name__ == "__main__":
     print(check_engine_status())
+
+
+# ---------------------------------------------------------------------------
+# Reasoning Reconciliation Engine (Connecting Verbal Explanations to Diagnosis)
+# ---------------------------------------------------------------------------
+def reconcile_reasoning(
+    initial_diagnosis: Dict[str, Any],
+    explanation_text: str = "",
+    chat_turns: Optional[List[Dict[str, str]]] = None,
+) -> Dict[str, Any]:
+    """Reconcile student verbal/textual reasoning with quantitative diagnostic hypothesis.
+
+    Extracts explicit intermediate mathematical operations and validates whether
+    the child's explanation supports, contradicts, or leaves ambiguous the candidate misconception.
+    """
+    raw_text = (explanation_text or "").lower()
+    if chat_turns:
+        for t in chat_turns:
+            if t.get("sender") == "student":
+                raw_text += " " + str(t.get("text", "")).lower()
+
+    prev_status = initial_diagnosis.get("diagnostic_status") or STATUS_CANDIDATE_MISCONCEPTION
+    candidate = initial_diagnosis.get("candidate_misconception") or initial_diagnosis.get("ruleId")
+
+    uncertainty_patterns = [
+        "don't know", "dont know", "pata nahi", "nahi pata", "अंदाज़ा", "नहीं पता", "guess", "tuka", "confused", "no idea"
+    ]
+    is_uncertain = any(p in raw_text for p in uncertainty_patterns)
+
+    sfl_indicators = [
+        "4 - 1", "4-1", "4 minus 1", "4 में से 1", "4 me se 1", "4 mein se 1", "4 se 1",
+        "larger from smaller", "smaller from larger", "bada me se chota", "chhota se bada",
+        "bottom from top", "subtracted 4 from 1", "4 se ek", "4 me se ek", "4 me se"
+    ]
+    has_sfl_reasoning = any(p in raw_text for p in sfl_indicators)
+
+    bwd_indicators = [
+        "6 - 2 = 4", "6-2=4", "6 me se 2", "6 minus 2", "kept 6", "6 didn't change",
+        "6 did not change", "6 ko nahi badla", "tens was 6", "6 bacha",
+        "6 दहाई", "दहाई को घटाना भूल", "घटाना भूल गया", "6 को घटाया नहीं",
+        "6 वैसे ही रहा", "6 nahi ghataya", "6 nahi badla", "dahan bhool gaya",
+        "dahai bhool gaya", "udhar liya lekin", "उधार ली लेकिन"
+    ]
+    has_bwd_reasoning = any(p in raw_text for p in bwd_indicators)
+
+    correct_regrouping_indicators = [
+        "11 - 4", "11-4", "11 minus 4", "borrowed 1", "haasil", "udhar", "उधार",
+        "unbundled", "became 11", "11 ban gaya", "6 became 5", "5 me se 2", "5-2=3"
+    ]
+    has_correct_regrouping = any(p in raw_text for p in correct_regrouping_indicators)
+
+    reconciled = dict(initial_diagnosis)
+    reconciled["original_diagnostic_state"] = {
+        "status": prev_status,
+        "confidence": initial_diagnosis.get("confidence", "LOW"),
+        "evidence_strength": initial_diagnosis.get("evidence_strength", EVIDENCE_WEAK),
+    }
+
+    supporting = list(initial_diagnosis.get("supporting_evidence", []))
+    contradictory = list(initial_diagnosis.get("contradictory_evidence", []))
+    missing = list(initial_diagnosis.get("missing_evidence", []))
+
+    if is_uncertain:
+        reconciled["diagnostic_status"] = STATUS_INSUFFICIENT_EVIDENCE
+        reconciled["evidence_strength"] = EVIDENCE_WEAK
+        reconciled["confidence"] = "LOW"
+        reconciled["reasoning_alignment"] = "UNCERTAIN_OR_GUESS"
+        reconciled["teacher_facing_explanation"] = "Student was hesitant or indicated guessing. Cannot infer a conceptual misconception."
+        contradictory.append("Student stated uncertainty or guessing during verbal check-in.")
+        missing = ["Verified non-guessing response evidence."]
+    elif candidate == SIG_SMALLER_FROM_LARGER:
+        if has_sfl_reasoning:
+            reconciled["diagnostic_status"] = STATUS_SUPPORTED_HYPOTHESIS
+            reconciled["evidence_strength"] = EVIDENCE_STRONG
+            reconciled["confidence"] = "HIGH"
+            reconciled["reasoning_alignment"] = "SUPPORTS_HYPOTHESIS"
+            reconciled["teacher_facing_explanation"] = "Student verbally confirmed subtracting smaller digit from larger digit (4 - 1 = 3) without unbundling tens."
+            supporting.append(f"Student verbal explanation confirmed: '{raw_text[:120].strip()}'")
+            missing = [m for m in missing if "reasoning" not in m.lower()]
+        elif has_correct_regrouping:
+            reconciled["diagnostic_status"] = STATUS_CONTRADICTED_HYPOTHESIS
+            reconciled["evidence_strength"] = EVIDENCE_MODERATE
+            reconciled["confidence"] = "LOW"
+            reconciled["reasoning_alignment"] = "CONTRADICTS_HYPOTHESIS"
+            reconciled["teacher_facing_explanation"] = "Student explained correct regrouping intent (e.g. 11 - 4). The incorrect recorded answer appears to be an arithmetic slip, not Smaller-From-Larger."
+            contradictory.append(f"Student verbal reasoning demonstrated unbundling: '{raw_text[:120].strip()}'")
+        else:
+            reconciled["reasoning_alignment"] = "INCONCLUSIVE"
+            reconciled["diagnostic_status"] = STATUS_CANDIDATE_MISCONCEPTION
+            reconciled["evidence_strength"] = EVIDENCE_WEAK
+            reconciled["confidence"] = "LOW"
+            missing.append("Specific column calculation steps not fully articulated in explanation.")
+    elif candidate == SIG_BORROW_WITHOUT_DECREMENT:
+        if has_bwd_reasoning:
+            reconciled["diagnostic_status"] = STATUS_SUPPORTED_HYPOTHESIS
+            reconciled["evidence_strength"] = EVIDENCE_STRONG
+            reconciled["confidence"] = "HIGH"
+            reconciled["reasoning_alignment"] = "SUPPORTS_HYPOTHESIS"
+            reconciled["teacher_facing_explanation"] = "Student confirmed unbundling to 11 but did not decrement the tens digit (calculated 6 - 2 = 4)."
+            supporting.append(f"Student verbal explanation confirmed: '{raw_text[:120].strip()}'")
+            missing = [m for m in missing if "reasoning" not in m.lower()]
+        elif has_correct_regrouping and ("5 me se 2" in raw_text or "5 - 2" in raw_text or "6 became 5" in raw_text):
+            reconciled["diagnostic_status"] = STATUS_CONTRADICTED_HYPOTHESIS
+            reconciled["evidence_strength"] = EVIDENCE_MODERATE
+            reconciled["confidence"] = "LOW"
+            reconciled["reasoning_alignment"] = "CONTRADICTS_HYPOTHESIS"
+            reconciled["teacher_facing_explanation"] = "Student stated they decremented the tens column (6 became 5). Initial Borrow-Without-Decrement hypothesis contradicted."
+            contradictory.append(f"Student explained tens column decrement: '{raw_text[:120].strip()}'")
+        else:
+            reconciled["reasoning_alignment"] = "INCONCLUSIVE"
+            reconciled["diagnostic_status"] = STATUS_CANDIDATE_MISCONCEPTION
+            reconciled["evidence_strength"] = EVIDENCE_WEAK
+            reconciled["confidence"] = "LOW"
+    else:
+        reconciled["reasoning_alignment"] = "PRESERVED"
+
+    reconciled["supporting_evidence"] = supporting
+    reconciled["contradictory_evidence"] = contradictory
+    reconciled["missing_evidence"] = missing
+    reconciled["reconciled_at"] = True
+
+    return reconciled
+
+
+# ---------------------------------------------------------------------------
+# Complete Assessment Session Diagnosis
+# ---------------------------------------------------------------------------
+def diagnose_session(session_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Diagnose a complete assessment session containing multiple student responses.
+
+    Ensures that no definitive misconception diagnosis is issued from one isolated response.
+    Enforces control probe verification and cognitive skill mastery derivation.
+    """
+    session_id = session_data.get("session_id", "session_default")
+    student_id = session_data.get("student_id", "student_default")
+    raw_responses = session_data.get("responses", [])
+
+    if isinstance(raw_responses, dict):
+        response_map = {k: int(v) for k, v in raw_responses.items()}
+        explanations = {}
+    elif isinstance(raw_responses, list):
+        response_map = {}
+        explanations = {}
+        for r in raw_responses:
+            qid = r.get("question_id") or r.get("questionId") or r.get("probe_id")
+            ans = r.get("answer") if r.get("answer") is not None else r.get("selectedAnswer")
+            if qid and ans is not None:
+                try:
+                    response_map[qid] = int(ans)
+                    if r.get("explanation"):
+                        explanations[qid] = str(r["explanation"])
+                except (ValueError, TypeError):
+                    pass
+    else:
+        response_map = {}
+        explanations = {}
+
+    total_probes = len(response_map)
+    if total_probes == 0:
+        return {
+            "session_id": session_id,
+            "student_id": student_id,
+            "diagnostic_status": STATUS_INSUFFICIENT_EVIDENCE,
+            "evidence_strength": EVIDENCE_NONE,
+            "confidence": "LOW",
+            "candidate_misconception": None,
+            "all_correct": False,
+            "summary": "No responses submitted in this assessment session. Assessment is incomplete.",
+            "supporting_evidence": [],
+            "contradictory_evidence": [],
+            "missing_evidence": ["All assessment questions must be attempted."],
+            "skill_mastery": {
+                "ONES_REGROUPING": MASTERY_NOT_ASSESSED,
+                "NON_REGROUPING_SUBTRACTION": MASTERY_NOT_ASSESSED,
+                "PLACE_VALUE_BUNDLES": MASTERY_NOT_ASSESSED,
+            },
+            "disclaimer": "Assessment session has no recorded responses.",
+        }
+
+    # Evaluate against canonical set if applicable
+    canonical_keys = set(APPROVED_PROBES.keys())
+    provided_keys = set(response_map.keys())
+
+    if canonical_keys.issubset(provided_keys):
+        sub_resp = {k: response_map[k] for k in canonical_keys}
+        base_result = diagnose_responses(sub_resp)
+        base_result["session_id"] = session_id
+        base_result["student_id"] = student_id
+        base_result["probes_evaluated"] = len(provided_keys)
+
+        # Ensure skill_mastery is always explicitly present
+        regrouping_all_passed = (base_result.get("diagnostic_status") == STATUS_NO_TARGET_PATTERN_DETECTED and base_result.get("all_correct"))
+        base_result["skill_mastery"] = {
+            "ONES_REGROUPING": MASTERY_SECURE if regrouping_all_passed else MASTERY_DEVELOPING,
+            "NON_REGROUPING_SUBTRACTION": MASTERY_SECURE,
+            "PLACE_VALUE_BUNDLES": MASTERY_PROVISIONALLY_SECURE if regrouping_all_passed else MASTERY_DEVELOPING,
+        }
+
+        # Merge verbal reasoning if provided on any probe
+        combined_expl = " ".join(explanations.values())
+        if combined_expl.strip():
+            base_result = reconcile_reasoning(base_result, combined_expl)
+
+        return base_result
+
+    # Partial or arbitrary probe set evaluation
+    regrouping_evals = []
+    control_evals = []
+    correct_count = 0
+
+    sfl_count = 0
+    bwd_count = 0
+
+    for qid, ans in response_map.items():
+        probe = ALL_PROBES.get(qid)
+        if not probe:
+            continue
+        is_corr = (ans == probe.correct_answer)
+        if is_corr:
+            correct_count += 1
+
+        if not probe.is_regrouping:
+            control_evals.append((qid, is_corr))
+        else:
+            p_sfl = calculate_signature_answer(probe, SIG_SMALLER_FROM_LARGER)
+            p_bwd = calculate_signature_answer(probe, SIG_BORROW_WITHOUT_DECREMENT)
+            if ans == p_sfl:
+                sfl_count += 1
+            if ans == p_bwd:
+                bwd_count += 1
+            regrouping_evals.append((qid, is_corr, ans == p_sfl, ans == p_bwd))
+
+    total_regrouping = len(regrouping_evals)
+    controls_passed = all(corr for _, corr in control_evals) if control_evals else True
+
+    # Rule: Incomplete assessments (fewer than 3 probes) must report INSUFFICIENT_EVIDENCE
+    if total_probes < 3:
+        status = STATUS_INSUFFICIENT_EVIDENCE
+        ev_strength = EVIDENCE_WEAK
+        cand_misconception = None
+        if sfl_count >= 1:
+            cand_misconception = SIG_SMALLER_FROM_LARGER
+        elif bwd_count >= 1:
+            cand_misconception = SIG_BORROW_WITHOUT_DECREMENT
+        summary_text = f"Assessment session has only {total_probes} response(s). Incomplete assessment; minimum 3-5 probes required."
+    elif total_regrouping < 2:
+        status = STATUS_INSUFFICIENT_EVIDENCE
+        ev_strength = EVIDENCE_WEAK
+        cand_misconception = None
+        if sfl_count == 1:
+            cand_misconception = SIG_SMALLER_FROM_LARGER
+        elif bwd_count == 1:
+            cand_misconception = SIG_BORROW_WITHOUT_DECREMENT
+        summary_text = f"Assessment session has {total_probes} response(s) but fewer than 2 regrouping opportunities. Incomplete evidence."
+    elif not controls_passed:
+        status = STATUS_AMBIGUOUS_PATTERN
+        ev_strength = EVIDENCE_WEAK
+        cand_misconception = None
+        summary_text = "Control problem(s) failed. Non-regrouping baseline subtraction must be verified first."
+    elif sfl_count == total_regrouping and total_regrouping >= 2:
+        status = STATUS_SUPPORTED_HYPOTHESIS
+        ev_strength = EVIDENCE_STRONG
+        cand_misconception = SIG_SMALLER_FROM_LARGER
+        summary_text = f"Consistent Smaller-From-Larger pattern observed across {total_regrouping} regrouping probes."
+    elif bwd_count == total_regrouping and total_regrouping >= 2:
+        status = STATUS_SUPPORTED_HYPOTHESIS
+        ev_strength = EVIDENCE_STRONG
+        cand_misconception = SIG_BORROW_WITHOUT_DECREMENT
+        summary_text = f"Consistent Borrow-Without-Decrement pattern observed across {total_regrouping} regrouping probes."
+    elif correct_count == total_probes and total_probes >= 3:
+        status = STATUS_NO_TARGET_PATTERN_DETECTED
+        ev_strength = EVIDENCE_STRONG
+        cand_misconception = None
+        summary_text = f"All {total_probes} probes answered correctly. Demonstrated secure place value subtraction."
+    elif correct_count == total_probes:
+        status = STATUS_NO_TARGET_PATTERN_DETECTED
+        ev_strength = EVIDENCE_MODERATE
+        cand_misconception = None
+        summary_text = f"{total_probes} probes answered correctly. Provisionally secure understanding."
+    else:
+        status = STATUS_AMBIGUOUS_PATTERN
+        ev_strength = EVIDENCE_WEAK
+        cand_misconception = None
+        summary_text = "Mixed or inconsistent errors across probes. 1-on-1 teacher interview recommended."
+
+    # Derive mastery states pedagogically
+    skill_mastery = {}
+    if total_regrouping >= 3 and all(corr for _, corr, _, _ in regrouping_evals):
+        skill_mastery["ONES_REGROUPING"] = MASTERY_SECURE
+    elif total_regrouping >= 2 and all(corr for _, corr, _, _ in regrouping_evals):
+        skill_mastery["ONES_REGROUPING"] = MASTERY_PROVISIONALLY_SECURE
+    elif total_regrouping >= 1 and any(corr for _, corr, _, _ in regrouping_evals):
+        skill_mastery["ONES_REGROUPING"] = MASTERY_DEVELOPING
+    elif total_regrouping >= 1:
+        skill_mastery["ONES_REGROUPING"] = MASTERY_DEVELOPING
+    else:
+        skill_mastery["ONES_REGROUPING"] = MASTERY_NOT_ASSESSED
+
+    skill_mastery["NON_REGROUPING_SUBTRACTION"] = (
+        MASTERY_SECURE if (control_evals and controls_passed)
+        else (MASTERY_DEVELOPING if control_evals else MASTERY_NOT_ASSESSED)
+    )
+    skill_mastery["PLACE_VALUE_BUNDLES"] = (
+        MASTERY_PROVISIONALLY_SECURE if (status == STATUS_NO_TARGET_PATTERN_DETECTED and correct_count >= 2)
+        else MASTERY_DEVELOPING
+    )
+
+    rec_intervention = INTERVENTION_CATALOGUE.get(cand_misconception or status or "AMBIGUOUS_PATTERN")
+    prereq_key = rec_intervention.get("prerequisite_skill") if rec_intervention else "PLACE_VALUE_BUNDLES"
+
+    session_result = {
+        "session_id": session_id,
+        "student_id": student_id,
+        "engine_version": "1.0.0",
+        "diagnostic_status": status,
+        "evidence_strength": ev_strength,
+        "confidence": "HIGH" if ev_strength == EVIDENCE_STRONG else "LOW",
+        "candidate_misconception": cand_misconception,
+        "all_correct": correct_count == total_probes and total_probes > 0,
+        "probes_evaluated": total_probes,
+        "correct_count": correct_count,
+        "summary": summary_text,
+        "supporting_evidence": [f"Correct: {correct_count}/{total_probes} probes."] + ([f"Consistent signature: {cand_misconception}"] if cand_misconception else []),
+        "contradictory_evidence": [] if controls_passed else ["Failed non-regrouping control problem(s)."],
+        "missing_evidence": [] if total_probes >= 5 else [f"Only {total_probes} probe(s) evaluated; full 5-probe benchmark provides maximum diagnostic precision."],
+        "skill_mastery": skill_mastery,
+        "related_prerequisite_skill": PREREQUISITE_GRAPH.get(prereq_key, PREREQUISITE_GRAPH["PLACE_VALUE_BUNDLES"]),
+        "recommended_intervention": rec_intervention,
+        "prerequisite_graph": PREREQUISITE_GRAPH,
+        "disclaimer": "Diagnostic result generated from complete assessment session evidence.",
+    }
+
+    # Reconcile verbal reasoning if any explanations provided
+    combined_expl = " ".join(explanations.values()).strip()
+    if combined_expl:
+        session_result = reconcile_reasoning(session_result, combined_expl)
+
+    return session_result
+
+
+# ---------------------------------------------------------------------------
+# Reassessment & Progress Tracking Comparison Engine
+# ---------------------------------------------------------------------------
+def compare_reassessment(pre_diagnosis: Dict[str, Any], post_diagnosis: Dict[str, Any]) -> Dict[str, Any]:
+    """Compare student diagnostic evidence before and after instructional intervention.
+
+    Avoids unsupported causal claims ('intervention proved successful') and communicates
+    transparent observational findings ('Improvement observed after intervention').
+    """
+    pre_misconception = pre_diagnosis.get("candidate_misconception") or pre_diagnosis.get("ruleId")
+    pre_status = pre_diagnosis.get("diagnostic_status") or pre_diagnosis.get("status")
+    post_misconception = post_diagnosis.get("candidate_misconception") or post_diagnosis.get("ruleId")
+    post_status = post_diagnosis.get("diagnostic_status") or post_diagnosis.get("status")
+    post_all_correct = post_diagnosis.get("all_correct") is True or post_diagnosis.get("status") == "Pass"
+
+    if post_all_correct or post_status == STATUS_NO_TARGET_PATTERN_DETECTED:
+        trend = "RESOLVED"
+        outcome = "IMPROVEMENT_OBSERVED"
+        narrative = (
+            "Improvement observed after intervention. Student demonstrated accurate place value "
+            "regrouping across reassessment probes including transfer problems. Continued practice recommended."
+        )
+    elif post_misconception == pre_misconception and post_status in (STATUS_SUPPORTED_HYPOTHESIS, STATUS_CANDIDATE_MISCONCEPTION):
+        trend = "PERSISTING"
+        outcome = "PERSISTING_PATTERN"
+        narrative = (
+            f"Candidate misconception ({pre_misconception}) persists after intervention. "
+            "Recommend Tier 2 concrete manipulative intervention with physical bundling sticks."
+        )
+    else:
+        trend = "WEAKENED"
+        outcome = "PARTIAL_PROGRESS"
+        narrative = (
+            "Candidate misconception not systematically observed on reassessment, though mixed "
+            "responses indicate emerging procedural stability. Targeted practice recommended."
+        )
+
+    return {
+        "pre_intervention_diagnosis": {
+            "status": pre_status,
+            "misconception": pre_misconception,
+            "evidence_strength": pre_diagnosis.get("evidence_strength", "WEAK"),
+        },
+        "post_intervention_diagnosis": {
+            "status": post_status,
+            "misconception": post_misconception,
+            "evidence_strength": post_diagnosis.get("evidence_strength", "WEAK"),
+        },
+        "misconception_trend": trend,
+        "comparison_outcome": outcome,
+        "teacher_summary": narrative,
+        "educational_disclaimer": (
+            "Observational evidence comparison. Synthetic and classroom pre/post differences "
+            "demonstrate observed change; educational causation requires controlled instructional design."
+        ),
+    }

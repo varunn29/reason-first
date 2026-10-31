@@ -33,6 +33,11 @@ const memoryStore = {
   responses: new Map(),
   diagnoses: new Map(),
   overrides: new Map(),
+  sessions: new Map(),
+  sessionDiagnoses: new Map(),
+  interventions: new Map(),
+  reassessments: new Map(),
+  groupOverrides: new Map(),
   assignments: [
     {
       id: 'asgn_class3_subtraction',
@@ -287,6 +292,505 @@ app.post('/api/responses', async (req, res) => {
 });
 
 // 4. Get Diagnosis Report by Response ID
+// ============================================================================
+// PRIORITY ONE & TWO: ASSESSMENT SESSION WORKFLOW & EVIDENCE REASONING
+// ============================================================================
+
+// S1. Start a New Assessment Session
+app.post('/api/sessions/start', async (req, res) => {
+  try {
+    const { studentId = 'student_guest', assignmentId = 'asgn_class3_subtraction', studentName = '' } = req.body;
+    const sessionId = `sess_${randomUUID()}`;
+    const cleanStudentName = studentName || studentId.replace(/^student_/, '').replace(/_/g, ' ') || 'Student';
+    const classLabel = 'Grade 3 - Section 3A';
+
+    registerStudentInMemory(studentId, cleanStudentName, classLabel);
+
+    const newSession = {
+      id: sessionId,
+      studentId,
+      assignmentId,
+      status: 'in_progress',
+      responses: [],
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+    };
+
+    memoryStore.sessions.set(sessionId, newSession);
+
+    if (process.env.DATABASE_URL) {
+      try {
+        await pool.query(
+          `INSERT INTO assessment_sessions (id, student_id, assignment_id, status) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING`,
+          [sessionId, studentId, assignmentId, 'in_progress']
+        );
+      } catch (dbErr) {
+        console.warn('DB session start query skipped:', dbErr.message);
+      }
+    }
+
+    res.status(201).json({ ok: true, session: newSession });
+  } catch (err) {
+    console.error('Error starting assessment session:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// S2. Submit Response to Assessment Session
+app.post('/api/sessions/:sessionId/responses', async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const {
+      questionId,
+      questionText = '',
+      answer,
+      correctAnswer = null,
+      explanation = '',
+      studentId = 'student_guest',
+      studentName = '',
+    } = req.body;
+
+    let session = memoryStore.sessions.get(sessionId);
+    if (!session) {
+      // Auto-recover session if not found in memory (dev resilience)
+      session = {
+        id: sessionId,
+        studentId,
+        assignmentId: 'asgn_class3_subtraction',
+        status: 'in_progress',
+        responses: [],
+        createdAt: new Date().toISOString(),
+        completedAt: null,
+      };
+      memoryStore.sessions.set(sessionId, session);
+    }
+
+    if (session.status === 'completed') {
+      return res.status(400).json({ ok: false, error: 'Cannot submit responses to a completed assessment session' });
+    }
+
+    // Prevent duplicate submission of same question in this session
+    const existing = session.responses.find(r => r.questionId === questionId);
+    if (existing) {
+      return res.status(409).json({ ok: false, error: `Question '${questionId}' has already been submitted in this session.` });
+    }
+
+    const responseId = randomUUID();
+    const isPass = correctAnswer !== null ? Number(answer) === Number(correctAnswer) : false;
+
+    // Single item preliminary diagnosis (Strictly LOW confidence, candidate observation only)
+    const singleDiag = await mlService.diagnose({
+      questionId,
+      answer,
+      explanation,
+    });
+
+    const preliminaryDiagnosis = singleDiag.status === 'ok' ? singleDiag.diagnosis : {
+      status: isPass ? 'Pass' : 'Fail',
+      diagnostic_status: isPass ? 'NO_TARGET_PATTERN_DETECTED' : 'CANDIDATE_MISCONCEPTION',
+      confidence: 'LOW',
+      evidence_strength: 'WEAK',
+      observations: `Response ${answer} recorded. Preliminary observation only. Complete assessment evaluation required for diagnostic conclusion.`,
+      evidence: { observed: answer, expected: correctAnswer, is_correct: isPass },
+      ruleId: isPass ? 'CORRECT' : 'CANDIDATE_OBSERVATION',
+    };
+
+    const responseRecord = {
+      id: responseId,
+      sessionId,
+      studentId: session.studentId,
+      assignmentId: session.assignmentId,
+      questionId,
+      questionText,
+      answer,
+      correctAnswer,
+      explanation,
+      isCorrect: isPass,
+      submittedAt: new Date().toISOString(),
+    };
+
+    session.responses.push(responseRecord);
+    memoryStore.responses.set(responseId, responseRecord);
+    memoryStore.diagnoses.set(responseId, preliminaryDiagnosis);
+
+    if (process.env.DATABASE_URL) {
+      try {
+        await pool.query(
+          `INSERT INTO responses (id, question_id, student_id, assignment_id, answer, explanation, session_id)
+           VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (id) DO NOTHING`,
+          [responseId, questionId, session.studentId, session.assignmentId, String(answer), explanation, sessionId]
+        );
+      } catch (dbErr) {
+        console.warn('DB response save skipped:', dbErr.message);
+      }
+    }
+
+    res.status(201).json({
+      ok: true,
+      responseId,
+      sessionId,
+      preliminaryDiagnosis,
+      totalResponsesInSession: session.responses.length,
+    });
+  } catch (err) {
+    console.error('Error submitting session response:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// S3. Complete Assessment Session & Run Multi-Probe Evidence Synthesis
+app.post('/api/sessions/:sessionId/complete', async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const session = memoryStore.sessions.get(sessionId);
+    if (!session) {
+      return res.status(404).json({ ok: false, error: 'Assessment session not found' });
+    }
+
+    if (session.responses.length === 0) {
+      return res.status(400).json({ ok: false, error: 'Cannot complete an empty assessment session. No responses submitted.' });
+    }
+
+    // Call Python multi-response diagnostic engine with complete session response set
+    const sessionPayload = {
+      session_id: sessionId,
+      student_id: session.studentId,
+      responses: session.responses.map(r => ({
+        question_id: r.questionId,
+        answer: Number(r.answer),
+        explanation: r.explanation || '',
+      })),
+    };
+
+    const diagResult = await mlService.diagnoseSession(sessionPayload);
+    const diagnosis = diagResult.diagnosis;
+
+    session.status = 'completed';
+    session.completedAt = new Date().toISOString();
+    session.diagnosis = diagnosis;
+    memoryStore.sessionDiagnoses.set(sessionId, diagnosis);
+
+    // Update student in memoryStore
+    const student = memoryStore.students.find(s => s.id === session.studentId);
+    if (student) {
+      const correctCount = session.responses.filter(r => r.isCorrect).length;
+      student.progress = Math.round((correctCount / session.responses.length) * 100);
+      student.lastSessionId = sessionId;
+      student.latestDiagnosis = diagnosis;
+    }
+
+    if (process.env.DATABASE_URL) {
+      try {
+        await pool.query(
+          `UPDATE assessment_sessions SET status = 'completed', completed_at = NOW() WHERE id = $1`,
+          [sessionId]
+        );
+      } catch (dbErr) {
+        console.warn('DB session complete update skipped:', dbErr.message);
+      }
+    }
+
+    res.json({
+      ok: true,
+      sessionId,
+      session,
+      diagnosis,
+    });
+  } catch (err) {
+    console.error('Error completing assessment session:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// S4. Get Assessment Session Details
+app.get('/api/sessions/:sessionId', async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const session = memoryStore.sessions.get(sessionId);
+    if (!session) {
+      return res.status(404).json({ ok: false, error: 'Assessment session not found' });
+    }
+    const diagnosis = memoryStore.sessionDiagnoses.get(sessionId) || session.diagnosis || null;
+    res.json({ ok: true, session, diagnosis });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ============================================================================
+// PRIORITY FIVE & SIX: PREREQUISITE GRAPH & TEACHER INTERVENTION ENGINE
+// ============================================================================
+
+// I1. Get Cognitive Prerequisite Graph
+app.get('/api/prerequisites', async (req, res) => {
+  try {
+    const data = await mlService.getPrerequisites();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// I2. Get Teacher Intervention Catalogue
+app.get('/api/interventions', async (req, res) => {
+  try {
+    const data = await mlService.getInterventions();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// I3. Record Teacher Intervention Delivery
+app.post('/api/interventions/deliver', async (req, res) => {
+  try {
+    const {
+      studentId,
+      sessionId = null,
+      targetSkill = 'ONES_REGROUPING',
+      misconceptionId = null,
+      interventionTitle,
+      teacherDecision = 'accepted', // 'accepted', 'modified', 'rejected'
+      teacherNotes = '',
+      status = 'delivered', // 'planned', 'delivered', 'completed'
+    } = req.body;
+
+    const recordId = `intv_${randomUUID()}`;
+    const record = {
+      id: recordId,
+      studentId,
+      sessionId,
+      targetSkill,
+      misconceptionId,
+      interventionTitle: interventionTitle || 'Tens-and-Ones Bundling Mat & Concrete Unbundling',
+      teacherDecision,
+      teacherNotes,
+      status,
+      deliveredAt: new Date().toISOString(),
+    };
+
+    if (!memoryStore.interventions.has(studentId)) {
+      memoryStore.interventions.set(studentId, []);
+    }
+    memoryStore.interventions.get(studentId).push(record);
+
+    res.status(201).json({ ok: true, intervention: record });
+  } catch (err) {
+    console.error('Error recording intervention:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// I4. Get Student Intervention History
+app.get('/api/interventions/student/:studentId', async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const history = memoryStore.interventions.get(studentId) || [];
+    res.json({ ok: true, interventions: history });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ============================================================================
+// PRIORITY SEVEN: POST-INTERVENTION REASSESSMENT & PROGRESS COMPARISON
+// ============================================================================
+
+// R1. Start Post-Intervention Reassessment
+app.post('/api/reassessment/start', async (req, res) => {
+  try {
+    const { studentId, preSessionId, targetSkill = 'ONES_REGROUPING' } = req.body;
+    const reassessSessionId = `reassess_${randomUUID()}`;
+
+    // Target probes + transfer probe
+    const questions = [
+      { id: 'probe_02', text: '72 - 38 = ?', options: [34, 46, 44, 36], correctAnswer: 34 },
+      { id: 'probe_03', text: '83 - 49 = ?', options: [34, 46, 44, 38], correctAnswer: 34 },
+      { id: 'ncert_ch12_herbs_270_36', text: '270 - 36 = ?', options: [234, 246, 244, 306], correctAnswer: 234 },
+      { id: 'ctrl_01', text: '58 - 23 = ?', options: [35, 31, 25, 33], correctAnswer: 35 },
+    ];
+
+    const session = {
+      id: reassessSessionId,
+      studentId,
+      preSessionId,
+      isReassessment: true,
+      targetSkill,
+      assignmentId: 'asgn_reassessment_subtraction',
+      status: 'in_progress',
+      questions,
+      responses: [],
+      createdAt: new Date().toISOString(),
+    };
+
+    memoryStore.sessions.set(reassessSessionId, session);
+
+    res.status(201).json({
+      ok: true,
+      reassessmentSession: session,
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// R2. Compare Pre & Post Reassessment Evidence
+app.post('/api/reassessment/compare', async (req, res) => {
+  try {
+    const { preSessionId, postSessionId } = req.body;
+    const preDiag = memoryStore.sessionDiagnoses.get(preSessionId) || {};
+    const postDiag = memoryStore.sessionDiagnoses.get(postSessionId) || {};
+
+    const comparisonResult = await mlService.compareReassessment(preDiag, postDiag);
+    const comparison = comparisonResult.comparison;
+
+    const compRecord = {
+      id: `comp_${randomUUID()}`,
+      preSessionId,
+      postSessionId,
+      comparison,
+      createdAt: new Date().toISOString(),
+    };
+
+    memoryStore.reassessments.set(postSessionId, compRecord);
+
+    res.json({ ok: true, comparison: compRecord });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ============================================================================
+// PRIORITY EIGHT: NEEDS-BASED STUDENT GROUPING
+// ============================================================================
+
+// G1. Get Students Grouped by Diagnosed Learning Needs
+app.get('/api/groupings', async (req, res) => {
+  try {
+    const students = memoryStore.students;
+
+    const groups = [
+      {
+        groupId: 'SFL_BUNDLE_GROUP',
+        name: 'Tens-and-Ones Regrouping (Smaller-From-Larger)',
+        targetSkill: 'ONES_REGROUPING',
+        prerequisiteSkill: 'PLACE_VALUE_BUNDLES',
+        recommendedActivity: 'Tens-and-Ones Bundling Mat & Dienes Exchange (NCERT p. 152)',
+        description: 'Students who subtracted smaller ones digits from larger ones digits without decomposing a ten.',
+        students: [],
+      },
+      {
+        groupId: 'BWD_DECREMENT_GROUP',
+        name: 'Crossing-Out Routine (Borrow-Without-Decrement)',
+        targetSkill: 'ONES_REGROUPING',
+        prerequisiteSkill: 'PLACE_VALUE_BUNDLES',
+        recommendedActivity: "The Banker's Exchange Token Surrender (NCERT p. 156-160)",
+        description: 'Students who unbundled into 10 ones but omitted decrementing the higher tens column.',
+        students: [],
+      },
+      {
+        groupId: 'PLACE_VALUE_GAP_GROUP',
+        name: 'Foundational Base-10 Bundling & Facts Check',
+        targetSkill: 'PLACE_VALUE_BUNDLES',
+        prerequisiteSkill: 'SINGLE_DIGIT_FACTS',
+        recommendedActivity: 'Ginladi Bead String Landmark Jumps (NCERT Chapter 3, pp. 23-28)',
+        description: 'Students with baseline non-regrouping errors or place-value decomposition gaps.',
+        students: [],
+      },
+      {
+        groupId: 'INSUFFICIENT_EVIDENCE_GROUP',
+        name: 'Pending Clinical Check-in / Inconclusive Evidence',
+        targetSkill: 'DIAGNOSTIC_INQUIRY',
+        prerequisiteSkill: 'SINGLE_DIGIT_FACTS',
+        recommendedActivity: '1-on-1 Think-Aloud Verbal Diagnostic Check-in',
+        description: 'Students with incomplete assessment evidence or pervasive hesitancy/guessing.',
+        students: [],
+      },
+      {
+        groupId: 'SECURE_EXTENSION_GROUP',
+        name: 'Place Value Subtraction Secure (Extensions)',
+        targetSkill: 'WORD_PROBLEM_APPLICATION',
+        prerequisiteSkill: 'ONES_REGROUPING',
+        recommendedActivity: '3-Digit Subtraction and Multi-Step Word Problems (NCERT p. 154)',
+        description: 'Students demonstrating consistent accuracy across canonical and transfer subtraction probes.',
+        students: [],
+      },
+    ];
+
+    for (const s of students) {
+      // Check manual teacher override
+      const manualGroup = memoryStore.groupOverrides.get(s.id);
+      if (manualGroup) {
+        const targetG = groups.find(g => g.groupId === manualGroup.groupId);
+        if (targetG) {
+          targetG.students.push({
+            ...s,
+            reason: `Manually placed by teacher: ${manualGroup.reason || 'Instructional tier adaptation.'}`,
+            isManualOverride: true,
+          });
+          continue;
+        }
+      }
+
+      // Check latest session diagnosis
+      const diag = s.latestDiagnosis || (s.lastSessionId ? memoryStore.sessionDiagnoses.get(s.lastSessionId) : null);
+      const misc = diag ? (diag.candidate_misconception || diag.ruleId) : null;
+      const status = diag ? diag.diagnostic_status : null;
+      const allCorr = diag ? diag.all_correct : (s.progress === 100);
+
+      if (misc === 'SMALLER_FROM_LARGER' || status === 'SUPPORTED_HYPOTHESIS' && misc === 'SMALLER_FROM_LARGER') {
+        groups[0].students.push({
+          ...s,
+          reason: 'Matches systematic Smaller-From-Larger pattern across regrouping probes.',
+        });
+      } else if (misc === 'BORROW_WITHOUT_DECREMENT' || status === 'SUPPORTED_HYPOTHESIS' && misc === 'BORROW_WITHOUT_DECREMENT') {
+        groups[1].students.push({
+          ...s,
+          reason: 'Matches Borrow-Without-Decrement pattern (forgot to reduce tens column).',
+        });
+      } else if (allCorr || status === 'NO_TARGET_PATTERN_DETECTED') {
+        groups[4].students.push({
+          ...s,
+          reason: 'Demonstrated consistent accuracy across all subtraction probes.',
+        });
+      } else if (status === 'AMBIGUOUS_PATTERN' || s.progress < 50) {
+        groups[2].students.push({
+          ...s,
+          reason: 'Non-regrouping errors or inconsistent patterns indicate foundational place value review needed.',
+        });
+      } else {
+        groups[3].students.push({
+          ...s,
+          reason: 'Awaiting complete assessment session or verbal reasoning verification.',
+        });
+      }
+    }
+
+    res.json({ ok: true, groups });
+  } catch (err) {
+    console.error('Error grouping students:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// G2. Teacher Manual Grouping Override
+app.post('/api/groupings/override', async (req, res) => {
+  try {
+    const { studentId, groupId, reason = '' } = req.body;
+    if (!studentId || !groupId) {
+      return res.status(400).json({ ok: false, error: 'studentId and groupId are required.' });
+    }
+    memoryStore.groupOverrides.set(studentId, {
+      groupId,
+      reason,
+      overriddenAt: new Date().toISOString(),
+    });
+    res.json({ ok: true, studentId, groupId, reason });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 app.get('/api/reports/:responseId', async (req, res) => {
   const { responseId } = req.params;
 
@@ -411,6 +915,54 @@ app.get('/api/reports/student/:studentId', async (req, res) => {
     classLabel: 'Grade 3 - Section 3A',
   };
 
+  // Check if student has a completed assessment session
+  let latestSession = null;
+  for (const sess of memoryStore.sessions.values()) {
+    if (sess.studentId === studentId || sess.studentId.includes(studentId)) {
+      if (!latestSession || new Date(sess.createdAt) > new Date(latestSession.createdAt)) {
+        latestSession = sess;
+      }
+    }
+  }
+
+  const sessionDiag = latestSession ? memoryStore.sessionDiagnoses.get(latestSession.id) : null;
+  const interventions = memoryStore.interventions.get(studentId) || [];
+  const reassessmentComp = latestSession ? memoryStore.reassessments.get(latestSession.id) : null;
+
+  if (latestSession && sessionDiag) {
+    const override = latestResponse ? (memoryStore.overrides.get(latestResponse.id) || null) : null;
+    return res.json({
+      ok: true,
+      student,
+      session: latestSession,
+      response: latestResponse || (latestSession.responses.length > 0 ? latestSession.responses[latestSession.responses.length - 1] : null),
+      responses: latestSession.responses,
+      report: {
+        status: sessionDiag.all_correct ? 'Pass' : 'Fail',
+        diagnostic_status: sessionDiag.diagnostic_status,
+        ruleId: sessionDiag.candidate_misconception || (sessionDiag.all_correct ? 'CORRECT' : 'PENDING_EVALUATION'),
+        candidate_misconception: sessionDiag.candidate_misconception,
+        evidence_strength: sessionDiag.evidence_strength || 'WEAK',
+        confidence: sessionDiag.confidence || 'LOW',
+        observations: sessionDiag.summary,
+        evidence: {
+          supporting: sessionDiag.supporting_evidence || [],
+          contradictory: sessionDiag.contradictory_evidence || [],
+          missing: sessionDiag.missing_evidence || [],
+        },
+        skill_mastery: sessionDiag.skill_mastery || {},
+        related_prerequisite_skill: sessionDiag.related_prerequisite_skill || null,
+        recommended_intervention: sessionDiag.recommended_intervention || null,
+        followUpQuestion: sessionDiag.recommended_follow_up_question || 'Can you explain the steps you used?',
+        suggestedActivity: sessionDiag.recommended_intervention?.teacher_guidance || 'Practice column regrouping with physical base-10 materials.',
+        alternatives: ['Calculation slip', 'Guessing'],
+      },
+      interventions,
+      reassessmentComparison: reassessmentComp || null,
+      override,
+    });
+  }
+
   if (latestResponse) {
     const diag = memoryStore.diagnoses.get(latestResponse.id);
     const override = memoryStore.overrides.get(latestResponse.id) || null;
@@ -419,6 +971,8 @@ app.get('/api/reports/student/:studentId', async (req, res) => {
       student,
       response: latestResponse,
       report: diag || null,
+      interventions,
+      reassessmentComparison: null,
       override,
     });
   }

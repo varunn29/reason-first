@@ -26,6 +26,29 @@ const inMemory = {
   classrooms: new Map(),
 };
 
+// Seed default in-memory demo teacher & classroom for dev / testing
+const demoSalt = crypto.randomBytes(16).toString('hex');
+const demoKey = crypto.scryptSync('password123', demoSalt, 64).toString('hex');
+const demoTeacher = {
+  id: 'teacher_demo_default',
+  name: 'Anita Sharma',
+  email: 'teacher@demo.com',
+  passwordHash: demoSalt + ':' + demoKey,
+  schoolName: 'Govt. Primary School, Ward 4',
+  createdAt: new Date().toISOString(),
+};
+const demoClassroom = {
+  id: 'class_demo_3a',
+  teacherId: demoTeacher.id,
+  classCode: '3A',
+  name: 'Grade 3 - Section 3A',
+  grade: 3,
+  academicYear: '2026-2027',
+  createdAt: new Date().toISOString(),
+};
+inMemory.teachers.set(demoTeacher.email, demoTeacher);
+inMemory.classrooms.set('3A', demoClassroom);
+
 // ---------------------------------------------------------------------------
 // Crypto Utilities (Scrypt password hashing + HMAC-SHA256 Token)
 // ---------------------------------------------------------------------------

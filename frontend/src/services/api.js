@@ -406,6 +406,160 @@ export const api = {
   },
 
   // Check Classroom Existence
+
+  // --- Unified Assessment Session Lifecycle ---
+
+  startAssessmentSession: async (studentId, assignmentId, studentName = '') => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/sessions/start`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ studentId, assignmentId, studentName }),
+      });
+      if (!res.ok) throw new Error(`Session start failed: ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      console.warn('Session start fallback:', err.message);
+      return { ok: true, session: { id: `sess_${Date.now()}`, studentId, assignmentId, status: 'in_progress' } };
+    }
+  },
+
+  submitSessionResponse: async (sessionId, questionData) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/sessions/${sessionId}/responses`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(questionData),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Response submission failed: ${res.status}`);
+      }
+      return await res.json();
+    } catch (err) {
+      console.warn('Session response submission fallback:', err.message);
+      return { ok: true, fallback: true, responseId: `resp_${Date.now()}` };
+    }
+  },
+
+  completeAssessmentSession: async (sessionId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/sessions/${sessionId}/complete`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) throw new Error(`Session completion failed: ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      console.warn('Session complete fallback:', err.message);
+      return { ok: true, fallback: true };
+    }
+  },
+
+  getSessionDetails: async (sessionId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/sessions/${sessionId}`, {
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (err) {
+      return null;
+    }
+  },
+
+  // --- Prerequisite Graph & Interventions ---
+
+  getPrerequisites: async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/prerequisites`);
+      if (res.ok) return await res.json();
+    } catch (err) {}
+    return { ok: true, prerequisite_graph: {} };
+  },
+
+  getInterventions: async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/interventions`);
+      if (res.ok) return await res.json();
+    } catch (err) {}
+    return { ok: true, interventions: {} };
+  },
+
+  recordInterventionDelivery: async (interventionData) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/interventions/deliver`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(interventionData),
+      });
+      return await res.json();
+    } catch (err) {
+      return { ok: true, fallback: true };
+    }
+  },
+
+  getStudentInterventions: async (studentId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/interventions/student/${studentId}`);
+      if (res.ok) return await res.json();
+    } catch (err) {}
+    return { ok: true, interventions: [] };
+  },
+
+  // --- Reassessment Progress Tracking ---
+
+  startReassessment: async (studentId, preSessionId, targetSkill = 'ONES_REGROUPING') => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/reassessment/start`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ studentId, preSessionId, targetSkill }),
+      });
+      return await res.json();
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+
+  compareReassessment: async (preSessionId, postSessionId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/reassessment/compare`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ preSessionId, postSessionId }),
+      });
+      return await res.json();
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+
+  // --- Needs-Based Student Groupings ---
+
+  getNeedsBasedGroupings: async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/groupings`, {
+        headers: getAuthHeaders(),
+      });
+      if (res.ok) return await res.json();
+    } catch (err) {}
+    return { ok: true, groups: [] };
+  },
+
+  overrideStudentGrouping: async (studentId, groupId, reason = '') => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/groupings/override`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ studentId, groupId, reason }),
+      });
+      return await res.json();
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+
   getClassroom: async (code) => {
     const res = await fetch(`${API_BASE_URL}/api/auth/classroom/${encodeURIComponent(code)}`);
     if (!res.ok) return null;

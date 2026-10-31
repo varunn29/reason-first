@@ -24,6 +24,8 @@ from math_diagnostic.engine import (
     CH07_CH08_PROBES,
     CH09_CH10_PROBES,
     CH11_CH13_CH14_PROBES,
+    INTERVENTION_CATALOGUE,
+    PREREQUISITE_GRAPH,
     SIG_BORROW_WITHOUT_DECREMENT,
     SIG_OPERATION_CONFUSION_ADD,
     SIG_SMALLER_FROM_LARGER,
@@ -31,9 +33,12 @@ from math_diagnostic.engine import (
     STATUS_SUPPORTED_HYPOTHESIS,
     TEXTBOOK_PROBES,
     calculate_signature_answer,
+    compare_reassessment,
     diagnose_responses,
+    diagnose_session,
     diagnose_single_response,
     get_calibrated_model,
+    reconcile_reasoning,
 )
 
 PORT = int(os.environ.get("PORT", 8000))
@@ -279,16 +284,58 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
                 "probes": COMBINED_PROBE_METADATA,
             }
             self.wfile.write(json.dumps(payload).encode("utf-8"))
+        elif self.path == "/prerequisites":
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "ok": True,
+                "prerequisite_graph": PREREQUISITE_GRAPH,
+            }).encode("utf-8"))
+        elif self.path == "/interventions":
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "ok": True,
+                "interventions": INTERVENTION_CATALOGUE,
+            }).encode("utf-8"))
         else:
             self._set_headers(404)
             self.wfile.write(json.dumps({"error": "Not Found"}).encode("utf-8"))
 
     def do_POST(self):
-        if self.path in ("/predict", "/diagnose"):
-            try:
-                content_length = int(self.headers.get("Content-Length", 0))
-                body = self.rfile.read(content_length).decode("utf-8")
-                data = json.loads(body) if body else {}
+        try:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length).decode("utf-8")
+            data = json.loads(body) if body else {}
+
+            if self.path in ("/diagnose/session", "/api/diagnose/session"):
+                session_result = diagnose_session(data)
+                self._set_headers(200)
+                self.wfile.write(json.dumps(session_result).encode("utf-8"))
+                return
+
+            if self.path in ("/diagnose/reconcile", "/api/diagnose/reconcile"):
+                init_diag = data.get("diagnosis", {})
+                expl = data.get("explanation", "")
+                turns = data.get("chat_turns", [])
+                reconciled = reconcile_reasoning(init_diag, expl, turns)
+                self._set_headers(200)
+                self.wfile.write(json.dumps(reconciled).encode("utf-8"))
+                return
+
+            if self.path in ("/diagnose/reassess", "/api/diagnose/reassess"):
+                pre_diag = data.get("pre", {})
+                post_diag = data.get("post", {})
+                comparison = compare_reassessment(pre_diag, post_diag)
+                self._set_headers(200)
+                self.wfile.write(json.dumps(comparison).encode("utf-8"))
+                return
+
+            if self.path in ("/predict", "/diagnose"):
+                # If session-based multi-response payload
+                if "responses" in data and (isinstance(data["responses"], list) or len(data["responses"]) > 1):
+                    session_result = diagnose_session(data)
+                    self._set_headers(200)
+                    self.wfile.write(json.dumps(session_result).encode("utf-8"))
+                    return
 
                 # Check if payload contains all 5 probes
                 probe_dict = {}
@@ -300,11 +347,9 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
                 if len(probe_dict) >= len(APPROVED_PROBES) and all(
                     k in probe_dict for k in APPROVED_PROBES.keys()
                 ):
-                    # Run full 5-probe diagnostic engine
                     engine_result = diagnose_responses({k: int(v) for k, v in probe_dict.items()})
                     response_payload = format_full_diagnosis(engine_result)
                 else:
-                    # Single answer or partial assessment
                     qid = str(data.get("questionId") or data.get("probe_id") or "")
                     raw_ans = data.get("answer")
                     if raw_ans is None:
@@ -327,25 +372,26 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
 
                 self._set_headers(200)
                 self.wfile.write(json.dumps(response_payload).encode("utf-8"))
+                return
 
-            except Exception as exc:
-                import traceback
-                traceback.print_exc()
-                self._set_headers(500)
-                err_payload = {
-                    "error": str(exc),
-                    "observations": f"Engine error: {str(exc)}",
-                    "evidence": {},
-                    "alternatives": [],
-                    "confidence": "LOW",
-                    "followUpQuestion": "Please re-attempt the diagnostic question.",
-                    "suggestedActivity": "Manual teacher review.",
-                    "ruleId": "ERROR",
-                }
-                self.wfile.write(json.dumps(err_payload).encode("utf-8"))
-        else:
             self._set_headers(404)
-            self.wfile.write(json.dumps({"error": "Not Found"}).encode("utf-8"))
+            self.wfile.write(json.dumps({"error": "Endpoint not found"}).encode("utf-8"))
+
+        except Exception as exc:
+            import traceback
+            traceback.print_exc()
+            self._set_headers(500)
+            err_payload = {
+                "error": str(exc),
+                "observations": f"Engine error: {str(exc)}",
+                "evidence": {},
+                "alternatives": [],
+                "confidence": "LOW",
+                "followUpQuestion": "Please re-attempt the diagnostic question.",
+                "suggestedActivity": "Manual teacher review.",
+                "ruleId": "ERROR",
+            }
+            self.wfile.write(json.dumps(err_payload).encode("utf-8"))
 
 
 def run():

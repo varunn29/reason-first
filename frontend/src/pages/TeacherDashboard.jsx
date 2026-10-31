@@ -1,5 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Bell, LogOut, Plus, Users, Clock, BookOpen, KeyRound, CheckCircle2, ChevronRight, RefreshCw, Copy, Check } from 'lucide-react';
+import { 
+  Bell, 
+  LogOut, 
+  Plus, 
+  Users, 
+  Clock, 
+  BookOpen, 
+  KeyRound, 
+  CheckCircle2, 
+  ChevronRight, 
+  RefreshCw,
+  Copy,
+  Check,
+  Layers,
+  ShieldCheck,
+  UserCheck
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileWrapper from '../components/MobileWrapper';
 import BottomNav from '../components/BottomNav';
@@ -16,7 +32,11 @@ const TeacherDashboard = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [studentFilter, setStudentFilter] = useState('ALL'); // 'ALL' or 'PENDING'
+  const [activeTab, setActiveTab] = useState('ROSTER'); // 'ROSTER' or 'GROUPINGS'
+  const [groupings, setGroupings] = useState([]);
+  const [isLoadingGroupings, setIsLoadingGroupings] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [groupOverrideMsg, setGroupOverrideMsg] = useState('');
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const { currentUser, classroom, logout } = useAuth();
@@ -36,26 +56,31 @@ const TeacherDashboard = () => {
     }
   };
 
+  const fetchGroupings = async () => {
+    setIsLoadingGroupings(true);
+    try {
+      const data = await api.getNeedsBasedGroupings();
+      if (data && data.groups) {
+        setGroupings(data.groups);
+      }
+    } catch (err) {
+      console.warn('Groupings fetch error:', err);
+    } finally {
+      setIsLoadingGroupings(false);
+    }
+  };
+
   useEffect(() => {
     fetchDashboard();
+    fetchGroupings();
 
-    // Automatically refresh student list when window regains focus (e.g. after student quiz in another tab)
     const handleFocus = () => {
       fetchDashboard(true);
+      fetchGroupings();
     };
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
   }, []);
-
-  const handleCopyCode = () => {
-    if (classCode) {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(classCode);
-      }
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   const statIcons = { Users, Clock, BookOpen };
 
@@ -82,9 +107,16 @@ const TeacherDashboard = () => {
     }
   };
 
+  const handleCopyCode = () => {
+    if (!classCode) return;
+    navigator.clipboard.writeText(classCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const displayName = currentUser?.name || teacher?.name || 'Educator';
   const schoolName = currentUser?.schoolName || teacher?.schoolName || 'Primary School';
-  const classCode = dashboardData?.teacher?.classCode || currentUser?.classCode || classroom?.classCode || teacher?.classCode || '3A';
+  const classCode = currentUser?.classCode || classroom?.classCode || teacher?.classCode || '3A';
 
   const handleLogout = () => {
     logout();
@@ -96,7 +128,7 @@ const TeacherDashboard = () => {
       {/* Teacher AI Consent Modal (shown once on first visit) */}
       <TeacherConsentModal />
 
-      <div className="pb-36">
+      <div className="pb-28">
         {/* Header */}
         <div className="px-5 pt-8 pb-3 flex justify-between items-center bg-bgMain">
           <div>
@@ -135,152 +167,268 @@ const TeacherDashboard = () => {
 
             <button 
               type="button"
-              aria-label="Refresh Dashboard"
-              onClick={() => { setIsRefreshing(true); fetchDashboard(); }}
-              className={`p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-primary transition active:scale-95 ${isRefreshing ? 'animate-spin text-primary' : ''}`}
-            >
-              <RefreshCw size={20} />
-            </button>
-            <button 
-              type="button"
               aria-label="Logout"
-              onClick={handleLogout}
-              className="p-2 bg-red-50 text-danger rounded-full shadow-sm hover:bg-red-100 transition active:scale-95 border border-red-100"
+              onClick={handleLogout} 
+              title="Log out"
+              className="p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-danger transition active:scale-95"
             >
-              <LogOut size={20} />
+              <LogOut size={18} />
+            </button>
+            <img 
+              src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${displayName.split(' ')[0]}`} 
+              alt="Profile" 
+              className="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-blue-50 ml-1" 
+            />
+          </div>
+        </div>
+
+        {/* Active Class Code Banner with Copy Button */}
+        <div className="px-5 mb-3">
+          <div className="bg-white rounded-2xl p-3 border border-blue-100 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <KeyRound size={16} />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Student Join Code</p>
+                <p className="text-xs font-semibold text-darkText">Tell students to enter this code:</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleCopyCode}
+              title="Click to copy join code"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary text-white text-sm font-extrabold tracking-wider shadow-sm hover:bg-primary/90 transition active:scale-95 cursor-pointer"
+            >
+              <span>{classCode}</span>
+              {copied ? <Check size={14} className="text-green-200" /> : <Copy size={13} className="opacity-80" />}
             </button>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="px-5 grid grid-cols-3 gap-2.5 mb-6">
-          {stats.map((stat) => {
-            const IconComponent = statIcons[stat.icon] || Users;
-            const isClickable = stat.label === 'Pending Reviews' || stat.label === 'Total Students' || stat.label === 'Total Assignments';
-            const isActive = (stat.label === 'Pending Reviews' && studentFilter === 'PENDING') ||
-                             (stat.label === 'Total Students' && studentFilter === 'ALL');
+        {/* Active Assignment Pill */}
+        <div className="px-5 mb-4">
+          <div 
+            onClick={() => navigate('/create')}
+            className="bg-primary/5 border border-primary/20 rounded-2xl p-3 flex justify-between items-center cursor-pointer hover:bg-primary/10 transition"
+          >
+            <div>
+              <span className="text-[10px] font-bold text-primary tracking-wider uppercase block">Active Diagnostic Track</span>
+              <p className="text-xs font-bold text-darkText mt-0.5">
+                {currentAssignment?.title || currentAssignment?.topic || 'Class 3 Subtraction Diagnostic with Regrouping'}
+              </p>
+            </div>
+            <span className="text-[10px] font-semibold text-primary bg-white px-2.5 py-1 rounded-full shadow-xs">
+              {currentAssignment?.questions?.length || 5} Probes
+            </span>
+          </div>
+        </div>
 
+        {/* Stats Cards */}
+        <div className="px-5 grid grid-cols-3 gap-3 mb-5">
+          {stats.map((stat) => {
+            const Icon = statIcons[stat.icon] || Users;
+            const isFilterActive = stat.label === 'Pending Reviews' && studentFilter === 'PENDING';
             return (
               <div 
                 key={stat.id} 
                 onClick={() => handleStatClick(stat.label)}
-                className={`bg-white rounded-3xl p-3.5 flex flex-col justify-between shadow-sm border transition relative ${
-                  isActive ? 'border-primary ring-2 ring-primary/20' : 'border-gray-50'
-                } ${isClickable ? 'cursor-pointer hover:border-blue-200 active:scale-95' : ''}`}
+                className={`p-3 rounded-2xl ${stat.bgColor} flex flex-col justify-between cursor-pointer transition-transform hover:scale-[1.03] active:scale-95 ${
+                  isFilterActive ? 'ring-2 ring-orange-400 shadow-sm' : ''
+                }`}
+                title={`Click to filter by ${stat.label}`}
               >
-                <div className="flex justify-between items-start">
-                  <span className="text-xl font-extrabold text-darkText tracking-tight">{stat.value}</span>
-                  <div className={`p-1.5 rounded-xl ${stat.bgColor} ${stat.iconColor}`}>
-                    <IconComponent size={14} />
-                  </div>
+                <div className={`w-8 h-8 rounded-full bg-white flex items-center justify-center ${stat.iconColor} mb-2 shadow-sm`}>
+                  <Icon size={16} />
                 </div>
-                <div className="mt-2">
-                  <p className="text-[11px] font-semibold text-gray-600 leading-tight">{stat.label}</p>
+                <div>
+                  <h3 className="text-xl font-bold text-darkText">{stat.value}</h3>
+                  <p className="text-[10px] text-gray-600 font-medium leading-tight mt-1">{stat.label}</p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Active Class Assignment Banner */}
-        <div className="px-5 mb-5">
-          <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-50 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-0.5">Active Assignment</span>
-              <h2 className="text-sm font-bold text-darkText leading-tight">
-                {currentAssignment?.topic || 'Class 3 Subtraction Diagnostic'}
-              </h2>
-              <p className="text-[11px] text-gray-400 font-medium mt-0.5">
-                5 diagnostic probes active
-              </p>
-            </div>
-            <button 
+        {/* View Switcher: Student Roster vs Needs-Based Groupings */}
+        <div className="px-5 mb-4">
+          <div className="bg-gray-100 p-1 rounded-2xl flex text-xs font-bold">
+            <button
               type="button"
-              onClick={() => navigate('/create')}
-              className="p-2.5 bg-blue-50 text-primary hover:bg-blue-100 rounded-2xl transition active:scale-95"
+              onClick={() => setActiveTab('ROSTER')}
+              className={`flex-1 py-2 rounded-xl transition flex items-center justify-center gap-1.5 ${
+                activeTab === 'ROSTER' 
+                  ? 'bg-white text-darkText shadow-sm' 
+                  : 'text-gray-500 hover:text-darkText'
+              }`}
             >
-              <ChevronRight size={18} />
+              <Users size={14} />
+              Student Roster ({allStudents.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => { setActiveTab('GROUPINGS'); fetchGroupings(); }}
+              className={`flex-1 py-2 rounded-xl transition flex items-center justify-center gap-1.5 ${
+                activeTab === 'GROUPINGS' 
+                  ? 'bg-white text-primary shadow-sm' 
+                  : 'text-gray-500 hover:text-darkText'
+              }`}
+            >
+              <Layers size={14} />
+              Needs-Based Groups ({groupings.length})
             </button>
           </div>
-        </div>
-
-        {/* Student Section Header */}
-        <div className="px-5">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-sm font-bold text-darkText flex items-center gap-2">
-              <span>Class Roster</span>
-              <span className="text-[11px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                {students.length}
-              </span>
-            </h2>
-
-            {studentFilter === 'PENDING' && (
-              <button 
-                type="button"
-                onClick={() => setStudentFilter('ALL')}
-                className="text-[11px] font-bold text-primary hover:underline"
-              >
-                Show All Students
-              </button>
-            )}
-          </div>
-
-          {isLoading ? (
-            <div>
-              <SkeletonLoader />
-              <SkeletonLoader />
-              <SkeletonLoader />
-            </div>
-          ) : students.length === 0 ? (
-            <div className="bg-white rounded-3xl p-8 text-center border-2 border-dashed border-gray-200 my-4 mb-28 shadow-sm animate-fade-in relative z-10">
-              <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
-                <Users size={30} />
-              </div>
-              <h3 className="text-base font-bold text-darkText mb-1.5">No Students Have Joined Yet</h3>
-              <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed mb-6">
-                No students have joined your class yet. Share your Class Code to get started.
-              </p>
-              
-              <div className="flex flex-col items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleCopyCode}
-                  className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-blue-50/80 hover:bg-blue-100 border border-blue-200 rounded-2xl text-xs font-bold text-primary active:scale-95 transition shadow-sm cursor-pointer"
-                  title="Click to copy join code"
-                >
-                  <KeyRound size={16} className="text-primary" />
-                  Join Code: <span className="font-extrabold text-primary tracking-widest text-base">{classCode}</span>
-                  {copied ? (
-                    <span className="flex items-center gap-1 text-[11px] text-green-700 bg-green-100/90 px-2 py-0.5 rounded-full font-semibold ml-1">
-                      <Check size={12} /> Copied!
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full font-medium ml-1 border border-gray-200">
-                      <Copy size={11} /> Tap to Copy
-                    </span>
-                  )}
-                </button>
-                <span className="text-[10px] text-gray-400 font-medium">Students enter this code on the student login screen</span>
-              </div>
-            </div>
-          ) : (
-            <div>
-              {students.map((student) => {
-                const sId = student.id || `student_${student.name?.toLowerCase().split(' ')[0]}`;
-                const sName = student.name || student.displayName;
-                return (
-                  <StudentCard 
-                    key={student.id} 
-                    student={student} 
-                    onClick={() => navigate(`/report?studentId=${sId}&name=${encodeURIComponent(sName)}`, { 
-                      state: { studentId: sId, studentName: sName } 
-                    })}
-                  />
-                );
-              })}
-            </div>
+          {groupOverrideMsg && (
+            <p className="text-[10px] text-green-700 font-bold text-center mt-1 animate-fade-in">
+              {groupOverrideMsg}
+            </p>
           )}
         </div>
+
+        {/* Tab Content: Needs-Based Flexible Groupings */}
+        {activeTab === 'GROUPINGS' ? (
+          <div className="px-5 space-y-4">
+            <div className="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
+              <span className="font-bold flex items-center gap-1.5 text-primary mb-1">
+                <ShieldCheck size={14} /> NCERT Flexible Learning Groups
+              </span>
+              Students are grouped dynamically by shared underlying conceptual hurdle rather than generic marks, enabling targeted small-group clinical intervention.
+            </div>
+
+            {isLoadingGroupings ? (
+              <div>
+                <SkeletonLoader />
+                <SkeletonLoader />
+              </div>
+            ) : groupings.length === 0 ? (
+              <div className="bg-white rounded-3xl p-6 text-center border border-gray-100 shadow-sm">
+                <p className="text-xs text-gray-500">No active student groupings available yet. Run student assessments first.</p>
+              </div>
+            ) : (
+              groupings.map((group) => {
+                const count = group.students?.length || 0;
+                return (
+                  <div key={group.id} className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+                        <h3 className="text-xs font-bold text-darkText">{group.name}</h3>
+                      </div>
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                        {count} Student{count !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-2xl p-3 border border-gray-100 mb-3 text-[11px] space-y-1">
+                      <p className="text-gray-700">
+                        <span className="font-bold text-darkText">Pedagogical Goal:</span> {group.pedagogicalGoal}
+                      </p>
+                      <p className="text-gray-600">
+                        <span className="font-bold text-darkText">Recommended NCERT Activity:</span> {group.recommendedActivity}
+                      </p>
+                    </div>
+
+                    {count === 0 ? (
+                      <p className="text-[10px] text-gray-400 italic">No students currently in this tier.</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {group.students.map((st) => (
+                          <div 
+                            key={st.id} 
+                            className="flex items-center justify-between p-2 rounded-xl bg-gray-50/80 hover:bg-gray-100 transition cursor-pointer"
+                            onClick={() => navigate(`/report?studentId=${st.id}&name=${encodeURIComponent(st.name)}`, { 
+                              state: { studentId: st.id, studentName: st.name } 
+                            })}
+                          >
+                            <div className="flex items-center gap-2">
+                              <img 
+                                src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${st.name.split(' ')[0]}`} 
+                                alt={st.name} 
+                                className="w-6 h-6 rounded-full bg-white border border-gray-200" 
+                              />
+                              <span className="text-xs font-bold text-darkText">{st.name}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[10px] text-primary font-bold">
+                              <span>View Report</span>
+                              <ChevronRight size={12} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        ) : (
+          /* Tab Content: Student Roster */
+          <div className="px-5">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold text-darkText">My Students</h2>
+                <button 
+                  type="button" 
+                  onClick={() => { setIsRefreshing(true); fetchDashboard(); }}
+                  title="Refresh student list"
+                  className={`p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-primary transition ${isRefreshing ? 'animate-spin text-primary' : ''}`}
+                >
+                  <RefreshCw size={14} />
+                </button>
+                {studentFilter === 'PENDING' && (
+                  <span className="text-[10px] text-orange-600 font-semibold">Filtering: Needs Review</span>
+                )}
+              </div>
+              {allStudents.length > 0 && (
+                <button 
+                  type="button"
+                  onClick={() => setStudentFilter((prev) => (prev === 'PENDING' ? 'ALL' : 'PENDING'))}
+                  className="text-xs font-semibold text-primary hover:underline cursor-pointer"
+                >
+                  {studentFilter === 'PENDING' ? 'Show All Students' : 'Filter Pending'}
+                </button>
+              )}
+            </div>
+
+            {isLoading ? (
+              <div>
+                <SkeletonLoader />
+                <SkeletonLoader />
+                <SkeletonLoader />
+              </div>
+            ) : students.length === 0 ? (
+              <div className="bg-white rounded-3xl p-8 text-center border-2 border-dashed border-gray-200 my-4 shadow-sm animate-fade-in">
+                <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                  <Users size={30} />
+                </div>
+                <h3 className="text-base font-bold text-darkText mb-1.5">No Students Have Joined Yet</h3>
+                <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed mb-5">
+                  No students have joined your class yet. Share class code <span className="font-extrabold text-primary px-2 py-0.5 bg-blue-50 rounded-lg">{classCode}</span> to get started.
+                </p>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700">
+                  <KeyRound size={15} className="text-primary" />
+                  Join Code: <span className="font-extrabold text-primary tracking-widest">{classCode}</span>
+                </div>
+              </div>
+            ) : (
+              <div>
+                {students.map((student) => {
+                  const sId = student.id || `student_${student.name?.toLowerCase().split(' ')[0]}`;
+                  const sName = student.name || student.displayName;
+                  return (
+                    <StudentCard 
+                      key={student.id} 
+                      student={student} 
+                      onClick={() => navigate(`/report?studentId=${sId}&name=${encodeURIComponent(sName)}`, { 
+                        state: { studentId: sId, studentName: sName } 
+                      })}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Floating Action Button */}
         <div className="fixed bottom-20 w-full max-w-[480px] px-5 flex justify-end z-40 pointer-events-none">
