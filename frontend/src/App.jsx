@@ -26,6 +26,7 @@ function App() {
             <Route path="/" element={<StudentLogin />} />
             <Route path="/student" element={<StudentInterface />} />
             <Route path="/solve" element={<QuestionSolving />} />
+            <Route path="/quiz" element={<QuestionSolving />} />
             <Route path="/chat" element={<ChatScreen />} />
 
             {/* Teacher auth & dashboard routes */}
