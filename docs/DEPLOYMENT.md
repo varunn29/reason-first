@@ -133,3 +133,4 @@ After deployment, verify that all three tiers are communicating:
 - [ ] **Session Submission**: Complete an assessment — diagnostic result status shows `SUPPORTED_HYPOTHESIS` / `CANDIDATE_MISCONCEPTION`.
 - [ ] **Teacher Dashboard**: Visit `/dashboard` — displays class mastery, misconception radar, and intervention tracker.
 - [ ] **Deep Link Refresh**: Refresh browser on `/dashboard` or `/report` — page reloads cleanly without 404 errors.
+

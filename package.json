@@ -5,6 +5,7 @@
   "scripts": {
     "ml": "python ml_model/math-diagnostic-ml/server.py",
     "backend": "npm --prefix backend run dev",
+    "migrate:db": "npm --prefix backend run migrate",
     "frontend": "npm --prefix frontend run dev",
     "build:frontend": "npm --prefix frontend run build"
   },

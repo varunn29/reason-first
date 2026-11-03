@@ -26,7 +26,37 @@ try {
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
+
+// Production Security Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  next();
+});
+
+// Production In-Memory Rate Limiter (Protects API from traffic spikes and abuse)
+const rateLimitMap = new Map();
+function rateLimiter({ windowMs = 60000, max = 300 } = {}) {
+  return (req, res, next) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'local';
+    const key = `${ip}:${req.path}`;
+    const now = Date.now();
+    let record = rateLimitMap.get(key);
+    if (!record || now - record.startTime > windowMs) {
+      record = { count: 1, startTime: now };
+    } else {
+      record.count++;
+    }
+    rateLimitMap.set(key, record);
+    if (record.count > max) {
+      return res.status(429).json({ ok: false, error: 'Too many requests. Please slow down.' });
+    }
+    next();
+  };
+}
+app.use('/api/', rateLimiter({ windowMs: 60000, max: 300 }));
 
 // In-memory cache for offline/dev resilience when DB is not configured
 const memoryStore = {
@@ -485,6 +515,52 @@ app.post('/api/sessions/:sessionId/complete', async (req, res) => {
           `UPDATE assessment_sessions SET status = 'completed', completed_at = NOW() WHERE id = $1`,
           [sessionId]
         );
+        if (diagnosis) {
+          const diagId = `sdiag_${randomUUID()}`;
+          await pool.query(
+            `INSERT INTO session_diagnoses (
+              id, session_id, diagnostic_status, candidate_misconception,
+              evidence_strength, confidence, all_correct, probes_evaluated,
+              correct_count, supporting_evidence, contradictory_evidence,
+              missing_evidence, skill_mastery, related_prerequisite_skill,
+              recommended_intervention, raw_diagnosis_json
+            ) VALUES (
+              $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
+            ) ON CONFLICT (session_id) DO UPDATE SET
+              diagnostic_status = EXCLUDED.diagnostic_status,
+              candidate_misconception = EXCLUDED.candidate_misconception,
+              evidence_strength = EXCLUDED.evidence_strength,
+              confidence = EXCLUDED.confidence,
+              all_correct = EXCLUDED.all_correct,
+              probes_evaluated = EXCLUDED.probes_evaluated,
+              correct_count = EXCLUDED.correct_count,
+              supporting_evidence = EXCLUDED.supporting_evidence,
+              contradictory_evidence = EXCLUDED.contradictory_evidence,
+              missing_evidence = EXCLUDED.missing_evidence,
+              skill_mastery = EXCLUDED.skill_mastery,
+              related_prerequisite_skill = EXCLUDED.related_prerequisite_skill,
+              recommended_intervention = EXCLUDED.recommended_intervention,
+              raw_diagnosis_json = EXCLUDED.raw_diagnosis_json;`,
+            [
+              diagId,
+              sessionId,
+              diagnosis.diagnostic_status || 'INSUFFICIENT_EVIDENCE',
+              diagnosis.candidate_misconception || null,
+              diagnosis.evidence_strength || 'WEAK',
+              diagnosis.confidence || 'LOW',
+              !!diagnosis.all_correct,
+              diagnosis.probes_evaluated || 0,
+              diagnosis.correct_count || 0,
+              JSON.stringify(diagnosis.supporting_evidence || []),
+              JSON.stringify(diagnosis.contradictory_evidence || []),
+              JSON.stringify(diagnosis.missing_evidence || []),
+              JSON.stringify(diagnosis.skill_mastery || {}),
+              JSON.stringify(diagnosis.related_prerequisite_skill || null),
+              JSON.stringify(diagnosis.recommended_intervention || null),
+              JSON.stringify(diagnosis),
+            ]
+          );
+        }
       } catch (dbErr) {
         console.warn('DB session complete update skipped:', dbErr.message);
       }
@@ -506,11 +582,47 @@ app.post('/api/sessions/:sessionId/complete', async (req, res) => {
 app.get('/api/sessions/:sessionId', async (req, res) => {
   try {
     const { sessionId } = req.params;
-    const session = memoryStore.sessions.get(sessionId);
+    let session = memoryStore.sessions.get(sessionId);
+    let diagnosis = memoryStore.sessionDiagnoses.get(sessionId) || session?.diagnosis || null;
+
+    if (!session && process.env.DATABASE_URL) {
+      try {
+        const sRes = await pool.query('SELECT * FROM assessment_sessions WHERE id = $1', [sessionId]);
+        if (sRes.rows.length > 0) {
+          const row = sRes.rows[0];
+          const rRes = await pool.query('SELECT * FROM responses WHERE session_id = $1 ORDER BY submitted_at ASC', [sessionId]);
+          session = {
+            id: row.id,
+            studentId: row.student_id,
+            assignmentId: row.assignment_id,
+            status: row.status,
+            createdAt: row.created_at,
+            completedAt: row.completed_at,
+            responses: rRes.rows.map(r => ({
+              id: r.id,
+              questionId: r.question_id,
+              answer: r.answer,
+              explanation: r.explanation,
+              submittedAt: r.submitted_at,
+            })),
+          };
+          memoryStore.sessions.set(sessionId, session);
+        }
+
+        const dRes = await pool.query('SELECT * FROM session_diagnoses WHERE session_id = $1', [sessionId]);
+        if (dRes.rows.length > 0) {
+          diagnosis = dRes.rows[0].raw_diagnosis_json || dRes.rows[0];
+          memoryStore.sessionDiagnoses.set(sessionId, diagnosis);
+        }
+      } catch (dbErr) {
+        console.warn('DB session fetch error:', dbErr.message);
+      }
+    }
+
     if (!session) {
       return res.status(404).json({ ok: false, error: 'Assessment session not found' });
     }
-    const diagnosis = memoryStore.sessionDiagnoses.get(sessionId) || session.diagnosis || null;
+
     res.json({ ok: true, session, diagnosis });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
@@ -574,6 +686,21 @@ app.post('/api/interventions/deliver', async (req, res) => {
     }
     memoryStore.interventions.get(studentId).push(record);
 
+    if (process.env.DATABASE_URL) {
+      try {
+        await pool.query(
+          `INSERT INTO intervention_records (
+            id, student_id, session_id, target_skill, misconception_id,
+            intervention_title, teacher_decision, teacher_notes, status, delivered_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+          ON CONFLICT (id) DO NOTHING;`,
+          [recordId, studentId, sessionId, targetSkill, misconceptionId, record.interventionTitle, teacherDecision, teacherNotes, status]
+        );
+      } catch (dbErr) {
+        console.warn('DB intervention save error:', dbErr.message);
+      }
+    }
+
     res.status(201).json({ ok: true, intervention: record });
   } catch (err) {
     console.error('Error recording intervention:', err);
@@ -585,7 +712,34 @@ app.post('/api/interventions/deliver', async (req, res) => {
 app.get('/api/interventions/student/:studentId', async (req, res) => {
   try {
     const { studentId } = req.params;
-    const history = memoryStore.interventions.get(studentId) || [];
+    let history = memoryStore.interventions.get(studentId) || [];
+
+    if (history.length === 0 && process.env.DATABASE_URL) {
+      try {
+        const dbRes = await pool.query(
+          'SELECT * FROM intervention_records WHERE student_id = $1 ORDER BY delivered_at DESC NULLS LAST, created_at DESC',
+          [studentId]
+        );
+        if (dbRes.rows.length > 0) {
+          history = dbRes.rows.map(row => ({
+            id: row.id,
+            studentId: row.student_id,
+            sessionId: row.session_id,
+            targetSkill: row.target_skill,
+            misconceptionId: row.misconception_id,
+            interventionTitle: row.intervention_title,
+            teacherDecision: row.teacher_decision,
+            teacherNotes: row.teacher_notes,
+            status: row.status,
+            deliveredAt: row.delivered_at || row.created_at,
+          }));
+          memoryStore.interventions.set(studentId, history);
+        }
+      } catch (dbErr) {
+        console.warn('DB fetch interventions error:', dbErr.message);
+      }
+    }
+
     res.json({ ok: true, interventions: history });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
@@ -653,6 +807,31 @@ app.post('/api/reassessment/compare', async (req, res) => {
     };
 
     memoryStore.reassessments.set(postSessionId, compRecord);
+
+    if (process.env.DATABASE_URL) {
+      try {
+        const studentId = comparison?.student_id || 'student_guest';
+        await pool.query(
+          `INSERT INTO reassessment_comparisons (
+            id, student_id, pre_session_id, post_session_id, comparison_outcome,
+            misconception_trend, teacher_summary, raw_comparison_json
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          ON CONFLICT (id) DO NOTHING;`,
+          [
+            compRecord.id,
+            studentId,
+            preSessionId,
+            postSessionId,
+            comparison?.outcome || 'REASSESSMENT_EVALUATED',
+            comparison?.trend || 'STABLE',
+            comparison?.teacher_summary || '',
+            JSON.stringify(comparison),
+          ]
+        );
+      } catch (dbErr) {
+        console.warn('DB reassessment save error:', dbErr.message);
+      }
+    }
 
     res.json({ ok: true, comparison: compRecord });
   } catch (err) {
@@ -1213,6 +1392,15 @@ try {
   console.warn('Auth routes not loaded:', err.message);
 }
 
+// 12. Centralized Production Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error('[UNHANDLED EXPRESS ERROR]', err);
+  res.status(err.status || 500).json({
+    ok: false,
+    error: process.env.NODE_ENV === 'production' ? 'An internal server error occurred' : err.message,
+  });
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, async () => {
   console.log(`\n========================================================`);
@@ -1239,11 +1427,13 @@ app.listen(PORT, async () => {
     console.log(`\x1b[33m[LLM STATUS] No API key found. Using deterministic simulator.\x1b[0m`);
   }
 
-  // 2. Database Status Check
+  // 2. Database Status Check & Auto Migration
   if (process.env.DATABASE_URL) {
     try {
       const res = await pool.query('SELECT NOW()');
       console.log(`\x1b[32m[DB STATUS] Connected to Neon Postgres (Server time: ${res.rows[0].now.toISOString()}).\x1b[0m`);
+      const migrateAll = require('./config/migrateAll');
+      await migrateAll();
     } catch (dbErr) {
       console.warn(`\x1b[33m[DB STATUS] Neon Postgres unreachable (${dbErr.message}). Using in-memory fallback.\x1b[0m`);
     }

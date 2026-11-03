@@ -7,7 +7,11 @@ Zero external dependencies (uses standard library http.server).
 import json
 import os
 import sys
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler
+try:
+    from http.server import ThreadingHTTPServer as ServerClass
+except ImportError:
+    from http.server import HTTPServer as ServerClass
 
 # Add src directory to python module path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -443,7 +447,9 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
 
 def run():
     server_address = ("", PORT)
-    httpd = HTTPServer(server_address, DiagnosticHandler)
+    httpd = ServerClass(server_address, DiagnosticHandler)
+    if hasattr(httpd, "daemon_threads"):
+        httpd.daemon_threads = True
     print(f"ML Diagnostic Server running on http://localhost:{PORT}")
     try:
         httpd.serve_forever()

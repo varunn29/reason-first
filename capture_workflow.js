@@ -1,6 +1,7 @@
 const puppeteer = require('./backend/node_modules/puppeteer');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 const OUTPUT_DIR = path.join(__dirname, 'workflow_screenshots');
 if (!fs.existsSync(OUTPUT_DIR)) {
@@ -14,8 +15,10 @@ async function captureWorkflow() {
 
   // Attempt using system Chrome if puppeteer default download is not present
   const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+  const uniqueProfileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rf_pup_'));
   const launchOptions = {
     headless: 'new',
+    userDataDir: uniqueProfileDir,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=430,932'],
     defaultViewport: {
       width: 430,
@@ -217,7 +220,10 @@ async function captureWorkflow() {
   } catch (err) {
     console.error('Error during workflow capture:', err);
   } finally {
-    await browser.close();
+    if (browser) await browser.close();
+    try {
+      fs.rmSync(uniqueProfileDir, { recursive: true, force: true });
+    } catch (e) {}
   }
 }
 
