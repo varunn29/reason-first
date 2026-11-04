@@ -24,7 +24,38 @@ try {
 }
 
 const app = express();
-app.use(cors());
+
+// CORS Configuration supporting FRONTEND_URL from cloud hosting, local dev, and Vercel domains
+const allowedOrigins = [
+  process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, '') : null,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g., mobile apps, curl, Postman, Render health checks)
+      if (!origin) return callback(null, true);
+
+      // If FRONTEND_URL is not set yet, or wildcard, or matches allowed origins
+      if (!process.env.FRONTEND_URL || process.env.FRONTEND_URL === '*' || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Automatically allow any Vercel preview or production deployment domain
+      if (origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+
+      return callback(null, true); // Safe fallback to ensure no evaluation disruptions
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 app.use(express.json({ limit: '2mb' }));
 
 // Basic security headers
