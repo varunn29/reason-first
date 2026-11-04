@@ -1,15 +1,12 @@
 // backend/chat/runMigration.js
-// Safe, additive migration runner for chat tables.
-// Can be executed via: npm run migrate:chat or node chat/runMigration.js
+// Migration runner for chat tables.
 
 const fs = require('fs');
 const path = require('path');
 const pool = require('../config/db');
 
 async function runMigration() {
-  console.log('----------------------------------------------------');
-  console.log('Running additive migration for Chat Feature...');
-  console.log('----------------------------------------------------');
+  console.log('[Chat] Applying chat tables...');
 
   const sqlPath = path.join(__dirname, 'schema.sql');
   const sql = fs.readFileSync(sqlPath, 'utf8');

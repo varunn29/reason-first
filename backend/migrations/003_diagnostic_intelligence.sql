@@ -1,9 +1,4 @@
--- ============================================================================
--- Migration 003: ReasonFirst Diagnostic Intelligence Upgrade
--- Non-destructive additive migration: Adds assessment sessions, session diagnoses,
--- teacher intervention records, and reassessment comparisons.
--- ============================================================================
-
+-- Assessment sessions, diagnoses, interventions, and reassessments
 CREATE TABLE IF NOT EXISTS assessment_sessions (
   id            TEXT PRIMARY KEY,
   student_id    TEXT NOT NULL REFERENCES students(id),

@@ -1,5 +1,4 @@
 const path = require('path');
-// Guarantee loading of backend/.env with override: true so empty parent/shell envs don't override it
 require('dotenv').config({ path: path.resolve(__dirname, '.env'), override: true });
 require('dotenv').config({ path: path.resolve(__dirname, '..', '.env'), override: true });
 const express = require('express');
@@ -28,7 +27,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 
-// Production Security Headers
+// Basic security headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -36,7 +35,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Production In-Memory Rate Limiter (Protects API from traffic spikes and abuse)
+// Simple sliding window rate limiter
 const rateLimitMap = new Map();
 function rateLimiter({ windowMs = 60000, max = 300 } = {}) {
   return (req, res, next) => {
@@ -51,14 +50,14 @@ function rateLimiter({ windowMs = 60000, max = 300 } = {}) {
     }
     rateLimitMap.set(key, record);
     if (record.count > max) {
-      return res.status(429).json({ ok: false, error: 'Too many requests. Please slow down.' });
+      return res.status(429).json({ ok: false, error: 'Too many requests. Please try again shortly.' });
     }
     next();
   };
 }
 app.use('/api/', rateLimiter({ windowMs: 60000, max: 300 }));
 
-// In-memory cache for offline/dev resilience when DB is not configured
+// In-memory store fallback when running without postgres
 const memoryStore = {
   responses: new Map(),
   diagnoses: new Map(),
@@ -322,9 +321,7 @@ app.post('/api/responses', async (req, res) => {
 });
 
 // 4. Get Diagnosis Report by Response ID
-// ============================================================================
-// PRIORITY ONE & TWO: ASSESSMENT SESSION WORKFLOW & EVIDENCE REASONING
-// ============================================================================
+// Assessment sessions & evidence collection
 
 // S1. Start a New Assessment Session
 app.post('/api/sessions/start', async (req, res) => {
@@ -629,9 +626,7 @@ app.get('/api/sessions/:sessionId', async (req, res) => {
   }
 });
 
-// ============================================================================
-// PRIORITY FIVE & SIX: PREREQUISITE GRAPH & TEACHER INTERVENTION ENGINE
-// ============================================================================
+// Prerequisite skills & intervention recommendations
 
 // I1. Get Cognitive Prerequisite Graph
 app.get('/api/prerequisites', async (req, res) => {
@@ -746,9 +741,7 @@ app.get('/api/interventions/student/:studentId', async (req, res) => {
   }
 });
 
-// ============================================================================
-// PRIORITY SEVEN: POST-INTERVENTION REASSESSMENT & PROGRESS COMPARISON
-// ============================================================================
+// Post-intervention reassessment
 
 // R1. Start Post-Intervention Reassessment
 app.post('/api/reassessment/start', async (req, res) => {
@@ -839,9 +832,7 @@ app.post('/api/reassessment/compare', async (req, res) => {
   }
 });
 
-// ============================================================================
-// PRIORITY EIGHT: NEEDS-BASED STUDENT GROUPING
-// ============================================================================
+// Student groupings by misconception
 
 // G1. Get Students Grouped by Diagnosed Learning Needs
 app.get('/api/groupings', async (req, res) => {
@@ -1403,57 +1394,43 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, async () => {
-  console.log(`\n========================================================`);
-  console.log(`🚀 Reason-First Backend running on http://localhost:${PORT}`);
-  console.log(`========================================================`);
+  console.log(`ReasonFirst backend listening on http://localhost:${PORT}`);
 
-  // 1. LLM API Key Status Check
   const geminiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '';
   const openaiKey = process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.trim() : '';
 
-  if (geminiKey && geminiKey.length > 0) {
-    const masked = geminiKey.length > 10
-      ? geminiKey.slice(0, 6) + '...' + geminiKey.slice(-4)
-      : '***';
-    const model = process.env.CHAT_LLM_MODEL || 'gemini-3.8-flash';
-    console.log(`\x1b[32m[LLM STATUS] Real API key detected (Google Gemini: ${masked}). Using live LLM (Model: ${model}).\x1b[0m`);
-  } else if (openaiKey && openaiKey.length > 0) {
-    const masked = openaiKey.length > 10
-      ? openaiKey.slice(0, 6) + '...' + openaiKey.slice(-4)
-      : '***';
+  if (geminiKey) {
+    const model = process.env.CHAT_LLM_MODEL || 'gemini-2.5-flash';
+    console.log(`[LLM] Google Gemini active (model: ${model})`);
+  } else if (openaiKey) {
     const model = process.env.CHAT_LLM_MODEL || 'gpt-4o-mini';
-    console.log(`\x1b[32m[LLM STATUS] Real API key detected (OpenAI/Compatible: ${masked}). Using live LLM (Model: ${model}).\x1b[0m`);
+    console.log(`[LLM] OpenAI active (model: ${model})`);
   } else {
-    console.log(`\x1b[33m[LLM STATUS] No API key found. Using deterministic simulator.\x1b[0m`);
+    console.log(`[LLM] No API key configured. Using local reasoning simulator.`);
   }
 
-  // 2. Database Status Check & Auto Migration
   if (process.env.DATABASE_URL) {
     try {
-      const res = await pool.query('SELECT NOW()');
-      console.log(`\x1b[32m[DB STATUS] Connected to Neon Postgres (Server time: ${res.rows[0].now.toISOString()}).\x1b[0m`);
+      await pool.query('SELECT NOW()');
+      console.log(`[Database] Connected to PostgreSQL`);
       const migrateAll = require('./config/migrateAll');
       await migrateAll();
     } catch (dbErr) {
-      console.warn(`\x1b[33m[DB STATUS] Neon Postgres unreachable (${dbErr.message}). Using in-memory fallback.\x1b[0m`);
+      console.warn(`[Database] PostgreSQL connection failed (${dbErr.message}). Using in-memory store.`);
     }
   } else {
-    console.log(`\x1b[33m[DB STATUS] DATABASE_URL not set. Running in development in-memory mode.\x1b[0m`);
+    console.log(`[Database] DATABASE_URL not set. Running in development in-memory mode.`);
   }
 
-  // 3. ML Diagnostic Server Check
   const ML_API_URL = process.env.ML_API_URL || 'http://localhost:8000';
   try {
     const mlRes = await fetch(`${ML_API_URL}/health`, { signal: AbortSignal.timeout(2000) });
     if (mlRes.ok) {
-      const mlData = await mlRes.json();
-      console.log(`\x1b[32m[ML SERVER STATUS] Connected to ML Diagnostic Engine at ${ML_API_URL} (v${mlData.engine_version || '0.1.0'}).\x1b[0m`);
+      console.log(`[ML Engine] Connected to diagnostic engine at ${ML_API_URL}`);
     } else {
-      console.log(`\x1b[33m[ML SERVER STATUS] ML Diagnostic Server returned HTTP ${mlRes.status}. Server will use local fallback.\x1b[0m`);
+      console.log(`[ML Engine] Diagnostic server returned HTTP ${mlRes.status}. Using local fallback.`);
     }
   } catch (mlErr) {
-    console.log(`\x1b[33m[ML SERVER STATUS] ML Diagnostic Engine not running at ${ML_API_URL} (${mlErr.message}). Server will use local fallback.\x1b[0m`);
+    console.log(`[ML Engine] Diagnostic server offline at ${ML_API_URL}. Using local fallback.`);
   }
-
-  console.log(`========================================================\n`);
 });

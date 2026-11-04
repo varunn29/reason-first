@@ -138,7 +138,7 @@ async function captureWorkflow() {
     await sleep(1500);
     await page.screenshot({ path: path.join(OUTPUT_DIR, '09_ai_diagnostic_report_top.png') });
 
-    // Scroll to see Cognitive Skill Mastery Matrix & Intervention Protocol
+    // Scroll to view skill mastery and intervention
     await page.evaluate(() => window.scrollBy(0, 600));
     await sleep(600);
     await page.screenshot({ path: path.join(OUTPUT_DIR, '10_diagnostic_report_intervention.png') });

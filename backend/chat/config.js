@@ -6,7 +6,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '..', '.env'), override
 require('dotenv').config({ path: path.resolve(__dirname, '..', '..', '.env'), override: true });
 
 const config = {
-  // Master feature flag: When false, app operates exactly as today
+  // Feature toggle for student conversational reasoning
   isEnabled: process.env.CHAT_FEATURE_ENABLED === 'true',
 
   // Conversation constraints tailored for Class 4 students (ages 8-10)

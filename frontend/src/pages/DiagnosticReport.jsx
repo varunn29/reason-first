@@ -193,7 +193,7 @@ const DiagnosticReport = () => {
   // Reassessment comparison data (if present)
   const reassessmentData = reportData?.reassessment;
 
-  // Save teacher human-in-the-loop override
+  // Save teacher override
   const handleSaveOverride = async () => {
     const responseId = reportData?.response?.id || activeResponseId;
     if (!responseId) return;
@@ -212,7 +212,7 @@ const DiagnosticReport = () => {
         interventionType: 'CONCRETE_MANIPULATIVE',
         targetSkill: relatedPrerequisite?.id || 'ONES_REGROUPING',
         targetMisconception: ruleId,
-        notes: teacherNote || 'Clinical protocol conducted using concrete manipulatives.',
+        notes: teacherNote || 'Intervention conducted with concrete manipulatives.',
       });
       setInterventionDelivered(true);
     } catch (err) {
@@ -264,7 +264,7 @@ const DiagnosticReport = () => {
             </button>
             <div>
               <h1 className="text-lg font-bold text-darkText">AI Diagnostic Report</h1>
-              <p className="text-[10px] text-gray-500 font-medium">Evidence-Based Clinical Diagnosis</p>
+              <p className="text-[10px] text-gray-500 font-medium">Diagnostic Learning Report</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -442,17 +442,17 @@ const DiagnosticReport = () => {
                 </div>
               </div>
 
-              {/* Cognitive Skill Mastery Matrix (Replaces Arbitrary Percentages) */}
+              {/* Skill Mastery Breakdown */}
               <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-50 mb-5">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-bold text-darkText flex items-center gap-2">
                     <Award size={16} className="text-primary" />
-                    Cognitive Skill Mastery Status
+                    Skill Mastery Status
                   </h2>
                   <span className="text-[10px] font-semibold text-gray-400">NCERT Class 3</span>
                 </div>
                 <p className="text-[11px] text-gray-500 mb-3">
-                  Qualitative mastery determined through multi-probe evidence rather than fabricated percentages:
+                  Mastery evaluated from student responses and reasoning:
                 </p>
 
                 <div className="space-y-2.5">
@@ -508,7 +508,7 @@ const DiagnosticReport = () => {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Bookmark size={16} className="text-primary" />
-                    <h2 className="text-sm font-bold text-darkText">Teacher-Led Clinical Intervention</h2>
+                    <h2 className="text-sm font-bold text-darkText">Recommended Intervention</h2>
                   </div>
                   {interventionDelivered && (
                     <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 border border-green-200 text-[10px] font-bold flex items-center gap-1">
@@ -524,7 +524,7 @@ const DiagnosticReport = () => {
 
                 <div className="bg-gray-50 rounded-2xl p-3 border border-gray-100 mb-3">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1.5">
-                    Step-by-Step Clinical Protocol
+                    Suggested Activity Steps
                   </span>
                   <ul className="space-y-1.5 text-xs text-gray-700">
                     {(intervention.step_by_step_protocol || []).map((step, idx) => (
@@ -604,12 +604,12 @@ const DiagnosticReport = () => {
                 )}
               </div>
 
-              {/* Human-in-the-Loop Teacher Review Card */}
+              {/* Teacher Review & Override */}
               <div className="bg-white rounded-3xl p-5 shadow-sm border border-indigo-100 mb-5">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-bold text-darkText flex items-center gap-2">
                     <UserCheck size={16} className="text-primary" />
-                    Teacher Clinical Review & Override
+                    Teacher Review & Override
                   </h2>
                   {overrideSaved && (
                     <span className="text-[10px] text-secondary font-bold flex items-center gap-1 animate-fade-in">
@@ -639,7 +639,7 @@ const DiagnosticReport = () => {
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-gray-600 mb-1 block">Clinical Observation Notes</label>
+                    <label className="text-[11px] font-semibold text-gray-600 mb-1 block">Teacher Observation Notes</label>
                     <textarea 
                       rows={2}
                       placeholder="e.g. Student crossed out tens column on scratch paper; error was a basic single-digit recall slip (4-1=3)."

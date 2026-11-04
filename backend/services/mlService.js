@@ -1,7 +1,5 @@
 // services/mlService.js
-// Production diagnostic client connecting Express Backend to Python Diagnostic Engine.
-// Enforces session-level evidence aggregation, verbal reasoning reconciliation,
-// prerequisite graph retrieval, and pre/post reassessment progress tracking.
+// Client client for the Python diagnostic microservice.
 
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
@@ -10,7 +8,7 @@ require('dotenv').config();
 const ML_API_URL = process.env.ML_API_URL || 'http://localhost:8000';
 
 /**
- * 1. Diagnose single student response (Preliminary observation only).
+ * Evaluates a single student response.
  */
 async function diagnose(response) {
   try {
@@ -27,22 +25,20 @@ async function diagnose(response) {
     });
 
     if (!res.ok) {
-      console.warn(`[ML Service] ML API at ${ML_API_URL} returned HTTP ${res.status}. Diagnosis pending.`);
+      console.warn(`[ML Service] Diagnostic engine returned HTTP ${res.status}`);
       return { status: 'pending' };
     }
 
     const data = await res.json();
     return { status: 'ok', diagnosis: data };
   } catch (err) {
-    console.warn(`⚠️ [ML Service Offline] Could not reach ML engine at ${ML_API_URL} (${err.message}). Using local diagnostic fallback.`);
+    console.warn(`[ML Service] Could not connect to engine at ${ML_API_URL}: ${err.message}`);
     return { status: 'pending' };
   }
 }
 
 /**
- * 1b. Predict diagnosis combining answer and full chat transcript / reasoning turns.
- * Authoritative diagnostic endpoint calling the trained Python ML model at POST /predict.
- * Falls back to LLM analysis with explicit warning if the ML model is offline or returns an error.
+ * Predicts diagnosis from answer and conversation turns.
  */
 async function predictChatDiagnosis({ questionId, answer, explanation = '', chatTurns = [], transcript = '' }) {
   try {
@@ -60,20 +56,20 @@ async function predictChatDiagnosis({ questionId, answer, explanation = '', chat
     });
 
     if (!res.ok) {
-      console.warn(`[WARNING] Using LLM fallback instead of trained ML model (HTTP ${res.status} from ${ML_API_URL})`);
+      console.warn(`[ML Service] Engine returned HTTP ${res.status}. Falling back to LLM analysis.`);
       return { status: 'fallback', error: `HTTP ${res.status}` };
     }
 
     const data = await res.json();
     return { status: 'ok', diagnosis: data };
   } catch (err) {
-    console.warn(`[WARNING] Using LLM fallback instead of trained ML model: ${err.message}`);
+    console.warn(`[ML Service] ML engine offline (${err.message}). Using LLM analysis.`);
     return { status: 'fallback', error: err.message };
   }
 }
 
 /**
- * 2. Diagnose complete assessment session (Multi-probe evidence synthesis).
+ * Evaluates a complete assessment session.
  */
 async function diagnoseSession(sessionData) {
   try {

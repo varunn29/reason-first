@@ -1,6 +1,5 @@
 // services/authService.js
-// Production-grade authentication service for Teachers and Students.
-// Zero external dependencies: uses Node.js standard library 'crypto'.
+// Teacher and student authentication using Node crypto.
 
 const crypto = require('crypto');
 const fs = require('fs');

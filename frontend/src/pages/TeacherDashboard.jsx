@@ -159,7 +159,7 @@ const TeacherDashboard = () => {
                     <CheckCircle2 size={14} className="text-primary" /> Active Class Alerts
                   </h4>
                   <p className="text-[11px] text-gray-600 leading-tight">
-                    {stats.find(s => s.label === 'Pending Reviews')?.value || 0} student response(s) in Grade 3 ready for human-in-the-loop clinical review.
+                    {stats.find(s => s.label === 'Pending Reviews')?.value || 0} student response(s) in Grade 3 ready for teacher review.
                   </p>
                 </div>
               )}
@@ -292,7 +292,7 @@ const TeacherDashboard = () => {
               <span className="font-bold flex items-center gap-1.5 text-primary mb-1">
                 <ShieldCheck size={14} /> NCERT Flexible Learning Groups
               </span>
-              Students are grouped dynamically by shared underlying conceptual hurdle rather than generic marks, enabling targeted small-group clinical intervention.
+              Students are grouped by shared learning needs rather than test scores, making small-group support easier.
             </div>
 
             {isLoadingGroupings ? (

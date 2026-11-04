@@ -38,7 +38,7 @@ export const NetworkStatusBar = () => {
         className="fixed top-0 left-0 right-0 z-50 bg-amber-600 text-white text-xs font-bold py-2 px-4 shadow-md flex items-center justify-center gap-2 transition-all animate-fadeIn"
       >
         <WifiOff size={16} className="animate-pulse" />
-        <span>Network connection lost. ReasonFirst is operating in offline-resilient mode.</span>
+        <span>You are offline. Responses are saved locally.</span>
       </aside>
     );
   }
@@ -50,7 +50,7 @@ export const NetworkStatusBar = () => {
         className="fixed top-0 left-0 right-0 z-50 bg-emerald-600 text-white text-xs font-bold py-2 px-4 shadow-md flex items-center justify-center gap-2 transition-all animate-fadeIn"
       >
         <Wifi size={16} />
-        <span>Back online! Connection restored.</span>
+        <span>Back online!</span>
       </aside>
     );
   }
@@ -59,3 +59,4 @@ export const NetworkStatusBar = () => {
 };
 
 export default NetworkStatusBar;
+

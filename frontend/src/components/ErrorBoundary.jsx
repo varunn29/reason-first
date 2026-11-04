@@ -12,7 +12,7 @@ export class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('[ReasonFirst Global ErrorBoundary]', error, errorInfo);
+    console.error('UI rendering error:', error, errorInfo);
   }
 
   handleReset = () => {
@@ -38,7 +38,7 @@ export class ErrorBoundary extends React.Component {
             </h2>
             
             <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-              An unexpected display glitch occurred. No assessment or student learning data has been lost.
+              An unexpected display error occurred. Please try reloading the page.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -68,3 +68,4 @@ export class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+

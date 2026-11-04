@@ -1,9 +1,4 @@
--- ============================================================================
--- Migration 002: Teachers, Classrooms & Authentication
--- Safe & non-destructive: creates new tables, alters students, and adds indexes.
--- ============================================================================
-
--- 1. Teachers table: Stores authenticated educators
+-- Teachers and classrooms
 CREATE TABLE IF NOT EXISTS teachers (
   id            TEXT PRIMARY KEY,
   name          TEXT NOT NULL,

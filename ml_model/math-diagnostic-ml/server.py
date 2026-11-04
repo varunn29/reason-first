@@ -1,7 +1,6 @@
-"""HTTP API Server for Class 3 Subtraction Diagnostic Engine.
+"""HTTP API server for the subtraction diagnostic engine.
 
-Exposes REST endpoints on port 8000 for backend and frontend integration.
-Zero external dependencies (uses standard library http.server).
+Endpoints on port 8000 for backend and evaluation integration.
 """
 
 import json
@@ -450,7 +449,7 @@ def run():
     httpd = ServerClass(server_address, DiagnosticHandler)
     if hasattr(httpd, "daemon_threads"):
         httpd.daemon_threads = True
-    print(f"ML Diagnostic Server running on http://localhost:{PORT}")
+    print(f"Diagnostic engine server listening on port {PORT}")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

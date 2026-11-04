@@ -1,6 +1,5 @@
 // backend/config/migrateAll.js
-// Automated, idempotent database migration and seed runner for production.
-// Automatically executed on startup when DATABASE_URL is configured.
+// Runs database schemas and default seed data.
 
 const fs = require('fs');
 const path = require('path');
@@ -12,7 +11,7 @@ async function migrateAll() {
     return { ok: false, message: 'DATABASE_URL not configured. Using in-memory fallback.' };
   }
 
-  console.log('[DB MIGRATION] Verifying and applying production database schema...');
+  console.log('[Migration] Checking database tables...');
 
   const migrationFiles = [
     { name: 'Core Schema (schema.sql)', path: path.join(__dirname, '..', 'schema.sql') },
@@ -81,10 +80,10 @@ async function migrateAll() {
       ON CONFLICT (id) DO NOTHING;
     `);
 
-    console.log('[DB MIGRATION] Production database schema & seed data verified successfully.');
+    console.log('[Migration] Database tables and default records verified.');
     return { ok: true };
   } catch (seedErr) {
-    console.warn('[DB MIGRATION WARNING] Seed verification note:', seedErr.message);
+    console.warn('[Migration] Note on initial data:', seedErr.message);
     return { ok: true, warning: seedErr.message };
   }
 }
@@ -96,3 +95,4 @@ if (require.main === module) {
 }
 
 module.exports = migrateAll;
+

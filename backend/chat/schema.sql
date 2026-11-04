@@ -1,10 +1,4 @@
--- ============================================================================
--- Additive Migration: Chat with Teacher Bot Feature
--- Safe & non-destructive: only creates new tables and indexes.
--- Does NOT drop or alter any existing tables.
--- ============================================================================
-
--- 1. Chat Sessions: Tracks each 1-on-1 diagnostic dialogue after an answer submission
+-- Chat dialogue sessions and messages
 CREATE TABLE IF NOT EXISTS chat_sessions (
   id             TEXT PRIMARY KEY,
   response_id    TEXT, -- Soft link to responses(id)
