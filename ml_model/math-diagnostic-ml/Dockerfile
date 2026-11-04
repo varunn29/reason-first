@@ -17,3 +17,4 @@ EXPOSE 7860
 
 # Run the Python standard library HTTP server
 CMD ["python", "server.py"]
+

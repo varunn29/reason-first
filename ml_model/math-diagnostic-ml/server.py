@@ -44,7 +44,10 @@ from math_diagnostic.engine import (
     reconcile_reasoning,
 )
 
-PORT = int(os.environ.get("PORT", 8000))
+port = int(os.environ.get("PORT", 8000))
+host = "0.0.0.0"
+PORT = port
+HOST = host
 
 # Canonical 5 probes
 CANONICAL_PROBES_METADATA = [
@@ -445,11 +448,11 @@ class DiagnosticHandler(BaseHTTPRequestHandler):
 
 
 def run():
-    server_address = ("", PORT)
+    server_address = (host, port)
     httpd = ServerClass(server_address, DiagnosticHandler)
     if hasattr(httpd, "daemon_threads"):
         httpd.daemon_threads = True
-    print(f"Diagnostic engine server listening on port {PORT}")
+    print(f"Diagnostic engine server listening on {host}:{port}")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
